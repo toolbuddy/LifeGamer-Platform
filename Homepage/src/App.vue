@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <HeaderBar/>
+    <router-view/>
     <Menu/>
   </div>
 </template>

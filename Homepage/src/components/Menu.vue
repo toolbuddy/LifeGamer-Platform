@@ -6,6 +6,10 @@
       </div>
       <div class="option-wrapper">
         <ul class="menu-list-wrapper">
+          <div class="username_wrapper">
+            <div class="username">Username</div>
+            <div class="studentID">Student ID</div>
+          </div>
           <li class="menu-list" v-for="item in items" :key="item.id">
             <span class="option-bar"></span>
             <span class="menu-content"> {{ item.value }} </span>
@@ -17,7 +21,7 @@
 
 <!-- javascript part -->
 <script>
-const menuItem = [];
+const menuItem = [{ value: "Gitlab" }, { value: "Grade" }, { value: "Logout" }];
 export default {
   name: "Menu",
   data: function() {
@@ -61,6 +65,22 @@ export default {
   height: 150px;
   background: white;
   border-radius: 50%;
+}
+
+.username_wrapper {
+  margin-bottom: 25px;
+  padding-right: 25px;
+}
+
+.username {
+  padding: 5px;
+  border-bottom: 3px solid #fff;
+}
+
+.studentID {
+  float: right;
+  font-size: 18px;
+  padding: 5px;
 }
 
 .option-wrapper {

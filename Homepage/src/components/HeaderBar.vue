@@ -8,14 +8,37 @@
             <li class="headerbar-menu">
                 <img class="logo" src="../assets/logo.svg" />
             </li>
+            <li class="headerbar-menu" v-for="item in list" :key="item.id">
+              {{ item.value }}
+            </li>
         </ul>
   </header>
 </template>
 
 <!-- javascript part -->
 <script>
+const list = [
+  {
+    value: "Announce"
+  },
+  {
+    value: "Demo Time"
+  },
+  {
+    value: "Battle Field"
+  },
+  {
+    value: "Resources"
+  }
+];
+
 export default {
-  name: "HeaderBar"
+  name: "HeaderBar",
+  data: function() {
+    return {
+      list: list
+    };
+  }
 };
 </script>
 

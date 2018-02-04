@@ -1,15 +1,20 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import Vue from "vue";
+import Router from "vue-router";
 
-Vue.use(Router)
+import Announce from "@/components/Announce";
+import DemoTime from "@/components/DemoTime";
+
+Vue.use(Router);
 
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      path: "/",
+      component: Announce
+    },
+    {
+      path: "/demotime",
+      component: DemoTime
     }
   ]
-})
+});
