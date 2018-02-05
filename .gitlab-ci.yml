@@ -1,0 +1,20 @@
+stages:
+  - Build homepage
+  - Deploy
+
+build:
+  stage: Build homepage
+  script:
+    - cd Homepage
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - ./Homepage/dist
+      
+deploy:
+  stage: Deploy
+  script: 
+    - ./scripts/deploy_homepage.sh
+  dependencies:
+    - build
