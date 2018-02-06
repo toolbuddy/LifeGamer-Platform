@@ -8,7 +8,7 @@ module.exports = {
     // First application
     {
       name      : 'LifeGamer-Platform',
-      script    : 'app.js',
+      script    : 'Handler/app.js',
       env: {
         COMMON_VARIABLE: 'true'
       },
@@ -32,7 +32,7 @@ module.exports = {
       'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
     },
     dev : {
-      user : 'hmkrl',
+      user : 'gitlab-runner',
       host : 'hmkrl.com',
       ref  : 'origin/dev',
       repo : 'git@hmkrl.com:HMKRL/LifeGamer-Platform.git',
