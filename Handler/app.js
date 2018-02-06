@@ -1,7 +1,21 @@
 const express = require('express');
+const path = require('path')
 const simpleOauthModule = require('simple-oauth2');
+const expressVue = require('express-vue');
+
+const vueOptions = {
+    rootPath: path.join(__dirname, '../Homepage/src'),
+    layout: {
+        start: '<div id="app">',
+        end: '</div>'
+    }
+};
+
+const expressVueMiddleware = expressVue.init(vueOptions);
 
 const app = express();
+app.use(expressVueMiddleware);
+
 const oauth2 = simpleOauthModule.create({
     client: {
         id: process.env.OAUTH_APP_ID,
@@ -66,9 +80,10 @@ app.get('/callback', (req, res) => {
 
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello<br><a href="/auth">Log in with Github</a>');
-});
+app.use(express.static(path.resolve(process.cwd() + '/../Homepage/dist')));
+
+app.get('/', (req, res, next) => {
+})
 
 app.listen(3000, () => {
     console.log('Express server started on port 3000'); // eslint-disable-line
