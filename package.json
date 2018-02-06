@@ -8,10 +8,11 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js --port 8763 --host localhost --public hmkrl.com",
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
-    "build": "node build/build.js"
+    "build": "node Homepage/build/build.js"
   },
   "dependencies": {
     "node-gitlab-api": "^2.2.3",
+    "simple-oauth2": "^1.5.0",
     "vue": "^2.5.2",
     "vue-cookie": "^1.1.4",
     "vue-cookies": "^1.5.4",
@@ -73,5 +74,15 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "main": "ecosystem.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pd2-ncku/LifeGamer-Platform.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pd2-ncku/LifeGamer-Platform/issues"
+  },
+  "homepage": "https://github.com/pd2-ncku/LifeGamer-Platform#readme"
 }

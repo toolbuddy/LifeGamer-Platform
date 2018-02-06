@@ -1,22 +1,10 @@
-const express = require('express');
 const path = require('path')
+const express = require('express');
 const simpleOauthModule = require('simple-oauth2');
-const expressVue = require('express-vue');
 
 var port = process.env.PORT || 3000;
 
-const vueOptions = {
-    rootPath: path.join(__dirname, '../Homepage/src'),
-    layout: {
-        start: '<div id="app">',
-        end: '</div>'
-    }
-};
-
-const expressVueMiddleware = expressVue.init(vueOptions);
-
 const app = express();
-app.use(expressVueMiddleware);
 
 const oauth2 = simpleOauthModule.create({
     client: {
@@ -82,7 +70,7 @@ app.get('/callback', (req, res) => {
 
 });
 
-app.use(express.static(path.resolve(__dirname + '/../Homepage/dist')));
+app.use(express.static(path.resolve(__dirname + '/Homepage/dist')));
 
 app.listen(port, () => {
     console.log('Express server started on port ' + port); // eslint-disable-line

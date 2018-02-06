@@ -4,11 +4,10 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
    */
   apps : [
-
     // First application
     {
       name      : 'LifeGamer-Platform',
-      script    : 'Handler/app.js',
+      script    : 'app.js',
       env: {
         COMMON_VARIABLE: 'true'
       },
@@ -37,7 +36,7 @@ module.exports = {
       ref  : 'origin/dev',
       repo : 'git@hmkrl.com:HMKRL/LifeGamer-Platform.git',
       path : '/var/www/development',
-      'post-deploy' : '(cd Handler && npm install) && (cd Homepage && npm install && npm run build) && pm2 reload ecosystem.config.js --env dev',
+      'post-deploy' : 'npm install && npm run build && pm2 reload configs/ecosystem.config.js --env dev',
       env  : {
         NODE_ENV: 'dev'
       }
