@@ -21,8 +21,7 @@ const oauth2 = simpleOauthModule.create({
 // Authorization uri definition
 const authorizationUri = oauth2.authorizationCode.authorizeURL({
     redirect_uri: 'https://hmkrl.com/callback',
-    scopes: 'read_user+api',
-    state: '8787'
+    scope: 'read_user'
 });
 
 // Initial page redirecting to Github
