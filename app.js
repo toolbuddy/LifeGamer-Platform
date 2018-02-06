@@ -70,7 +70,7 @@ app.get('/callback', (req, res) => {
 
 });
 
-app.use(express.static(path.resolve(__dirname + '/Homepage/dist')));
+app.use(express.static(path.resolve(__dirname + '/dist')));
 
 app.listen(port, () => {
     console.log('Express server started on port ' + port); // eslint-disable-line

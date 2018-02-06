@@ -5,12 +5,8 @@ stages:
 build:
   stage: Build homepage
   script:
-    - cd Homepage
     - npm install
     - npm run build
-  artifacts:
-    paths:
-      - ./Homepage/dist
       
 deploy:
   stage: Deploy
