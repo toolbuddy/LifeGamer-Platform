@@ -15,6 +15,6 @@ build:
 deploy:
   stage: Deploy
   script: 
-    - ./scripts/deploy_homepage.sh
+    - pm2 deploy ecosystem.config.js dev
   dependencies:
     - build
