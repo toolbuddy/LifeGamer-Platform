@@ -3,6 +3,8 @@ const path = require('path')
 const simpleOauthModule = require('simple-oauth2');
 const expressVue = require('express-vue');
 
+var port = process.env.PORT || 3000;
+
 const vueOptions = {
     rootPath: path.join(__dirname, '../Homepage/src'),
     layout: {
@@ -80,9 +82,9 @@ app.get('/callback', (req, res) => {
 
 });
 
-app.use(express.static(path.resolve(process.cwd() + '/../Homepage/dist')));
+app.use(express.static(path.resolve(__dirname + '/../Homepage/dist')));
 
-app.listen(3000, () => {
-    console.log('Express server started on port 3000'); // eslint-disable-line
+app.listen(port, () => {
+    console.log('Express server started on port ' + port); // eslint-disable-line
 });
 
