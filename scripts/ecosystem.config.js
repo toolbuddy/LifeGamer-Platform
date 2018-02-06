@@ -36,7 +36,7 @@ module.exports = {
       ref  : 'origin/dev',
       repo : 'git@hmkrl.com:HMKRL/LifeGamer-Platform.git',
       path : '/var/www/development',
-      'post-deploy' : 'npm install && npm run build && pm2 reload configs/ecosystem.config.js --env dev',
+      'post-deploy' : 'npm install && npm run build && pm2 reload scripts/ecosystem.config.js --env dev',
       env  : {
         NODE_ENV: 'dev'
       }

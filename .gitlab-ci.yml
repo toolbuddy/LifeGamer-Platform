@@ -10,7 +10,8 @@ build:
       
 deploy:
   stage: Deploy
-  script: 
-    - pm2 deploy configs/ecosystem.config.js dev
+  script:
+    - source $HOME/.profile
+    - pm2 deploy scripts/ecosystem.config.js dev
   dependencies:
     - build
