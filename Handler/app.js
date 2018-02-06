@@ -82,9 +82,6 @@ app.get('/callback', (req, res) => {
 
 app.use(express.static(path.resolve(process.cwd() + '/../Homepage/dist')));
 
-app.get('/', (req, res, next) => {
-})
-
 app.listen(3000, () => {
     console.log('Express server started on port 3000'); // eslint-disable-line
 });
