@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header id="headerbar" :style="HeaderStyle">
+    <header id="headerbar" :style="headertoggle">
         <ul class="headerbar-menu-wrapper">
                 <li id="MenuIcon" class="headerbar-menu menuicon-wrapper" @click="showMenu">
                     <img class="menu-icon" src="../assets/menu.svg" />
@@ -13,19 +13,23 @@
                 </li>
             </ul>
     </header>
-    <aside id="menu" :style="MenuStyle">
+    <aside id="menu" :style="menutoggle">
         <div class="img-wrapper">
-            <div></div>
+            <div class="user_avatar" :style="useravatar_bgurl"></div>
         </div>
         <div class="option-wrapper">
             <ul class="menu-list-wrapper">
             <div class="username_wrapper">
-                <div class="username">Username</div>
-                <div class="studentID">Student ID</div>
+                <div class="username"> {{ userdata.name }} </div>
+                <div class="studentID"> {{ userdata.username }} </div>
             </div>
+            <li class="menu-list">
+              <span class="option-bar"></span>
+              <a class="menu-content gitlablink" :href="userdata.web_url">Gitlab</a>
+            </li>
             <li class="menu-list" v-for="item in menulist" :key="item.id">
                 <span class="option-bar"></span>
-                <span class="menu-content"> {{ item.value }} </span>
+                <span class="menu-content">{{ item.value }} </span>
             </li>
             </ul>
         </div>
@@ -41,37 +45,52 @@ const headerlist = [
   { value: "Resources" }
 ];
 
-const menulist = [{ value: "Gitlab" }, { value: "Grade" }, { value: "Logout" }];
+const menulist = [{ value: "Grade" }, { value: "Logout" }];
 
 export default {
   name: "Frame",
   data: function() {
     return {
-      MenuStyle: {
-        left: "-250px"
-      },
-      HeaderStyle: {
-        top: "0px"
-      },
+      headertop: 0,
+      menuleft: "-250px",
       _scrollY: 0,
-      token: "",
+      token: null,
+      userdata: null,
       headerlist: headerlist,
       menulist: menulist
     };
   },
+  computed: {
+    menutoggle: function() {
+      return {
+        left: this.menuleft
+      };
+    },
+    headertoggle: function() {
+      return {
+        top: this.headertop
+      };
+    },
+    useravatar_bgurl: function() {
+      return {
+        "background-image": `url( ${this.userdata.avatar_url} )`
+      };
+    }
+  },
   created: function() {
     this.getCookie();
+    this.getuserdata();
     document.addEventListener("scroll", this.toggleHeaderBar);
   },
   methods: {
     showMenu: function() {
-      this.MenuStyle.left = "0px";
+      this.menuleft = "0px";
       document.addEventListener("click", this.hideMenu);
     },
     hideMenu: function(event) {
       let x = event.clientX;
-      if (this.MenuStyle.left === "0px" && x > 250) {
-        this.MenuStyle.left = "-250px";
+      if (this.menuleft === "0px" && x > 250) {
+        this.menuleft = "-250px";
         window.removeEventListener("click", this.hideMenu);
       }
     },
@@ -79,18 +98,35 @@ export default {
       let scrollY = window.scrollY;
       if (this._scrollY < scrollY) {
         /* scroll down */
-        this.HeaderStyle.top = "0px";
+        this.headertop = "0px";
       } else if (scrollY == 0) {
         /* scroll to the top */
-        this.HeaderStyle.top = "0px";
+        this.headertop = "0px";
       } else {
         /* scroll up */
-        this.HeaderStyle.top = "-10%";
+        this.headertop = "-10%";
       }
       this._scrollY = scrollY;
     },
     getCookie: function() {
       this.token = this.$cookies.get("token");
+    },
+    getuserdata: function() {
+      /* get user data via vue-resource */
+      this.$http
+        .get(`https://hmkrl.com/gitlab/api/v4/user?access_token=${this.token}`)
+        .then(
+          response => {
+            // set data
+            this.userdata = response.body;
+          },
+          response => {
+            // error callback
+            console.error(response);
+            /* cannot get response, redirect to /auth */
+            router.push("auth");
+          }
+        );
     }
   }
 };
@@ -115,6 +151,12 @@ export default {
   top: 0;
   left: 0;
   transition: all 0.5s ease;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .headerbar-menu-wrapper {
@@ -156,6 +198,12 @@ export default {
   color: white;
   width: var(--menu-width);
   height: 100%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   /* set position */
   top: 0;
   left: calc(var(--menu-width) * (-1));
@@ -169,15 +217,17 @@ export default {
   align-items: center;
 }
 
-.img-wrapper > div {
+.user_avatar {
   width: 150px;
   height: 150px;
   background: white;
   border-radius: 50%;
+  background-size: 150px 150px;
+  border: 2px solid white;
 }
 
 .username_wrapper {
-  margin-bottom: 25px;
+  margin-bottom: 40px;
   padding-right: 25px;
 }
 
@@ -205,6 +255,7 @@ export default {
 
 .menu-list {
   padding: 8px 0;
+  margin: 10px 5px;
 }
 
 .option-bar {
@@ -219,5 +270,10 @@ export default {
 .menu-content:hover {
   opacity: 1;
   cursor: pointer;
+}
+
+.gitlablink {
+  text-decoration: none;
+  color: white;
 }
 </style>

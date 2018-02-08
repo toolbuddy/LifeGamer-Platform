@@ -4,8 +4,13 @@ import Vue from "vue";
 import App from "./App";
 import router from "./router";
 
+/* vue cookies */
 const vueCookies = require("vue-cookies");
 Vue.use(vueCookies);
+
+/* vue resource */
+const vueResource = require("vue-resource");
+Vue.use(vueResource.default);
 
 Vue.config.productionTip = false;
 
