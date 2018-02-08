@@ -132,6 +132,7 @@ export default {
         );
     },
     cleanCookie: function() {
+      this.$http.get("https://hmkrl.com/gitlab/users/sign_out");
       this.$cookies.remove("token");
       window.location.reload();
     }
