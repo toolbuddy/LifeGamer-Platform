@@ -32,6 +32,7 @@ app.get('/auth', (req, res) => {
 
 // Callback service parsing the authorization token and asking for the access token
 app.get('/callback', (req, res) => {
+
     const code = req.query.code;
     const options = {
         code: req.query.code,
@@ -39,32 +40,22 @@ app.get('/callback', (req, res) => {
         redirect_uri: 'https://hmkrl.com/callback'
     };
 
-
     oauth2.authorizationCode.getToken(options, (error, result) => {
         if (error) {
-            console.error('Access Token Error', error.message);
+            // console.error('Access Token Error', error.message);
             return res.json('Authentication failed');
         }
 
-        console.log('The resulting token: ', result);
+        // console.log('The resulting token: ', result);
         const token = oauth2.accessToken.create(result);
 
-        console.log(token['token']['access_token'])
+        const GitlabAPI = require('node-gitlab-api')({
+            url:   'https://hmkrl.com/gitlab',
+            oauthToken: token['token']['access_token']
+        })
 
-            const GitlabAPI = require('node-gitlab-api')({
-                url:   'https://hmkrl.com/gitlab', // Defaults to http://gitlab.com
-                    oauthToken: token['token']['access_token']
-            })
-
-        var images = '<html>';
-
-        GitlabAPI.users.all()
-            .then((users) => {
-                users.forEach((user) => {
-                    images += '<img src="' + user['avatar_url'] + '"/><br>\n';
-                })
-                res.end(images + '</html>')
-            })
+        res.cookie('token', token['token']['access_token'], { secure: true });
+        res.redirect('https://hmkrl.com');
     });
 
 });
