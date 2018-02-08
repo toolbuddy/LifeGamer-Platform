@@ -1,0 +1,17 @@
+stages:
+  - Build homepage
+  - Deploy
+
+build:
+  stage: Build homepage
+  script:
+    - npm install
+    - npm run build
+      
+deploy:
+  stage: Deploy
+  script:
+    - source $HOME/.profile
+    - pm2 deploy scripts/ecosystem.config.js dev
+  dependencies:
+    - build
