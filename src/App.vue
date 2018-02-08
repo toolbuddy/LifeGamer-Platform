@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <div v-if="hasCookie">
+    <div id="content" v-if="hasCookie">
       <Frame/>
       <router-view/>
     </div>
-    <div v-else>
+    <div id="login" v-else>
       <Login/>
     </div>
   </div>
@@ -19,7 +19,7 @@ export default {
   components: { Frame, Login },
   data: function() {
     return {
-      hasCookie: true
+      hasCookie: false
     };
   },
   created: function() {

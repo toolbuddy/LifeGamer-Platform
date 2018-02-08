@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="loaded">
     <header id="headerbar" :style="headertoggle">
         <ul class="headerbar-menu-wrapper">
                 <li id="MenuIcon" class="headerbar-menu menuicon-wrapper" @click="showMenu">
@@ -51,6 +51,7 @@ export default {
   name: "Frame",
   data: function() {
     return {
+      loaded: false,
       headertop: 0,
       menuleft: "-250px",
       _scrollY: 0,
@@ -119,6 +120,7 @@ export default {
           response => {
             // set data
             this.userdata = response.body;
+            this.loaded = true;
           },
           response => {
             // error callback
