@@ -21,7 +21,7 @@ const oauth2 = simpleOauthModule.create({
 // Authorization uri definition
 const authorizationUri = oauth2.authorizationCode.authorizeURL({
     redirect_uri: 'https://hmkrl.com/callback',
-    scope: 'read_user'
+    scope: 'api'
 });
 
 // Initial page redirecting to Github
@@ -42,11 +42,11 @@ app.get('/callback', (req, res) => {
 
     oauth2.authorizationCode.getToken(options, (error, result) => {
         if (error) {
-            // console.error('Access Token Error', error.message);
+            console.error('Access Token Error', error.message);
             return res.json('Authentication failed');
         }
 
-        // console.log('The resulting token: ', result);
+        console.log('The resulting token: ', result);
         const token = oauth2.accessToken.create(result);
 
         const GitlabAPI = require('node-gitlab-api')({
