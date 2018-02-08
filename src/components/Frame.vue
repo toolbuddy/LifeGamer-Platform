@@ -8,7 +8,7 @@
                 <li class="headerbar-menu">
                     <img class="logo" src="../assets/logo.svg" />
                 </li>
-                <li class="headerbar-menu" v-for="item in headerlist" :key="item.id">
+                <li class="headerbar-menu" v-for="item in headerlist" :key="item.id" >
                 {{ item.value }}
                 </li>
             </ul>
@@ -27,9 +27,13 @@
               <span class="option-bar"></span>
               <a class="menu-content gitlablink" :href="userdata.web_url">Gitlab</a>
             </li>
-            <li class="menu-list" v-for="item in menulist" :key="item.id">
+            <li class="menu-list">
                 <span class="option-bar"></span>
-                <span class="menu-content">{{ item.value }} </span>
+                <span class="menu-content">Grade</span>
+            </li>
+            <li class="menu-list">
+                <span class="option-bar"></span>
+                <span class="menu-content" @click="cleanCookie">Logout</span>
             </li>
             </ul>
         </div>
@@ -45,8 +49,6 @@ const headerlist = [
   { value: "Resources" }
 ];
 
-const menulist = [{ value: "Grade" }, { value: "Logout" }];
-
 export default {
   name: "Frame",
   data: function() {
@@ -57,8 +59,7 @@ export default {
       _scrollY: 0,
       token: null,
       userdata: null,
-      headerlist: headerlist,
-      menulist: menulist
+      headerlist: headerlist
     };
   },
   computed: {
@@ -126,9 +127,13 @@ export default {
             // error callback
             console.error(response);
             /* cannot get response, redirect to /auth */
-            router.push("auth");
+            window.location.href = "https://hmkrl.com/auth";
           }
         );
+    },
+    cleanCookie: function() {
+      this.$cookies.remove("token");
+      window.location.reload();
     }
   }
 };
