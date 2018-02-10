@@ -54,7 +54,7 @@ app.get('/callback', (req, res) => {
             oauthToken: token['token']['access_token']
         })
 
-        res.cookie('token', token['token']['access_token'], { secure: true });
+        res.cookie('token', token['token']['access_token'], { secure: true, expires: 0 });
         res.redirect('https://hmkrl.com');
     });
 
