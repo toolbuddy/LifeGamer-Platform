@@ -1,18 +1,25 @@
 <!-- HTML part -->
 <template>
-    <h1>Hello Board</h1>
+    <div id="markdown-body">
+        <markdown></markdown>
+    </div>
 </template>
 
 <!-- js part -->
 <script>
+import Vue from "vue";
+import markdown from "./markdown/Announce.md";
+
 export default {
-  name: "Board"
+  name: "Announce",
+  components: { markdown }
 };
 </script>
 
 <!-- css part -->
-<style>
-h1 {
-  margin-top: 150px;
+<style scope>
+#markdown-body {
+  margin-top: 25px;
+  padding: 1.5rem;
 }
 </style>

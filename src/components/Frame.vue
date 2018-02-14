@@ -1,17 +1,26 @@
 <template>
   <div v-if="loaded">
-    <header id="headerbar" :style="headertoggle">
+    <header id="headerbar">
         <ul class="headerbar-menu-wrapper">
-                <li id="MenuIcon" class="headerbar-menu menuicon-wrapper" @click="showMenu">
-                    <img class="menu-icon" src="../assets/menu.svg" />
-                </li>
-                <li class="headerbar-menu">
-                    <img class="logo" src="../assets/logo.svg" />
-                </li>
-                <li class="headerbar-menu" v-for="item in headerlist" :key="item.id" >
-                {{ item.value }}
-                </li>
-            </ul>
+          <li id="MenuIcon" class="headerbar-menu menuicon-wrapper" @click="showMenu">
+            <img class="menu-icon" src="../assets/menu.svg" />
+          </li>
+          <li class="headerbar-menu">
+            <img class="logo" src="../assets/logo.svg" />
+          </li>
+          <li class="headerbar-menu headerbar-desktop" v-for="item in headerlist" :key="item.id" >
+            {{ item.value }}
+          </li>
+          <li class="headerbar-menu headerbar-mobile" @click="headerbarToggle">
+            <img id="arrow" class="menu-icon" src="../assets/arrow_down.svg" />
+          </li>
+        </ul>
+        <!-- The components here only show in mobile service -->
+        <ul class="headerbar-mobile-menu" :style="headertoggle">
+          <li class="headerbar-mobile-menu-item" v-for="item in headerlist" :key="item.id">
+            {{ item.value }}
+          </li>
+        </ul>
     </header>
     <aside id="menu" :style="menutoggle">
         <div class="img-wrapper">
@@ -54,9 +63,8 @@ export default {
   data: function() {
     return {
       loaded: false,
-      headertop: 0,
+      mobileHeaderbarOpen: false,
       menuleft: "-250px",
-      _scrollY: 0,
       token: null,
       userdata: null,
       headerlist: headerlist
@@ -70,7 +78,7 @@ export default {
     },
     headertoggle: function() {
       return {
-        top: this.headertop
+        display: this.mobileHeaderbarOpen ? "flex" : "none"
       };
     },
     useravatar_bgurl: function() {
@@ -82,8 +90,8 @@ export default {
   created: function() {
     this.getCookie();
     this.getuserdata();
-    document.addEventListener("scroll", this.toggleHeaderBar);
   },
+  destroyed: function() {},
   methods: {
     showMenu: function() {
       this.menuleft = "0px";
@@ -96,19 +104,11 @@ export default {
         window.removeEventListener("click", this.hideMenu);
       }
     },
-    toggleHeaderBar: function() {
-      let scrollY = window.scrollY;
-      if (this._scrollY < scrollY) {
-        /* scroll down */
-        this.headertop = "0px";
-      } else if (scrollY == 0) {
-        /* scroll to the top */
-        this.headertop = "0px";
-      } else {
-        /* scroll up */
-        this.headertop = "-10%";
-      }
-      this._scrollY = scrollY;
+    headerbarToggle: function() {
+      this.mobileHeaderbarOpen ^= 1;
+      document.querySelector(
+        'img[id="arrow"]'
+      ).style.transform = `rotate( ${this.mobileHeaderbarOpen * 180}deg)`;
     },
     getCookie: function() {
       this.token = this.$cookies.get("token");
@@ -143,7 +143,7 @@ export default {
 <style scope>
 :root {
   --fullWidth: 100%;
-  --headerbar-height: 9%;
+  --headerbar-height: 48px;
   --headerbar-color: #009688;
   --headerbar-hover-color: #006d70;
   --menu-background-color: #006d70;
@@ -190,6 +190,60 @@ export default {
   background: var(--headerbar-hover-color);
 }
 
+.headerbar-mobile {
+  float: right;
+}
+
+#arrow {
+  transition: transform 0.3s ease;
+}
+
+.headerbar-mobile-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-direction: column;
+  width: var(--fullWidth);
+  background: var(--headerbar-color);
+}
+
+.headerbar-mobile-menu-item {
+  width: 100%;
+  height: var(--headerbar-height);
+  line-height: var(--headerbar-height);
+  text-align: center;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.headerbar-mobile-menu-item:hover {
+  background: var(--headerbar-hover-color);
+  cursor: pointer;
+}
+
+/* header bar RWD */
+/* start */
+@media screen and (min-width: 1200px) {
+  .headerbar-desktop {
+    display: flex;
+  }
+  .headerbar-mobile,
+  .headerbar-mobile-menu {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .headerbar-desktop {
+    display: none;
+  }
+  .headerbar-mobile,
+  .headerbar-mobile-menu {
+    display: flex;
+  }
+}
+/* end */
+
 .logo {
   height: 85%;
 }
@@ -206,6 +260,7 @@ export default {
   color: white;
   width: var(--menu-width);
   height: 100%;
+  overflow: auto;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -221,6 +276,7 @@ export default {
 .img-wrapper {
   display: flex;
   height: 35%;
+  min-height: 170px;
   justify-content: center;
   align-items: center;
 }
@@ -252,12 +308,13 @@ export default {
 
 .option-wrapper {
   height: 65%;
+  min-height: 250px;
   padding-left: 30px;
 }
 
 .menu-list-wrapper {
   margin: 0;
-  padding: 0;
+  padding: 30px 0 0 0;
   list-style: none;
 }
 

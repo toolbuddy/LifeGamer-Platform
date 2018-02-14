@@ -2,7 +2,7 @@
   <div id="app">
     <div id="content" v-if="hasCookie">
       <Frame/>
-      <router-view/>
+      <router-view></router-view>
     </div>
     <div id="login" v-else>
       <Login/>

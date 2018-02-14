@@ -12,7 +12,5 @@ export default {
 
 <!-- css part -->
 <style>
-h1 {
-  margin-top: 150px;
-}
+
 </style>
