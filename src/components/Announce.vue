@@ -1,23 +1,23 @@
 <!-- HTML part -->
 <template>
     <div id="markdown-body">
-        <section v-html="markdownString"></section>
+        <section v-if="loaded" v-html="markdownString"></section>
     </div>
 </template>
 
 <!-- js part -->
 <script>
-import Vue from "vue";
-
 export default {
   name: "Announce",
   data: function() {
     return {
-      markdownString:
-        '```cpp\n #include <iostream> \n\n using namespace std;\n\n int main() {\n cout << "hello world" << endl;\n return 0;\n}```'
+      markdownString: "",
+      loaded: false
     };
   },
   created: function() {
+    /* getting data from server */
+    this.getWebContent();
     var marked = require("marked");
     var hljs = require("highlight.js");
     marked.setOptions({
@@ -33,6 +33,16 @@ export default {
     codeSection.forEach(item => {
       item.classList.add("hljs");
     });
+  },
+  methods: {
+    getWebContent: function() {
+      this.$http
+        .get("https://hmkrl.com/db_page?method=get&page=Announce")
+        .then(response => {
+          this.markdownString = response.body;
+          this.loaded = true;
+        });
+    }
   }
 };
 </script>
