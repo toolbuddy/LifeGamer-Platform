@@ -1,20 +1,19 @@
 <!-- html part -->
 <template>
-  <div id="loginpage">
-    <h1 class="title">LifeGamer Platform</h1>
-    <h3 class="subtitle">An Intergrated Game Project Platform</h3>
-    <div class="loginButton" @click="login"><strong>Login</strong></div>
+  <div id='loginpage'>
+    <h1 class='title'>LifeGamer Platform</h1>
+    <h3 class='subtitle'>An Intergrated Game Project Platform</h3>
+    <div class='loginButton' @click='login'><strong>Login</strong></div>
   </div>
 </template>
-
 
 <!-- javascript part -->
 <script>
 export default {
-  name: "Login",
+  name: 'Login',
   methods: {
     login: function() {
-      window.location.href = "https://hmkrl.com/auth";
+      window.location.href = 'https://hmkrl.com/auth';
     }
   }
 };
@@ -23,7 +22,7 @@ export default {
 <!-- css part -->
 <style>
 :root {
-  --background-url: "";
+  --background-url: '';
   --button-color: #333;
   --button-hover-color: #666;
 }
@@ -69,7 +68,7 @@ export default {
     font-size: 55px;
   }
   #loginpage {
-    background-image: url("../assets/background.png");
+    background-image: url('../assets/background.png');
   }
 }
 @media screen and (min-width: 600px) and (max-width: 1200px) {
@@ -77,7 +76,7 @@ export default {
     font-size: 28px;
   }
   #loginpage {
-    background-image: url("../assets/background_landscape.png");
+    background-image: url('../assets/background_landscape.png');
   }
 }
 @media screen and (max-width: 599px) {
@@ -85,7 +84,7 @@ export default {
     font-size: 22px;
   }
   #loginpage {
-    background-image: url("../assets/background_portrait.png");
+    background-image: url('../assets/background_portrait.png');
   }
 }
 </style>

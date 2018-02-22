@@ -7,6 +7,13 @@ build:
   script:
     - npm install
     - npm run build
+
+check coding style: 
+  stage: Build homepage
+  script:
+    - npm install
+    - npm run lint
+  allow_failure: true
       
 deploy:
   stage: Deploy
