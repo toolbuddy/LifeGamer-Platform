@@ -52,91 +52,91 @@
 
 <script>
 const headerlist = [
-  { value: "Demo Time", path: "demotime" },
-  { value: "Battle Field", path: "battle" },
-  { value: "Resources", path: "resource" }
-];
+  { value: 'Demo Time', path: 'demotime' },
+  { value: 'Battle Field', path: 'battle' },
+  { value: 'Resources', path: 'resource' }
+]
 
 export default {
-  name: "Frame",
-  data: function() {
+  name: 'Frame',
+  data: function () {
     return {
       loaded: false,
       mobileHeaderbarOpen: false,
-      menuleft: "-250px",
+      menuleft: '-250px',
       token: null,
       userdata: null,
       headerlist: headerlist
-    };
-  },
-  computed: {
-    menutoggle: function() {
-      return {
-        left: this.menuleft
-      };
-    },
-    headertoggle: function() {
-      return {
-        display: this.mobileHeaderbarOpen ? "flex" : "none"
-      };
-    },
-    useravatar_bgurl: function() {
-      return {
-        "background-image": `url( ${this.userdata.avatar_url} )`
-      };
     }
   },
-  created: function() {
-    this.getCookie();
-    this.getuserdata();
-  },
-  destroyed: function() {},
-  methods: {
-    showMenu: function() {
-      this.menuleft = "0px";
-      document.addEventListener("click", this.hideMenu);
-    },
-    hideMenu: function(event) {
-      let x = event.clientX;
-      if (this.menuleft === "0px" && x > 250) {
-        this.menuleft = "-250px";
-        window.removeEventListener("click", this.hideMenu);
+  computed: {
+    menutoggle: function () {
+      return {
+        left: this.menuleft
       }
     },
-    headerbarToggle: function() {
-      this.mobileHeaderbarOpen ^= 1;
+    headertoggle: function () {
+      return {
+        display: this.mobileHeaderbarOpen ? 'flex' : 'none'
+      }
+    },
+    useravatar_bgurl: function () {
+      return {
+        'background-image': `url( ${this.userdata.avatar_url} )`
+      }
+    }
+  },
+  created: function () {
+    this.getCookie()
+    this.getuserdata()
+  },
+  destroyed: function () {},
+  methods: {
+    showMenu: function () {
+      this.menuleft = '0px'
+      document.addEventListener('click', this.hideMenu)
+    },
+    hideMenu: function (event) {
+      let x = event.clientX
+      if (this.menuleft === '0px' && x > 250) {
+        this.menuleft = '-250px'
+        window.removeEventListener('click', this.hideMenu)
+      }
+    },
+    headerbarToggle: function () {
+      this.mobileHeaderbarOpen ^= 1
       document.querySelector(
         'img[id="arrow"]'
-      ).style.transform = `rotate( ${this.mobileHeaderbarOpen * 180}deg)`;
+      ).style.transform = `rotate( ${this.mobileHeaderbarOpen * 180}deg)`
     },
-    getCookie: function() {
-      this.token = this.$cookies.get("token");
+    getCookie: function () {
+      this.token = this.$cookies.get('token')
     },
-    getuserdata: function() {
+    getuserdata: function () {
       /* get user data via vue-resource */
       this.$http
         .get(`https://hmkrl.com/gitlab/api/v4/user?access_token=${this.token}`)
         .then(
           response => {
             // set data
-            this.userdata = response.body;
-            this.loaded = true;
+            this.userdata = response.body
+            this.loaded = true
           },
           response => {
             // error callback
-            console.error(response);
+            console.error(response)
             /* cannot get response, redirect to /auth */
-            window.location.href = "https://hmkrl.com/auth";
+            window.location.href = 'https://hmkrl.com/auth'
           }
-        );
+        )
     },
-    cleanCookie: function() {
-      this.$http.get("https://hmkrl.com/gitlab/users/sign_out");
-      this.$cookies.remove("token");
-      window.location.reload();
+    cleanCookie: function () {
+      this.$http.get('https://hmkrl.com/gitlab/users/sign_out')
+      this.$cookies.remove('token')
+      window.location.reload()
     }
   }
-};
+}
 </script>
 
 <style scope>

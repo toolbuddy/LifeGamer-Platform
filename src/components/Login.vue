@@ -12,11 +12,11 @@
 export default {
   name: 'Login',
   methods: {
-    login: function() {
-      window.location.href = 'https://hmkrl.com/auth';
+    login: function () {
+      window.location.href = 'https://hmkrl.com/auth'
     }
   }
-};
+}
 </script>
 
 <!-- css part -->

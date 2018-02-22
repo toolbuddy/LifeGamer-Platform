@@ -11,26 +11,26 @@
 </template>
 
 <script>
-import Frame from "./components/Frame";
-import Login from "./components/Login";
+import Frame from './components/Frame'
+import Login from './components/Login'
 
 export default {
-  name: "App",
+  name: 'App',
   components: { Frame, Login },
-  data: function() {
+  data: function () {
     return {
       hasCookie: false
-    };
+    }
   },
-  created: function() {
-    this.checkCookie();
+  created: function () {
+    this.checkCookie()
   },
   methods: {
-    checkCookie: function() {
-      this.hasCookie = this.$cookies.isKey("token");
+    checkCookie: function () {
+      this.hasCookie = this.$cookies.isKey('token')
     }
   }
-};
+}
 </script>
 
 <style>
