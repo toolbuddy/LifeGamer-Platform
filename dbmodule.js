@@ -67,7 +67,7 @@ class DBModule {
     let sql = `SELECT * FROM users WHERE id = '${id}'`;
     this.con.query(sql, (error, result) => {
       if (error) throw error;
-      return result;
+      return result[0].grade;
     });
   }
   setUserData(id, grade) {
@@ -85,11 +85,11 @@ class DBModule {
     let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
     this.con.query(sql, (error, result) => {
       if (error) throw error;
-      return result;
+      return result[0].content;
     });
   }
   setBoardContent(page, content) {
-    let sql = `UPDATE markdown SET content = '${content}' WHERE page = ${page}`;
+    let sql = `UPDATE markdown SET content = '${content}' WHERE page = '${page}'`;
     this.con.query(sql, (error, result) => {
       if (error) {
         throw error;
