@@ -48,6 +48,7 @@ class DBModule {
         case "get":
           page = req.query.page;
           let data = await this.getBoardContent(page);
+          console.log('data: ' +  data)
           res.end(data);
           break;
         case "set":
@@ -80,11 +81,15 @@ class DBModule {
     })
   }
   getBoardContent(page) {
-    let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
-    this.con.query(sql, (error, result) => {
-      if (error) throw error
-      console.log(result)
-      return result[0].content
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) {
+          reject("Error querying database")
+        }
+        console.log(result)
+        resolve(result[0].content)
+      })
     })
   }
   setBoardContent(page, content) {
