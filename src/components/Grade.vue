@@ -1,7 +1,7 @@
 <!-- HTML part -->
 <template>
     <div>
-        <h1>Demo time</h1>
+        <h1>Grade</h1>
     </div>
 </template>
 

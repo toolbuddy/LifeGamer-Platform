@@ -51,4 +51,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+#login {
+  width: 100%;
+  height: 100%;
+}
 </style>

@@ -5,21 +5,21 @@
           <li id="MenuIcon" class="headerbar-menu menuicon-wrapper" @click="showMenu">
             <img class="menu-icon" src="../assets/menu.svg" />
           </li>
-          <li class="headerbar-menu">
+          <router-link class="headerbar-menu link" :to="{ name: 'announce' }">
             <img class="logo" src="../assets/logo.svg" />
-          </li>
-          <li class="headerbar-menu headerbar-desktop" v-for="item in headerlist" :key="item.id" >
+          </router-link>
+          <router-link class="headerbar-menu link headerbar-desktop" :to="{ name: item.path }" v-for="item in headerlist" :key="item.id" >
             {{ item.value }}
-          </li>
+          </router-link>
           <li class="headerbar-menu headerbar-mobile" @click="headerbarToggle">
             <img id="arrow" class="menu-icon" src="../assets/arrow_down.svg" />
           </li>
         </ul>
         <!-- The components here only show in mobile service -->
         <ul class="headerbar-mobile-menu" :style="headertoggle">
-          <li class="headerbar-mobile-menu-item" v-for="item in headerlist" :key="item.id">
+          <router-link class="link headerbar-mobile-menu-item" :to="{ name: item.path }" v-for="item in headerlist" :key="item.id">
             {{ item.value }}
-          </li>
+          </router-link>
         </ul>
     </header>
     <aside id="menu" :style="menutoggle">
@@ -34,11 +34,11 @@
             </div>
             <li class="menu-list">
               <span class="option-bar"></span>
-              <a class="menu-content gitlablink" :href="userdata.web_url">Gitlab</a>
+              <a class="menu-content link" :href="userdata.web_url">Gitlab</a>
             </li>
             <li class="menu-list">
                 <span class="option-bar"></span>
-                <span class="menu-content">Grade</span>
+                <router-link class="menu-content link" :to="{ name: 'grade' }">Grade</router-link>
             </li>
             <li class="menu-list">
                 <span class="option-bar"></span>
@@ -52,10 +52,9 @@
 
 <script>
 const headerlist = [
-  { value: "Announce" },
-  { value: "Demo Time" },
-  { value: "Battle Field" },
-  { value: "Resources" }
+  { value: "Demo Time", path: "demotime" },
+  { value: "Battle Field", path: "battle" },
+  { value: "Resources", path: "resource" }
 ];
 
 export default {
@@ -337,7 +336,7 @@ export default {
   cursor: pointer;
 }
 
-.gitlablink {
+.link {
   text-decoration: none;
   color: white;
 }
