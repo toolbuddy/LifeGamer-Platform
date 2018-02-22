@@ -15,14 +15,15 @@ class DBModule {
     app.get("/db_user", (req, res) => {
       /* using query string to pass data */
       let method = req.query.method;
+      let id = null;
       switch (method) {
         case "get":
-          let id = req.query.id;
+          id = req.query.id;
           let data = this.getUserData(id);
           res.end(data);
           break;
         case "set":
-          let id = req.query.id;
+          id = req.query.id;
           let grade = req.query.grade;
           let flag = this.setUserData(id, grade);
           res.end(flag);
@@ -33,14 +34,15 @@ class DBModule {
     });
     app.get("/db_page", (req, res) => {
       let method = req.query.method;
+      let page = null;
       switch (method) {
         case "get":
-          let page = req.query.page;
+          page = req.query.page;
           let data = this.getBoardContent(page);
           res.end(data);
           break;
         case "set":
-          let page = req.query.page;
+          page = req.query.page;
           let content = req.query.content;
           let flag = this.setUserData(page, content);
           res.end(flag);

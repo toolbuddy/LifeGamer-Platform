@@ -2,7 +2,7 @@ const path = require("path");
 const express = require("express");
 
 const { OAuthService } = require("./oauth");
-const { DBMoudle } = require("./dbmodule");
+const { DBModule } = require("./dbmodule");
 
 var port = process.env.PORT || 3000;
 
@@ -10,7 +10,7 @@ const app = express();
 
 // module init
 OAuthService.init(app);
-DBMoudle.init(app);
+DBModule.init(app);
 
 app.use(express.static(path.resolve(__dirname + "/dist")));
 
