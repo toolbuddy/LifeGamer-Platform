@@ -1,29 +1,29 @@
-const mysql = require('mysql')
+const mysql = require("mysql");
 
 class DBModule {
-  constructor () {
+  constructor() {
     /* setting connection */
     this.con = mysql.createConnection({
-      host: 'localhost',
+      host: "localhost",
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      database: 'lifegamer_platform'
-    })
+      database: "lifegamer_platform"
+    });
     /* create connection */
     this.con.connect(error => {
       if (error) {
-        console.log(error)
-        return
+        console.log(error);
+        return;
       }
-      console.log('mysql connect')
-    })
+      console.log("mysql connect");
+    });
   }
-  init (app) {
-    app.get('/db_user', async (req, res) => {
-      res.set('Content-Type', 'application/json')
+  init(app) {
+    app.get("/db_user", async (req, res) => {
+      res.set("Content-Type", "application/json");
       /* using query string to pass data */
-      let method = req.query.method
-      let id = null
+      let method = req.query.method;
+      let id = null;
       switch (method) {
         case "get":
           id = req.query.id;
@@ -37,18 +37,18 @@ class DBModule {
           res.end(flag);
           break;
         default:
-          break
+          break;
       }
-    })
-    app.get('/db_page', async (req, res) => {
-      res.set('Content-Type', 'application/json')
-      let method = req.query.method
-      let page = null
+    });
+    app.get("/db_page", async (req, res) => {
+      res.set("Content-Type", "application/json");
+      let method = req.query.method;
+      let page = null;
       switch (method) {
         case "get":
           page = req.query.page;
           let data = await this.getBoardContent(page);
-          console.log('data: ' +  data)
+          console.log("data: " + data);
           res.end(data);
           break;
         case "set":
@@ -58,52 +58,60 @@ class DBModule {
           res.end(flag);
           break;
         default:
-          break
+          break;
       }
-    })
+    });
   }
   /* database operate */
   getUserData(id) {
-    let sql = `SELECT * FROM users WHERE id = '${id}'`;
-    this.con.query(sql, (error, result) => {
-      if (error) throw error
-      return result[0].grade
-    })
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * FROM users WHERE id = '${id}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) {
+          reject("Error querying database");
+        }
+        resolve(result[0].grade);
+      });
+    });
   }
   setUserData(id, grade) {
-    let sql = `UPDATE users SET grade = '${grade}' WHERE id = '${id}'`;
-    this.con.query(sql, (error, result) => {
-      if (error) {
-        throw error
-      }
-      console.log(result.affectedRows + ' record(s) updated')
-      return true
-    })
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE users SET grade = '${grade}' WHERE id = '${id}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) {
+          reject(false);
+        }
+        console.log(result.affectedRows + " record(s) updated");
+        resolve(true);
+      });
+    });
   }
   getBoardContent(page) {
     return new Promise((resolve, reject) => {
       let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
       this.con.query(sql, (error, result) => {
         if (error) {
-          reject("Error querying database")
+          reject("Error querying database");
         }
-        console.log(result)
-        resolve(result[0].content)
-      })
-    })
+        console.log(result);
+        resolve(result[0].content);
+      });
+    });
   }
   setBoardContent(page, content) {
-    let sql = `UPDATE markdown SET content = '${content}' WHERE page = '${page}'`;
-    this.con.query(sql, (error, result) => {
-      if (error) {
-        throw error
-      }
-      console.log(result.affectedRows + ' record(s) updated')
-      return true
-    })
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE markdown SET content = '${content}' WHERE page = '${page}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) {
+          reject(false);
+        }
+        console.log(result.affectedRows + " record(s) updated");
+        resolve(true);
+      });
+    });
   }
 }
 
 module.exports = {
   DBModule: new DBModule()
-}
+};

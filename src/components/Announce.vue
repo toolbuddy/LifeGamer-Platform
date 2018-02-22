@@ -1,31 +1,35 @@
 <!-- HTML part -->
 <template>
     <div id="markdown-body">
-        <section v-if="loaded" v-html="markdownString"></section>
+        <section v-html="renderMD"></section>
     </div>
 </template>
 
 <!-- js part -->
 <script>
+var marked = require('marked')
+var hljs = require('highlight.js')
+marked.setOptions({
+  highlight: function (code) {
+    return hljs.highlightAuto(code).value
+  }
+})
+
 export default {
   name: 'Announce',
   data: function () {
     return {
-      markdownString: '',
-      loaded: false
+      markdownString: ''
+    }
+  },
+  computed: {
+    renderMD: function () {
+      return marked(this.markdownString)
     }
   },
   created: function () {
     /* getting data from server */
     this.getWebContent()
-    var marked = require('marked')
-    var hljs = require('highlight.js')
-    marked.setOptions({
-      highlight: function (code) {
-        return hljs.highlightAuto(code).value
-      }
-    })
-    this.markdownString = marked(this.markdownString)
   },
   mounted: function () {
     /* add class hljs for code section */
@@ -41,7 +45,6 @@ export default {
         .then(response => {
           this.markdownString = response.bodyText
           console.log(response)
-          this.loaded = true
         })
     }
   }
