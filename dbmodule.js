@@ -10,6 +10,14 @@ class DBModule {
       password: process.env.DB_PASSWORD,
       database: "lifegamer_platform"
     });
+    /* create connection */
+    this.con.connect(error => {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      console.log("mysql connect");
+    });
   }
   init(app) {
     app.get("/db_user", (req, res) => {
@@ -54,57 +62,39 @@ class DBModule {
   }
   /* database operate */
   getUserData(id) {
-    this.con.connect(error => {
+    let sql = `SELECT * FROM users WHERE id = '${id}'`;
+    this.con.query(sql, (error, result) => {
       if (error) throw error;
-      let sql = `SELECT * FROM users WHERE id = '${id}'`;
-      this.con.query(sql, (error, result) => {
-        if (error) throw error;
-        return result;
-      });
+      return result;
     });
   }
   setUserData(id, grade) {
-    this.con.connect(error => {
+    let sql = `UPDATE users SET grade = '${grade}' WHERE id = '${id}'`;
+    this.con.query(sql, (error, result) => {
       if (error) {
         throw error;
         return false;
       }
-      let sql = `UPDATE users SET grade = '${grade}' WHERE id = '${id}'`;
-      this.con.query(sql, (error, result) => {
-        if (error) {
-          throw error;
-          return false;
-        }
-        console.log(result.affectedRows + " record(s) updated");
-        return true;
-      });
+      console.log(result.affectedRows + " record(s) updated");
+      return true;
     });
   }
   getBoardContent(page) {
-    this.con.connect(error => {
+    let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
+    this.con.query(sql, (error, result) => {
       if (error) throw error;
-      let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
-      this.con.query(sql, (error, result) => {
-        if (error) throw error;
-        return result;
-      });
+      return result;
     });
   }
   setBoardContent(page, content) {
-    this.con.connect(error => {
+    let sql = `UPDATE markdown SET content = '${content}' WHERE page = ${page}`;
+    this.con.query(sql, (error, result) => {
       if (error) {
         throw error;
         return false;
       }
-      let sql = `UPDATE markdown SET content = '${content}' WHERE page = ${page}`;
-      this.con.query(sql, (error, result) => {
-        if (error) {
-          throw error;
-          return false;
-        }
-        console.log(result.affectedRows + " record(s) updated");
-        return true;
-      });
+      console.log(result.affectedRows + " record(s) updated");
+      return true;
     });
   }
 }
