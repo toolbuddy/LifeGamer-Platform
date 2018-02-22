@@ -19,7 +19,7 @@ class DBModule {
     })
   }
   init (app) {
-    app.get('/db_user', (req, res) => {
+    app.get('/db_user', async (req, res) => {
       res.set('Content-Type', 'application/json')
       /* using query string to pass data */
       let method = req.query.method
@@ -40,7 +40,7 @@ class DBModule {
           break
       }
     })
-    app.get('/db_page', (req, res) => {
+    app.get('/db_page', async (req, res) => {
       res.set('Content-Type', 'application/json')
       let method = req.query.method
       let page = null
@@ -62,14 +62,14 @@ class DBModule {
     })
   }
   /* database operate */
-  async getUserData(id) {
+  getUserData(id) {
     let sql = `SELECT * FROM users WHERE id = '${id}'`;
     this.con.query(sql, (error, result) => {
       if (error) throw error
       return result[0].grade
     })
   }
-  async setUserData(id, grade) {
+  setUserData(id, grade) {
     let sql = `UPDATE users SET grade = '${grade}' WHERE id = '${id}'`;
     this.con.query(sql, (error, result) => {
       if (error) {
@@ -79,7 +79,7 @@ class DBModule {
       return true
     })
   }
-  async getBoardContent(page) {
+  getBoardContent(page) {
     let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
     this.con.query(sql, (error, result) => {
       if (error) throw error
@@ -87,7 +87,7 @@ class DBModule {
       return result[0].content
     })
   }
-  async setBoardContent(page, content) {
+  setBoardContent(page, content) {
     let sql = `UPDATE markdown SET content = '${content}' WHERE page = '${page}'`;
     this.con.query(sql, (error, result) => {
       if (error) {
