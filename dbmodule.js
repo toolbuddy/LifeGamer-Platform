@@ -25,17 +25,17 @@ class DBModule {
       let method = req.query.method
       let id = null
       switch (method) {
-        case 'get':
-          id = req.query.id
-          let data = this.getUserData(id)
-          res.end(data)
-          break
-        case 'set':
-          id = req.query.id
-          let grade = req.query.grade
-          let flag = this.setUserData(id, grade)
-          res.end(flag)
-          break
+        case "get":
+          id = req.query.id;
+          let data = await this.getUserData(id);
+          res.end(data);
+          break;
+        case "set":
+          id = req.query.id;
+          let grade = req.query.grade;
+          let flag = await this.setUserData(id, grade);
+          res.end(flag);
+          break;
         default:
           break
       }
@@ -45,33 +45,32 @@ class DBModule {
       let method = req.query.method
       let page = null
       switch (method) {
-        case 'get':
-          page = req.query.page
-          let data = this.getBoardContent(page)
-          console.log(data)
-          res.end(data)
-          break
-        case 'set':
-          page = req.query.page
-          let content = req.query.content
-          let flag = this.setUserData(page, content)
-          res.end(flag)
-          break
+        case "get":
+          page = req.query.page;
+          let data = await this.getBoardContent(page);
+          res.end(data);
+          break;
+        case "set":
+          page = req.query.page;
+          let content = req.query.content;
+          let flag = await this.setUserData(page, content);
+          res.end(flag);
+          break;
         default:
           break
       }
     })
   }
   /* database operate */
-  getUserData (id) {
-    let sql = `SELECT * FROM users WHERE id = '${id}'`
+  async getUserData(id) {
+    let sql = `SELECT * FROM users WHERE id = '${id}'`;
     this.con.query(sql, (error, result) => {
       if (error) throw error
       return result[0].grade
     })
   }
-  setUserData (id, grade) {
-    let sql = `UPDATE users SET grade = '${grade}' WHERE id = '${id}'`
+  async setUserData(id, grade) {
+    let sql = `UPDATE users SET grade = '${grade}' WHERE id = '${id}'`;
     this.con.query(sql, (error, result) => {
       if (error) {
         throw error
@@ -80,16 +79,16 @@ class DBModule {
       return true
     })
   }
-  getBoardContent (page) {
-    let sql = `SELECT * FROM markdown WHERE page = '${page}'`
+  async getBoardContent(page) {
+    let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
     this.con.query(sql, (error, result) => {
       if (error) throw error
       console.log(result)
       return result[0].content
     })
   }
-  setBoardContent (page, content) {
-    let sql = `UPDATE markdown SET content = '${content}' WHERE page = '${page}'`
+  async setBoardContent(page, content) {
+    let sql = `UPDATE markdown SET content = '${content}' WHERE page = '${page}'`;
     this.con.query(sql, (error, result) => {
       if (error) {
         throw error
