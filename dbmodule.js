@@ -21,6 +21,7 @@ class DBModule {
   }
   init(app) {
     app.get("/db_user", (req, res) => {
+      res.set("Content-Type", "application/json");
       /* using query string to pass data */
       let method = req.query.method;
       let id = null;
@@ -41,6 +42,7 @@ class DBModule {
       }
     });
     app.get("/db_page", (req, res) => {
+      res.set("Content-Type", "application/json");
       let method = req.query.method;
       let page = null;
       switch (method) {

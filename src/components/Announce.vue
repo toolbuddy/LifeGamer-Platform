@@ -39,7 +39,8 @@ export default {
       this.$http
         .get('https://hmkrl.com/db_page?method=get&page=Announce')
         .then(response => {
-          this.markdownString = response.body[0]['content']
+          this.markdownString = response.body
+          console.log(response);
           this.loaded = true
         })
     }
