@@ -20,9 +20,9 @@ export default {
 </script>
 
 <!-- css part -->
-<style>
+<style scope>
 :root {
-  --background-url: '';
+  --background-url: "";
   --button-color: #333;
   --button-hover-color: #666;
 }
@@ -68,7 +68,7 @@ export default {
     font-size: 55px;
   }
   #loginpage {
-    background-image: url('../assets/background.png');
+    background-image: url("../assets/background.png");
   }
 }
 @media screen and (min-width: 600px) and (max-width: 1200px) {
@@ -76,7 +76,7 @@ export default {
     font-size: 28px;
   }
   #loginpage {
-    background-image: url('../assets/background_landscape.png');
+    background-image: url("../assets/background_landscape.png");
   }
 }
 @media screen and (max-width: 599px) {
@@ -84,7 +84,7 @@ export default {
     font-size: 22px;
   }
   #loginpage {
-    background-image: url('../assets/background_portrait.png');
+    background-image: url("../assets/background_portrait.png");
   }
 }
 </style>

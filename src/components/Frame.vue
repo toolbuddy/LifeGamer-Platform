@@ -5,19 +5,22 @@
           <li id="MenuIcon" class="headerbar-menu menuicon-wrapper" @click="showMenu">
             <img class="menu-icon" src="../assets/menu.svg" />
           </li>
-          <router-link class="headerbar-menu link" :to="{ name: 'announce' }">
+          <router-link class="headerbar-menu link" :to="{ name: 'announce' , query: {edit: editMode}}">
             <img class="logo" src="../assets/logo.svg" />
           </router-link>
-          <router-link class="headerbar-menu link headerbar-desktop" :to="{ name: item.path }" v-for="item in headerlist" :key="item.id" >
+          <router-link class="headerbar-menu link headerbar-desktop" :to="{ name: item.path, query: {edit: editMode}}" v-for="item in headerlist" :key="item.id" >
             {{ item.value }}
           </router-link>
+          <li class="headerbar-menu headerbar-derktop" v-if="userdata.is_admin" @click="editModeToggle" :style="editIcon">
+            <img class="menu-icon" :style="editToggle" src="../assets/cog.svg" />
+          </li>
           <li class="headerbar-menu headerbar-mobile" @click="headerbarToggle">
             <img id="arrow" class="menu-icon" src="../assets/arrow_down.svg" />
           </li>
         </ul>
         <!-- The components here only show in mobile service -->
         <ul class="headerbar-mobile-menu" :style="headertoggle">
-          <router-link class="link headerbar-mobile-menu-item" :to="{ name: item.path }" v-for="item in headerlist" :key="item.id">
+          <router-link class="link headerbar-mobile-menu-item" :to="{ name: item.path , query: {edit: editMode}}" v-for="item in headerlist" :key="item.id">
             {{ item.value }}
           </router-link>
         </ul>
@@ -33,16 +36,22 @@
                 <div class="studentID"> {{ userdata.username }} </div>
             </div>
             <li class="menu-list">
-              <span class="option-bar"></span>
-              <a class="menu-content link" :href="userdata.web_url">Gitlab</a>
+              <a class="menu-content link" :href="userdata.web_url">
+                <img class="icon" src="../assets/gitlab.svg" />
+                <span>Gitlab</span>
+              </a>
             </li>
             <li class="menu-list">
-                <span class="option-bar"></span>
-                <router-link class="menu-content link" :to="{ name: 'grade' }">Grade</router-link>
+                <router-link class="menu-content link" :to="{ name: 'grade' , query: {edit: editMode}}">
+                  <img class="icon" src="../assets/flag-checkered.svg" />
+                  <span>Grade</span>
+                </router-link>
             </li>
             <li class="menu-list">
-                <span class="option-bar"></span>
-                <span class="menu-content" @click="cleanCookie">Logout</span>
+                <span class="menu-content" @click="cleanCookie">
+                  <img class="icon" src="../assets/sign-out-alt.svg" />
+                  <span>Logout</span>
+                </span>
             </li>
             </ul>
         </div>
@@ -66,7 +75,8 @@ export default {
       menuleft: '-250px',
       token: null,
       userdata: null,
-      headerlist: headerlist
+      headerlist: headerlist,
+      editMode: false
     }
   },
   computed: {
@@ -83,6 +93,16 @@ export default {
     useravatar_bgurl: function () {
       return {
         'background-image': `url( ${this.userdata.avatar_url} )`
+      }
+    },
+    editToggle: function () {
+      return {
+        transform: `rotate(${this.editMode * -30}deg )`
+      }
+    },
+    editIcon: function () {
+      return {
+        'background-color': this.editMode ? '#006d70' : '#009688'
       }
     }
   },
@@ -134,6 +154,11 @@ export default {
       this.$http.get('https://hmkrl.com/gitlab/users/sign_out')
       this.$cookies.remove('token')
       window.location.reload()
+    },
+    editModeToggle: function () {
+      this.editMode ^= 1
+      /* same as history.replace() function */
+      this.$router.replace({ query: { edit: this.editMode } })
     }
   }
 }
@@ -290,7 +315,7 @@ export default {
 }
 
 .username_wrapper {
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   padding-right: 25px;
 }
 
@@ -313,31 +338,36 @@ export default {
 
 .menu-list-wrapper {
   margin: 0;
-  padding: 30px 0 0 0;
+  padding: 10px 0 0 0;
   list-style: none;
 }
 
 .menu-list {
-  padding: 8px 0;
-  margin: 10px 5px;
-}
-
-.option-bar {
-  margin-right: 30px;
-  border-left: 5px solid #fff;
+  margin: 13px 5px;
+  height: 36px;
 }
 
 .menu-content {
-  opacity: 0.5;
+  opacity: 1;
+  height: 100%;
+  float: left;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .menu-content:hover {
-  opacity: 1;
+  opacity: 0.5;
   cursor: pointer;
 }
 
 .link {
   text-decoration: none;
   color: white;
+}
+
+.icon {
+  height: 100%;
+  margin-right: 18px;
 }
 </style>

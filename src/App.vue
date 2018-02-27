@@ -24,6 +24,7 @@ export default {
   },
   created: function () {
     this.checkCookie()
+    this.$router.replace({ query: { edit: false } })
   },
   methods: {
     checkCookie: function () {
@@ -33,7 +34,7 @@ export default {
 }
 </script>
 
-<style>
+<style scope>
 @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
 
 html,
