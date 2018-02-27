@@ -59,7 +59,7 @@ export default {
   methods: {
     getWebContent: function () {
       this.$http
-        .get('https://hmkrl.com/db_page?method=get&page=Announce')
+        .get('https://hmkrl.com/db_page?page=Announce')
         .then(response => {
           this.markdownString = response.bodyText
           console.log(response)
@@ -74,12 +74,14 @@ export default {
         })
     },
     sendWebContent: function () {
+      let url = 'https://hmkrl.com/db_page'
+      var data = { page: 'Announce', content: this.markdownString }
       this.$http
-        .get(
-          `https://hmkrl.com/db_page?method=set&page=Announce&content=${
-            this.markdownString
-          }`
-        )
+        .post(url, data, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then(response => {
           console.log(response)
         })
