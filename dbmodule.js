@@ -1,4 +1,5 @@
 const mysql = require("mysql");
+const request = require("request");
 class DBModule {
   constructor() {
     /* setting connection */
@@ -34,9 +35,11 @@ class DBModule {
     app.post("/db_page", async (req, res) => {
       let page = req.body.page;
       let content = req.body.content;
-      console.log("page:" + page);
-      console.log("content:" + content);
-      let flag = await this.setBoardContent(page, content);
+      let token = req.body.token;
+      let isAdmin = await this.checkAdmin(token);
+      let flag = null;
+      if (isAdmin == "true") flag = await this.setBoardContent(page, content);
+      else flag = "false";
       res.end(flag);
     });
     app.post("/db_user", async (req, res) => {
@@ -92,6 +95,18 @@ class DBModule {
         }
         console.log(result.affectedRows + " record(s) updated");
         resolve("true");
+      });
+    });
+  }
+  checkAdmin(cookie) {
+    return new Promise((resolve, reject) => {
+      let url = `https://hmkrl.com/gitlab/api/v4/user?access_token=${cookie}`;
+      request.get(url, (error, rsp, body) => {
+        if (error) reject(error);
+        console.log(body);
+        let result = JSON.parse(body);
+        if (result.is_admin) resolve("true");
+        else resolve("false");
       });
     });
   }

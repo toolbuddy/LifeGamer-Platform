@@ -75,7 +75,12 @@ export default {
     },
     sendWebContent: function () {
       let url = 'https://hmkrl.com/db_page'
-      var data = { page: 'Announce', content: this.markdownString }
+      let cookie = this.$cookies.get('token')
+      var data = {
+        page: 'Announce',
+        content: this.markdownString,
+        token: cookie
+      }
       this.$http
         .post(url, data, {
           headers: {
