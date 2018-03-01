@@ -66,6 +66,8 @@ const headerlist = [
   { value: 'Resources', path: 'resource' }
 ]
 
+const config = require('../../config/config')
+
 export default {
   name: 'Frame',
   data: function () {
@@ -135,7 +137,7 @@ export default {
     getuserdata: function () {
       /* get user data via vue-resource */
       this.$http
-        .get(`https://hmkrl.com/gitlab/api/v4/user?access_token=${this.token}`)
+        .get(`${config.hostname}/gitlab/api/v4/user?access_token=${this.token}`)
         .then(
           response => {
             // set data
@@ -146,12 +148,12 @@ export default {
             // error callback
             console.error(response)
             /* cannot get response, redirect to /auth */
-            window.location.href = 'https://hmkrl.com/auth'
+            window.location.href = `${config.hostname}/auth`
           }
         )
     },
     cleanCookie: function () {
-      this.$http.get('https://hmkrl.com/gitlab/users/sign_out')
+      this.$http.get(`${config.hostname}/gitlab/users/sign_out`)
       this.$cookies.remove('token')
       window.location.reload()
     },
@@ -179,6 +181,7 @@ export default {
   background: var(--headerbar-color);
   color: white;
   position: fixed;
+  z-index: 50;
   /* set position */
   top: 0;
   left: 0;

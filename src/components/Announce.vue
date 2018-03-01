@@ -24,6 +24,8 @@ marked.setOptions({
   }
 })
 
+const config = require('../../config/config')
+
 export default {
   name: 'Announce',
   data: function () {
@@ -59,7 +61,7 @@ export default {
   methods: {
     getWebContent: function () {
       this.$http
-        .get('https://hmkrl.com/db_page?page=Announce')
+        .get(`${config.hostname}/db_page?page=Announce`)
         .then(response => {
           this.markdownString = response.bodyText
           console.log(response)
@@ -68,13 +70,13 @@ export default {
     checkAdmin: function () {
       let cookie = this.$cookies.get('token')
       this.$http
-        .get(`https://hmkrl.com/gitlab/api/v4/user?access_token=${cookie}`)
+        .get(`${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`)
         .then(response => {
           this.is_admin = response.body.is_admin
         })
     },
     sendWebContent: function () {
-      let url = 'https://hmkrl.com/db_page'
+      let url = `${config.hostname}/db_page`
       let cookie = this.$cookies.get('token')
       var data = {
         page: 'Announce',
@@ -96,7 +98,7 @@ export default {
 </script>
 
 <!-- css part -->
-<style scope>
+<style scoped>
 #markdown-body {
   margin-top: 50px;
 }
@@ -109,11 +111,23 @@ export default {
 
 .edit-section {
   float: left;
-  width: 48vw;
-  height: 90vh;
   border: 2px solid #888;
   box-sizing: border-box;
   padding: 5px;
+}
+
+@media screen and (min-width: 1200px) {
+  .edit-section {
+    width: 90vw;
+    height: 48vh;
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .edit-section {
+    width: 48vw;
+    height: 90vh;
+  }
 }
 
 .editor {
@@ -139,5 +153,5 @@ export default {
 }
 </style>
 
-<style scope src="./style/monokai-sublime.css"></style>
-<style scope src="./style/github-style.css"></style>
+<style scoped src="./style/monokai-sublime.css"></style>
+<style scoped src="./style/github-style.css"></style>

@@ -19,13 +19,6 @@ class DBModule {
     });
   }
   init(app) {
-    app.get("/db_user", async (req, res) => {
-      res.set("Content-Type", "application/json");
-      /* using query string to pass data */
-      let id = req.query.id;
-      let data = await this.getUserData(id);
-      res.end(data);
-    });
     app.get("/db_page", async (req, res) => {
       res.set("Content-Type", "application/json");
       let page = req.query.page;
@@ -40,12 +33,6 @@ class DBModule {
       let flag = null;
       if (isAdmin == "true") flag = await this.setBoardContent(page, content);
       else flag = "false";
-      res.end(flag);
-    });
-    app.post("/db_user", async (req, res) => {
-      let id = req.query.id;
-      let grade = req.body.grade;
-      let flag = await this.setUserData(id, grade);
       res.end(flag);
     });
   }

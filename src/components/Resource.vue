@@ -7,6 +7,8 @@
 
 <!-- js part -->
 <script>
+const config = require('../../config/config')
+
 export default {
   name: 'Resource',
   data: function () {
@@ -26,7 +28,7 @@ export default {
     checkAdmin: function () {
       let cookie = this.$cookies.get('token')
       this.$http
-        .get(`https://hmkrl.com/gitlab/api/v4/user?access_token=${cookie}`)
+        .get(`${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`)
         .then(response => {
           this.is_admin = response.body.is_admin
         })

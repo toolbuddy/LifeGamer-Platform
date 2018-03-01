@@ -9,11 +9,13 @@
 
 <!-- javascript part -->
 <script>
+const config = require('../../config/config')
+
 export default {
   name: 'Login',
   methods: {
     login: function () {
-      window.location.href = 'https://hmkrl.com/auth'
+      window.location.href = `${config.hostname}/auth`
     }
   }
 }
