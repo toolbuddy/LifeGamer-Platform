@@ -1,4 +1,5 @@
 const simpleOauthModule = require('simple-oauth2')
+const config = require('./config/config')
 
 const oauth2 = simpleOauthModule.create({
   client: {
@@ -6,7 +7,7 @@ const oauth2 = simpleOauthModule.create({
     secret: process.env.OAUTH_APP_SECRET
   },
   auth: {
-    tokenHost: 'https://hmkrl.com',
+    tokenHost: config.hostname,
     tokenPath: '/gitlab/oauth/token',
     authorizePath: '/gitlab/oauth/authorize'
   }
@@ -14,7 +15,7 @@ const oauth2 = simpleOauthModule.create({
 
 // Authorization uri definition
 const authorizationUri = oauth2.authorizationCode.authorizeURL({
-  redirect_uri: 'https://hmkrl.com/callback',
+  redirect_uri: `${config.hostname}/callback`,
   scope: 'api'
 })
 
@@ -31,7 +32,7 @@ class OAuthService {
       const options = {
         code: req.query.code,
         grant_type: 'authorization_code',
-        redirect_uri: 'https://hmkrl.com/callback'
+        redirect_uri: `${config.hostname}/callback`
       }
 
       oauth2.authorizationCode.getToken(options, (error, result) => {
@@ -44,7 +45,7 @@ class OAuthService {
         const token = oauth2.accessToken.create(result)
 
         res.cookie('token', token['token']['access_token'], { secure: true, expires: 0 })
-        res.redirect('https://hmkrl.com')
+        res.redirect(config.hostname)
       })
     })
   }

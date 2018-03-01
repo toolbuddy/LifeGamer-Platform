@@ -1,5 +1,7 @@
 const mysql = require("mysql");
 const request = require("request");
+const config = require('./config/config');
+
 class DBModule {
   constructor() {
     /* setting connection */
@@ -87,7 +89,7 @@ class DBModule {
   }
   checkAdmin(cookie) {
     return new Promise((resolve, reject) => {
-      let url = `https://hmkrl.com/gitlab/api/v4/user?access_token=${cookie}`;
+      let url = `${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`;
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         console.log(body);
