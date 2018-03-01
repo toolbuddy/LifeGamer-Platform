@@ -1,3 +1,3 @@
 module.exports = {
-  hostname: "https://hmkrl.com"
+  hostname: "https://pd2b.imslab.org"
 };
