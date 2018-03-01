@@ -15,10 +15,20 @@ check coding style:
     - npm run lint
   allow_failure: true
       
-deploy:
+deploy to dev server:
   stage: Deploy
+  only:
+    - dev
   script:
-    - source $HOME/.profile
     - pm2 deploy scripts/ecosystem.config.js dev
+  dependencies:
+    - build
+
+deploy to production server:
+  stage: Deploy
+  only:
+    - master
+  script:
+    - pm2 deploy scripts/ecosystem.config.js production
   dependencies:
     - build
