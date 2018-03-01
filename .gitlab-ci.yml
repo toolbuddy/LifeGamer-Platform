@@ -7,11 +7,28 @@ build:
   script:
     - npm install
     - npm run build
-      
-deploy:
-  stage: Deploy
+
+check coding style: 
+  stage: Build homepage
   script:
-    - source $HOME/.profile
+    - npm install
+    - npm run lint
+  allow_failure: true
+      
+deploy to dev server:
+  stage: Deploy
+  only:
+    - dev
+  script:
     - pm2 deploy scripts/ecosystem.config.js dev
+  dependencies:
+    - build
+
+deploy to production server:
+  stage: Deploy
+  only:
+    - master
+  script:
+    - pm2 deploy scripts/ecosystem.config.js production
   dependencies:
     - build

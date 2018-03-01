@@ -1,17 +1,29 @@
 <template>
   <div v-if="loaded">
-    <header id="headerbar" :style="headertoggle">
+    <header id="headerbar">
         <ul class="headerbar-menu-wrapper">
-                <li id="MenuIcon" class="headerbar-menu menuicon-wrapper" @click="showMenu">
-                    <img class="menu-icon" src="../assets/menu.svg" />
-                </li>
-                <li class="headerbar-menu">
-                    <img class="logo" src="../assets/logo.svg" />
-                </li>
-                <li class="headerbar-menu" v-for="item in headerlist" :key="item.id" >
-                {{ item.value }}
-                </li>
-            </ul>
+          <li id="MenuIcon" class="headerbar-menu menuicon-wrapper" @click="showMenu">
+            <img class="menu-icon" src="../assets/menu.svg" />
+          </li>
+          <router-link class="headerbar-menu link" :to="{ name: 'announce' , query: {edit: editMode}}">
+            <img class="logo" src="../assets/logo.svg" />
+          </router-link>
+          <router-link class="headerbar-menu link headerbar-desktop" :to="{ name: item.path, query: {edit: editMode}}" v-for="item in headerlist" :key="item.id" >
+            {{ item.value }}
+          </router-link>
+          <li class="headerbar-menu headerbar-derktop" v-if="userdata.is_admin" @click="editModeToggle" :style="editIcon">
+            <img class="menu-icon" :style="editToggle" src="../assets/cog.svg" />
+          </li>
+          <li class="headerbar-menu headerbar-mobile" @click="headerbarToggle">
+            <img id="arrow" class="menu-icon" src="../assets/arrow_down.svg" />
+          </li>
+        </ul>
+        <!-- The components here only show in mobile service -->
+        <ul class="headerbar-mobile-menu" :style="headertoggle">
+          <router-link class="link headerbar-mobile-menu-item" :to="{ name: item.path , query: {edit: editMode}}" v-for="item in headerlist" :key="item.id">
+            {{ item.value }}
+          </router-link>
+        </ul>
     </header>
     <aside id="menu" :style="menutoggle">
         <div class="img-wrapper">
@@ -24,16 +36,22 @@
                 <div class="studentID"> {{ userdata.username }} </div>
             </div>
             <li class="menu-list">
-              <span class="option-bar"></span>
-              <a class="menu-content gitlablink" :href="userdata.web_url">Gitlab</a>
+              <a class="menu-content link" :href="userdata.web_url">
+                <img class="icon" src="../assets/gitlab.svg" />
+                <span>Gitlab</span>
+              </a>
             </li>
             <li class="menu-list">
-                <span class="option-bar"></span>
-                <span class="menu-content">Grade</span>
+                <router-link class="menu-content link" :to="{ name: 'grade' , query: {edit: editMode}}">
+                  <img class="icon" src="../assets/flag-checkered.svg" />
+                  <span>Grade</span>
+                </router-link>
             </li>
             <li class="menu-list">
-                <span class="option-bar"></span>
-                <span class="menu-content" @click="cleanCookie">Logout</span>
+                <span class="menu-content" @click="cleanCookie">
+                  <img class="icon" src="../assets/sign-out-alt.svg" />
+                  <span>Logout</span>
+                </span>
             </li>
             </ul>
         </div>
@@ -43,106 +61,115 @@
 
 <script>
 const headerlist = [
-  { value: "Announce" },
-  { value: "Demo Time" },
-  { value: "Battle Field" },
-  { value: "Resources" }
-];
+  { value: 'Demo Time', path: 'demotime' },
+  { value: 'Battle Field', path: 'battle' },
+  { value: 'Resources', path: 'resource' }
+]
+
+const config = require('../../config/config')
 
 export default {
-  name: "Frame",
-  data: function() {
+  name: 'Frame',
+  data: function () {
     return {
       loaded: false,
-      headertop: 0,
-      menuleft: "-250px",
-      _scrollY: 0,
+      mobileHeaderbarOpen: false,
+      menuleft: '-250px',
       token: null,
       userdata: null,
-      headerlist: headerlist
-    };
-  },
-  computed: {
-    menutoggle: function() {
-      return {
-        left: this.menuleft
-      };
-    },
-    headertoggle: function() {
-      return {
-        top: this.headertop
-      };
-    },
-    useravatar_bgurl: function() {
-      return {
-        "background-image": `url( ${this.userdata.avatar_url} )`
-      };
+      headerlist: headerlist,
+      editMode: false
     }
   },
-  created: function() {
-    this.getCookie();
-    this.getuserdata();
-    document.addEventListener("scroll", this.toggleHeaderBar);
+  computed: {
+    menutoggle: function () {
+      return {
+        left: this.menuleft
+      }
+    },
+    headertoggle: function () {
+      return {
+        display: this.mobileHeaderbarOpen ? 'flex' : 'none'
+      }
+    },
+    useravatar_bgurl: function () {
+      return {
+        'background-image': `url( ${this.userdata.avatar_url} )`
+      }
+    },
+    editToggle: function () {
+      return {
+        transform: `rotate(${this.editMode * -30}deg )`
+      }
+    },
+    editIcon: function () {
+      return {
+        'background-color': this.editMode ? '#006d70' : '#009688'
+      }
+    }
   },
+  created: function () {
+    this.getCookie()
+    this.getuserdata()
+  },
+  destroyed: function () {},
   methods: {
-    showMenu: function() {
-      this.menuleft = "0px";
-      document.addEventListener("click", this.hideMenu);
+    showMenu: function () {
+      this.menuleft = '0px'
+      document.addEventListener('click', this.hideMenu)
     },
-    hideMenu: function(event) {
-      let x = event.clientX;
-      if (this.menuleft === "0px" && x > 250) {
-        this.menuleft = "-250px";
-        window.removeEventListener("click", this.hideMenu);
+    hideMenu: function (event) {
+      let x = event.clientX
+      if (this.menuleft === '0px' && x > 250) {
+        this.menuleft = '-250px'
+        window.removeEventListener('click', this.hideMenu)
       }
     },
-    toggleHeaderBar: function() {
-      let scrollY = window.scrollY;
-      if (this._scrollY < scrollY) {
-        /* scroll down */
-        this.headertop = "0px";
-      } else if (scrollY == 0) {
-        /* scroll to the top */
-        this.headertop = "0px";
-      } else {
-        /* scroll up */
-        this.headertop = "-10%";
-      }
-      this._scrollY = scrollY;
+    headerbarToggle: function () {
+      this.mobileHeaderbarOpen ^= 1
+      document.querySelector(
+        'img[id="arrow"]'
+      ).style.transform = `rotate( ${this.mobileHeaderbarOpen * 180}deg)`
     },
-    getCookie: function() {
-      this.token = this.$cookies.get("token");
+    getCookie: function () {
+      this.token = this.$cookies.get('token')
     },
-    getuserdata: function() {
+    getuserdata: function () {
       /* get user data via vue-resource */
       this.$http
-        .get(`https://hmkrl.com/gitlab/api/v4/user?access_token=${this.token}`)
+        .get(`${config.hostname}/gitlab/api/v4/user?access_token=${this.token}`)
         .then(
           response => {
             // set data
-            this.userdata = response.body;
-            this.loaded = true;
+            this.userdata = response.body
+            this.loaded = true
           },
           response => {
             // error callback
-            console.error(response);
+            console.error(response)
             /* cannot get response, redirect to /auth */
-            window.location.href = "https://hmkrl.com/auth";
+            window.location.href = `${config.hostname}/auth`
           }
-        );
+        )
     },
-    cleanCookie: function() {
-      this.$cookies.remove("token");
-      window.location.reload();
+    cleanCookie: function () {
+      this.$http.get(`${config.hostname}/gitlab/users/sign_out`)
+      this.$cookies.remove('token')
+      window.location.reload()
+    },
+    editModeToggle: function () {
+      this.editMode ^= 1
+      /* same as history.replace() function */
+      this.$router.replace({ query: { edit: this.editMode } })
     }
   }
-};
+}
 </script>
 
 <style scope>
 :root {
   --fullWidth: 100%;
-  --headerbar-height: 9%;
+  --headerbar-height: 48px;
   --headerbar-color: #009688;
   --headerbar-hover-color: #006d70;
   --menu-background-color: #006d70;
@@ -154,6 +181,7 @@ export default {
   background: var(--headerbar-color);
   color: white;
   position: fixed;
+  z-index: 50;
   /* set position */
   top: 0;
   left: 0;
@@ -189,6 +217,60 @@ export default {
   background: var(--headerbar-hover-color);
 }
 
+.headerbar-mobile {
+  float: right;
+}
+
+#arrow {
+  transition: transform 0.3s ease;
+}
+
+.headerbar-mobile-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-direction: column;
+  width: var(--fullWidth);
+  background: var(--headerbar-color);
+}
+
+.headerbar-mobile-menu-item {
+  width: 100%;
+  height: var(--headerbar-height);
+  line-height: var(--headerbar-height);
+  text-align: center;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.headerbar-mobile-menu-item:hover {
+  background: var(--headerbar-hover-color);
+  cursor: pointer;
+}
+
+/* header bar RWD */
+/* start */
+@media screen and (min-width: 1200px) {
+  .headerbar-desktop {
+    display: flex;
+  }
+  .headerbar-mobile,
+  .headerbar-mobile-menu {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .headerbar-desktop {
+    display: none;
+  }
+  .headerbar-mobile,
+  .headerbar-mobile-menu {
+    display: flex;
+  }
+}
+/* end */
+
 .logo {
   height: 85%;
 }
@@ -205,6 +287,7 @@ export default {
   color: white;
   width: var(--menu-width);
   height: 100%;
+  overflow: auto;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -220,6 +303,7 @@ export default {
 .img-wrapper {
   display: flex;
   height: 35%;
+  min-height: 170px;
   justify-content: center;
   align-items: center;
 }
@@ -234,7 +318,7 @@ export default {
 }
 
 .username_wrapper {
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   padding-right: 25px;
 }
 
@@ -251,36 +335,42 @@ export default {
 
 .option-wrapper {
   height: 65%;
+  min-height: 250px;
   padding-left: 30px;
 }
 
 .menu-list-wrapper {
   margin: 0;
-  padding: 0;
+  padding: 10px 0 0 0;
   list-style: none;
 }
 
 .menu-list {
-  padding: 8px 0;
-  margin: 10px 5px;
-}
-
-.option-bar {
-  margin-right: 30px;
-  border-left: 5px solid #fff;
+  margin: 13px 5px;
+  height: 36px;
 }
 
 .menu-content {
-  opacity: 0.5;
+  opacity: 1;
+  height: 100%;
+  float: left;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .menu-content:hover {
-  opacity: 1;
+  opacity: 0.5;
   cursor: pointer;
 }
 
-.gitlablink {
+.link {
   text-decoration: none;
   color: white;
+}
+
+.icon {
+  height: 100%;
+  margin-right: 18px;
 }
 </style>

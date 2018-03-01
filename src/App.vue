@@ -2,7 +2,7 @@
   <div id="app">
     <div id="content" v-if="hasCookie">
       <Frame/>
-      <router-view/>
+      <router-view></router-view>
     </div>
     <div id="login" v-else>
       <Login/>
@@ -11,29 +11,30 @@
 </template>
 
 <script>
-import Frame from "./components/Frame";
-import Login from "./components/Login";
+import Frame from './components/Frame'
+import Login from './components/Login'
 
 export default {
-  name: "App",
+  name: 'App',
   components: { Frame, Login },
-  data: function() {
+  data: function () {
     return {
       hasCookie: false
-    };
+    }
   },
-  created: function() {
-    this.checkCookie();
+  created: function () {
+    this.checkCookie()
+    this.$router.replace({ query: { edit: false } })
   },
   methods: {
-    checkCookie: function() {
-      this.hasCookie = this.$cookies.isKey("token");
+    checkCookie: function () {
+      this.hasCookie = this.$cookies.isKey('token')
     }
   }
-};
+}
 </script>
 
-<style>
+<style scope>
 @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
 
 html,
@@ -50,5 +51,10 @@ body {
   font-family: "Noto Sans TC", "sans-serif";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#login {
+  width: 100%;
+  height: 100%;
 }
 </style>

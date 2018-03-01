@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+### Changed
+- User will be kicked out from Gitlab when logout.
+- cookie will be cleared when browser closed.
+
 ## [0.0.1] - 2018-02-08
 ### Added
 - Oauth user authentication provided by out Gitlab server.
