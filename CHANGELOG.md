@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.1.1] - 2018-03-01
+### Fixed
+- Some hostname don't follow config
+- Announcement edit page layout broken
+
 ## [0.1.0] - 2018-03-01
 ### Added
 - Announce board
@@ -12,6 +17,7 @@
     - Now CI will deploy master and dev branch to different server
 - Sidebar entry has new icon style
 - Added background to login page
+
 ### Changed
 - User will be kicked out from Gitlab when logout.
 - cookie will be cleared when browser closed.

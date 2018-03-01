@@ -106,7 +106,6 @@ export default {
 .edit-wrapper {
   display: flex;
   justify-content: space-around;
-  padding-top: 25px;
 }
 
 .edit-section {
@@ -114,19 +113,25 @@ export default {
   border: 2px solid #888;
   box-sizing: border-box;
   padding: 5px;
-}
-
-@media screen and (min-width: 1200px) {
-  .edit-section {
-    width: 90vw;
-    height: 48vh;
-  }
+  overflow: auto;
 }
 
 @media screen and (max-width: 1199px) {
+  .edit-wrapper {
+    flex-direction: column;
+  }
+  .edit-section {
+    height: 49vh;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .edit-wrapper {
+    flex-direction: row;
+  }
   .edit-section {
     width: 48vw;
-    height: 90vh;
+    height: 98vh;
   }
 }
 
