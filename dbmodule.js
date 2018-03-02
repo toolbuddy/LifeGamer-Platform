@@ -1,6 +1,6 @@
 const mysql = require("mysql");
 const request = require("request");
-const config = require('./config/config');
+const config = require("./config/config");
 
 class DBModule {
   constructor() {
@@ -20,48 +20,7 @@ class DBModule {
       console.log("mysql connect");
     });
   }
-  init(app) {
-    app.get("/db_page", async (req, res) => {
-      res.set("Content-Type", "application/json");
-      let page = req.query.page;
-      let data = await this.getBoardContent(page);
-      res.end(data);
-    });
-    app.post("/db_page", async (req, res) => {
-      let page = req.body.page;
-      let content = req.body.content;
-      let token = req.body.token;
-      let isAdmin = await this.checkAdmin(token);
-      let flag = null;
-      if (isAdmin == "true") flag = await this.setBoardContent(page, content);
-      else flag = "false";
-      res.end(flag);
-    });
-  }
   /* database operate */
-  getUserData(id) {
-    return new Promise((resolve, reject) => {
-      let sql = `SELECT * FROM users WHERE id = '${id}'`;
-      this.con.query(sql, (error, result) => {
-        if (error) {
-          reject("Error querying database");
-        }
-        resolve(result[0].grade);
-      });
-    });
-  }
-  setUserData(id, grade) {
-    return new Promise((resolve, reject) => {
-      let sql = `UPDATE users SET grade = '${grade}' WHERE id = '${id}'`;
-      this.con.query(sql, (error, result) => {
-        if (error) {
-          reject("false");
-        }
-        console.log(result.affectedRows + " record(s) updated");
-        resolve("true");
-      });
-    });
-  }
   getBoardContent(page) {
     return new Promise((resolve, reject) => {
       let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
@@ -84,18 +43,6 @@ class DBModule {
         }
         console.log(result.affectedRows + " record(s) updated");
         resolve("true");
-      });
-    });
-  }
-  checkAdmin(cookie) {
-    return new Promise((resolve, reject) => {
-      let url = `${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`;
-      request.get(url, (error, rsp, body) => {
-        if (error) reject(error);
-        console.log(body);
-        let result = JSON.parse(body);
-        if (result.is_admin) resolve("true");
-        else resolve("false");
       });
     });
   }
