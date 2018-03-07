@@ -1,4 +1,4 @@
-const config = require("./config/config");
+const config = require("../config/config");
 const { DBModule } = require("./dbmodule");
 const request = require("request");
 

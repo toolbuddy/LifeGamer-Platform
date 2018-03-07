@@ -14,35 +14,37 @@ export default {
   data: function () {
     return {
       token: null,
-      userdata: null
+      userdata: null,
+      commits: null
     }
   },
-  created: async function () {
+  created: function () {
     /* get token from cookie */
-    this.token = await this.getToken()
+    this.token = this.$cookies.get('token')
     /* get user data via gitlab api */
     this.$http
       .get(`${config.hostname}/gitlab/api/v4/user?access_token=${this.token}`)
       .then(response => {
         this.userdata = response.body
+        console.log('userdata: ' + this.userdata)
       })
-    /* send request to server, asking server to update user pipelines history */
-    // this.askUpdate();
+      .then(function () {
+        /* send request to server, asking server to update user pipelines history */
+        this.commits = this.getCommits()
+        console.log(this.commits)
+      })
   },
   methods: {
-    getToken: function () {
-      return new Promise((resolve, reject) => {
-        resolve(this.$cookies.get('token'))
-      })
-    },
-    askUpdate: function () {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(`${config.hostname}/db_history?token=${this.token}`)
-          .then(response => {
-            resolve(response.body)
-          })
-      })
+    getCommits: function () {
+      this.$http
+        .get(
+          `${config.hostname}/commits?userID=${this.userdata.id}&token=${
+            this.token
+          }`
+        )
+        .then(response => {
+          return response.body
+        })
     }
   }
 }
@@ -53,6 +55,7 @@ export default {
 .section-wrapper {
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
   padding: 10px 10%;
 }
 </style>

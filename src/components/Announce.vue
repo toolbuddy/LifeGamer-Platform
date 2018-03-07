@@ -83,15 +83,11 @@ export default {
         content: this.markdownString,
         token: cookie
       }
-      this.$http
-        .post(url, data, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(response => {
-          console.log(response)
-        })
+      this.$http.post(url, data, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
     }
   }
 }

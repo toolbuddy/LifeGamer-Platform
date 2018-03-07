@@ -20,8 +20,8 @@ check coding style:
       
 deploy to dev server:
   stage: Deploy
-  only:
-    - dev
+  except:
+    - master
   script:
     - pm2 deploy scripts/ecosystem.config.js dev
   dependencies:
