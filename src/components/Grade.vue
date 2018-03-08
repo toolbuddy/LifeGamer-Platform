@@ -3,10 +3,10 @@
     <section class="section-wrapper">
         <h1>Grade</h1>
         <div class="commit-list">
-          <div class="commit-row" v-for="item in commits['dev']" :key="item.id">
-            <div class="commit-item commit-title">{{ item.title }}</div>
-            <div class="commit-item commit-time"> {{ item.committed_date }} </div>
+          <div class="commit-row" v-if="loaded" v-for="item in commits['dev']" :key="item.id">
             <div class="commit-item commit-shortid">{{ item.short_id }}</div>
+            <div class="commit-item commit-title"> {{ item.title }} </div>
+            <div class="commit-item commit-time">{{ item.committed_date }}</div>
             <div class="commit-item commit-button"></div>
           </div>
         </div>
@@ -23,7 +23,8 @@ export default {
     return {
       token: null,
       userdata: null,
-      commits: null
+      commits: null,
+      loaded: false
     }
   },
   created: function () {
@@ -51,6 +52,7 @@ export default {
         .then(response => {
           this.commits = JSON.parse(response.bodyText)
           console.log('commits: ' + this.commits['dev'])
+          this.loaded = true
         })
     }
   }
@@ -72,8 +74,13 @@ export default {
 }
 .commit-row {
   width: 100%;
-  height: 60px;
-  line-height: 20px;
+  height: 70px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 20px;
   border-top: 1px solid #8c8c8c;
   border-bottom: 1px solid #8c8c8c;
   box-sizing: border-box;
@@ -81,5 +88,14 @@ export default {
 
 .commit-item {
   float: left;
+  margin: 0 10px;
+}
+
+.commit-title {
+  width: 40%;
+}
+
+.commit-time {
+  width: 20%;
 }
 </style>
