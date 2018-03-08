@@ -2,6 +2,9 @@
 <template>
     <section class="section-wrapper">
         <h1>Grade</h1>
+        <div>
+          {{ commits }}
+        </div>
     </section>
 </template>
 
@@ -26,12 +29,10 @@ export default {
       .get(`${config.hostname}/gitlab/api/v4/user?access_token=${this.token}`)
       .then(response => {
         this.userdata = response.body
-        console.log('userdata: ' + this.userdata)
       })
       .then(function () {
         /* send request to server, asking server to update user pipelines history */
-        this.commits = this.getCommits()
-        console.log(this.commits)
+        this.getCommits()
       })
   },
   methods: {
@@ -43,7 +44,9 @@ export default {
           }`
         )
         .then(response => {
-          return response.body
+          this.commits = response
+          console.log('response: ' + response)
+          console.log('commits: ' + this.commits)
         })
     }
   }
