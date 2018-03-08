@@ -22,9 +22,22 @@ class platformGrade {
         let branch = await gitlabAPI.getBranch(projectID, token);
         /* get commit */
         let data = {};
-        let commits = null;
         for (var i = 0; i < branch.length; i++) {
-          commits = await gitlabAPI.getCommits(projectID, branch[i], token);
+          let commits = [];
+          let page = 1;
+          while (1) {
+            let result = await gitlabAPI.getCommits(
+              projectID,
+              branch[i],
+              token,
+              page
+            );
+            if (result.length == 0) break;
+            result.forEach(item => {
+              commits.push(item);
+            });
+            page = page + 1;
+          }
           data[branch[i]] = commits;
         }
         console.log(data);

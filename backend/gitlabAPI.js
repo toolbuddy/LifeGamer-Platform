@@ -59,7 +59,7 @@ class gitlabAPI {
     return new Promise((resolve, reject) => {
       let url = `${
         config.hostname
-      }/gitlab/api/v4/projects/${projectID}/repository/branches?&access_token=${token}`;
+      }/gitlab/api/v4/projects/${projectID}/repository/branches?access_token=${token}`;
       let branches = new Array();
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
@@ -74,11 +74,11 @@ class gitlabAPI {
       });
     });
   }
-  getCommits(projectID, refName, token) {
+  getCommits(projectID, refName, token, page) {
     return new Promise((resolve, reject) => {
       let url = `${
         config.hostname
-      }/gitlab/api/v4/projects/${projectID}/repository/commits?ref_name=${refName}&access_token=${token}`;
+      }/gitlab/api/v4/projects/${projectID}/repository/commits?page=${page}&ref_name=${refName}&access_token=${token}`;
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = JSON.parse(body);

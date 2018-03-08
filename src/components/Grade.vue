@@ -3,11 +3,12 @@
     <section class="section-wrapper">
         <h1>Grade</h1>
         <div class="commit-list">
-          <div class="commit-row"></div>
-          <div class="commit-row"></div>
-          <div class="commit-row"></div>
-          <div class="commit-row"></div>
-          <div class="commit-row"></div>
+          <div class="commit-row">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         </div>
     </section>
 </template>
@@ -59,11 +60,6 @@ export default {
 
 <!-- css part -->
 <style scoped>
-:root {
-  --commit-background-color: #f9f9f9;
-  --commit-row-border-color: #000;
-}
-
 .section-wrapper {
   width: 100%;
   height: 100%;
@@ -73,13 +69,14 @@ export default {
 
 .commit-list {
   width: 100%;
-  background-color: var(--commit-background-color);
+  background-color: #f9f9f9;
 }
 .commit-row {
   width: 100%;
-  height: 50px;
-  border-top: 1px solid var(--commit-row-border-color);
-  border-bottom: 1px solid var(--commit-row-border-color);
+  height: 60px;
+  line-height: 20px;
+  border-top: 1px solid #8c8c8c;
+  border-bottom: 1px solid #8c8c8c;
   box-sizing: border-box;
 }
 </style>
