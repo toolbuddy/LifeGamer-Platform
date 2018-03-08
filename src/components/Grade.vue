@@ -2,8 +2,12 @@
 <template>
     <section class="section-wrapper">
         <h1>Grade</h1>
-        <div>
-          {{ commits }}
+        <div class="commit-list">
+          <div class="commit-row"></div>
+          <div class="commit-row"></div>
+          <div class="commit-row"></div>
+          <div class="commit-row"></div>
+          <div class="commit-row"></div>
         </div>
     </section>
 </template>
@@ -44,9 +48,9 @@ export default {
           }`
         )
         .then(response => {
-          this.commits = response
-          console.log('response: ' + response)
+          this.commits = response.bodyText
           console.log('commits: ' + this.commits)
+          console.log(JSON.parse(this.commits))
         })
     }
   }
@@ -55,10 +59,27 @@ export default {
 
 <!-- css part -->
 <style scoped>
+:root {
+  --commit-background-color: #f9f9f9;
+  --commit-row-border-color: #000;
+}
+
 .section-wrapper {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 10px 10%;
+  padding: 50px 10%;
+}
+
+.commit-list {
+  width: 100%;
+  background-color: var(--commit-background-color);
+}
+.commit-row {
+  width: 100%;
+  height: 50px;
+  border-top: 1px solid var(--commit-row-border-color);
+  border-bottom: 1px solid var(--commit-row-border-color);
+  box-sizing: border-box;
 }
 </style>
