@@ -7,7 +7,6 @@ class gitlabAPI {
       let url = `${
         config.hostname
       }/gitlab/api/v4/users/${userID}/projects?search=${projectname}&access_token=${token}`;
-      console.log("getProject url: " + url);
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = JSON.parse(body);
@@ -61,12 +60,11 @@ class gitlabAPI {
       let url = `${
         config.hostname
       }/gitlab/api/v4/projects/${projectID}/repository/branches?&access_token=${token}`;
-      console.log("getBranch url: " + url);
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = JSON.parse(body);
         let branches = new Array();
-        console.log(result);
+        console.log(Array.from(result));
         Array.from(result).forEach(item => {
           branches.push(item.name);
         });
