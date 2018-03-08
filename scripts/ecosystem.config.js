@@ -33,7 +33,7 @@ module.exports = {
     dev: {
       user: 'gitlab-runner',
       host: 'hmkrl.com',
-      ref: 'origin/dev',
+      ref: 'origin/debug',
       repo: 'git@hmkrl.com:HMKRL/LifeGamer-Platform.git',
       path: '/var/www/development',
       'post-deploy': 'npm install && npm run build && pm2 reload scripts/ecosystem.config.js --env dev',

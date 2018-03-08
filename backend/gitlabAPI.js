@@ -56,33 +56,33 @@ class gitlabAPI {
     });
   }
   getBranch(projectID, token) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve , reject) => {
       let url = `${
         config.hostname
       }/gitlab/api/v4/projects/${projectID}/repository/branches?&access_token=${token}`;
+      let branches = new Array();
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
-        let result = JSON.parse(body);
-        let branches = new Array();
-        console.log(Array.from(result));
-        Array.from(result).forEach(item => {
+        let result = Array.from(JSON.parse(body));
+        console.log('result: ' + result);
+        console.log('typeof result: ' + typeof(result));
+        result.forEach(item => {
           branches.push(item.name);
         });
+        console.log("branch: " + branches);
         resolve(branches);
       });
     });
   }
   getCommits(projectID, refName, token) {
-    return new Promise((resolve, reject) => {
       let url = `${
         config.hostname
       }/gitlab/api/v4/projects/${projectID}/repository/commits?ref_name=${refName}&access_token=${token}`;
       request.get(url, (error, rsp, body) => {
-        if (error) reject(error);
+        if (error) return(error);
         let result = JSON.parse(body);
-        resolve(result);
+        return(result);
       });
-    });
   }
   postPipeline(projectID, refName, token) {
     return new Promise((resolve, reject) => {

@@ -12,16 +12,17 @@ class platformGrade {
       let projectName = config.projectName;
       /* get project ID */
       let projectID = await gitlabAPI.getProjectID(userID, projectName, token);
+      console.log('projectID: ' + projectID);
       /* get branch */
       let branch = await gitlabAPI.getBranch(projectID, token);
+      console.log('branch: ' + branch);
       /* get commit */
       let data = {};
       let commits = null;
-      branch.forEach(async item => {
-        commits = await gitlabAPI.getCommits(projectID, item, token);
+      branch.forEach((item) => {
+        commits = gitlabAPI.getCommits(projectID, item, token);
         data[item] = commits;
-      });
-      res.end(data);
+      }).then(() => {res.end(data)});
     });
   }
 }
