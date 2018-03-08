@@ -7,7 +7,7 @@
             <div class="commit-item commit-shortid">{{ item.short_id }}</div>
             <div class="commit-item commit-title"> {{ item.title }} </div>
             <div class="commit-item commit-time">{{ item.committed_date }}</div>
-            <div class="commit-item commit-button"></div>
+            <div class="commit-item commit-button" @click="choose(item.short_id)">select</div>
           </div>
         </div>
     </section>
@@ -109,6 +109,9 @@ export default {
             })
           })
         })
+    },
+    choose: function (shortID) {
+      alert(shortID)
     }
   }
 }
@@ -120,7 +123,7 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 50px 10%;
+  padding: 50px 7%;
 }
 
 .commit-list {
@@ -135,16 +138,14 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 10px 20px;
   border-top: 1px solid #8c8c8c;
-  border-bottom: 1px solid #8c8c8c;
   box-sizing: border-box;
 }
 
 .commit-item {
   float: left;
-  margin: 0 10px;
-  height: 100%;
+  margin: 0 3.4%;
+  text-align: center;
 }
 
 .commit-title {
@@ -161,5 +162,40 @@ export default {
 
 .commit-button {
   width: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60%;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid #006d70;
+  transition: all 0.3s ease;
+}
+
+.commit-button:hover {
+  background-color: #009688;
+  cursor: pointer;
+  color: #fff;
+}
+
+@media screen and (min-width: 1200px) {
+  .commit-title {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .commit-title {
+    display: none;
+  }
+  .commit-time {
+    width: 50%;
+  }
+  .commit-shortid {
+    width: 25%;
+  }
+  .commit-button {
+    width: 25%;
+  }
 }
 </style>
