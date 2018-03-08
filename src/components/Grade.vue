@@ -3,11 +3,11 @@
     <section class="section-wrapper">
         <h1>Grade</h1>
         <div class="commit-list">
-          <div class="commit-row">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+          <div class="commit-row" v-for="item in commits['dev']" :key="item.id">
+            <div class="commit-item commit-title">{{ item.title }}</div>
+            <div class="commit-item commit-time"> {{ item.committed_date }} </div>
+            <div class="commit-item commit-shortid">{{ item.short_id }}</div>
+            <div class="commit-item commit-button"></div>
           </div>
         </div>
     </section>
@@ -49,9 +49,8 @@ export default {
           }`
         )
         .then(response => {
-          this.commits = response.bodyText
-          console.log('commits: ' + this.commits)
-          console.log(JSON.parse(this.commits))
+          this.commits = JSON.parse(response.bodyText)
+          console.log('commits: ' + this.commits['dev'])
         })
     }
   }
@@ -78,5 +77,9 @@ export default {
   border-top: 1px solid #8c8c8c;
   border-bottom: 1px solid #8c8c8c;
   box-sizing: border-box;
+}
+
+.commit-item {
+  float: left;
 }
 </style>
