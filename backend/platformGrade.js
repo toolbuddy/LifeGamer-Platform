@@ -40,7 +40,6 @@ class platformGrade {
           }
           data[branch[i]] = commits;
         }
-        console.log(data);
         res.end(JSON.stringify(data));
       } catch (e) {
         next(e);

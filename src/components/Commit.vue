@@ -2,6 +2,7 @@
 <template>
     <section class="section-wrapper">
         <div class="branch-selector">
+            <div class="current-branch"> Branch: {{ this.curBranch }} </div>
             <ul class="branch-select">
                 <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(item)"> {{ item }} </li>
             </ul>
@@ -210,6 +211,12 @@ export default {
   float: right;
   list-style: none;
   padding: 0;
+  margin: 10px 0;
+}
+
+.current-branch {
+  float: left;
+  padding: 12px;
   margin: 10px 0;
 }
 
