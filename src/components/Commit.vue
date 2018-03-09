@@ -3,7 +3,7 @@
     <section class="section-wrapper">
         <div class="branch-selector">
             <ul class="branch-select">
-                <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(this)"> {{ item }} </li>
+                <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(item)"> {{ item }} </li>
             </ul>
         </div>
         <div class="commit-list">
@@ -125,14 +125,8 @@ export default {
     commitChoose: function (shortID) {
       alert(shortID)
     },
-    branchSelect: function (param) {
-      this.curBranch = param.innerHTML
-      Array.from(document.querySelectorAll('li[class="select-item"]')).forEach(
-        item => {
-          item.classList.remove('select-item-selected')
-        }
-      )
-      param.classList.add('select-item-selected')
+    branchSelect: function (branch) {
+      this.curBranch = branch
     }
   }
 }
@@ -230,11 +224,6 @@ export default {
   border: 1px solid #bcbcbc;
   text-align: center;
   transition: all 0.3s ease;
-}
-
-.select-item-selected {
-  background-color: #777;
-  color: #fff;
 }
 
 .select-item:hover {
