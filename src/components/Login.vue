@@ -22,11 +22,10 @@ export default {
 </script>
 
 <!-- css part -->
-<style scope>
+<style>
 :root {
-  --background-url: "";
-  --button-color: #333;
-  --button-hover-color: #666;
+  --login-button-color: #333;
+  --login-button-hover-color: #666;
 }
 
 #loginpage {
@@ -50,7 +49,7 @@ export default {
 }
 
 .loginButton {
-  background: var(--button-color);
+  background: var(--login-button-color);
   width: 150px;
   height: 50px;
   margin-top: 30px;
@@ -61,7 +60,7 @@ export default {
 }
 
 .loginButton:hover {
-  background: var(--button-hover-color);
+  background: var(--login-button-hover-color);
   cursor: pointer;
 }
 

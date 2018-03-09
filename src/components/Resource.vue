@@ -38,6 +38,6 @@ export default {
 </script>
 
 <!-- css part -->
-<style scope>
+<style scoped>
 
 </style>

@@ -2,9 +2,8 @@
 <template>
     <section class="section-wrapper">
         <div class="branch-selector">
-            <span class="select-placeholder"> {{ curBranch }} </span>
-            <ul v-for="(item, index) in branch" :key="index">
-                <li> {{ item }} </li>
+            <ul class="branch-select">
+                <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(this)"> {{ item }} </li>
             </ul>
         </div>
         <div class="commit-list">
@@ -12,14 +11,14 @@
             <div class="commit-item commit-shortid">Short ID</div>
             <div class="commit-item commit-title">Title</div>
             <div class="commit-item commit-time">Commit Time</div>
-            <div class="commit-item commit-button">Button</div>
+            <div class="commit-item commit-button"></div>
           </div>
         </div>
-          <div class="commit-row" v-if="loaded" v-for="item in commits['dev']" :key="item.id">
+          <div class="commit-row" v-if="loaded" v-for="item in commits[this.curBranch]" :key="item.id">
             <div class="commit-item commit-shortid">{{ item.short_id }}</div>
             <div class="commit-item commit-title"> {{ item.title }} </div>
             <div class="commit-item commit-time">{{ item.committed_date }}</div>
-            <div class="commit-item commit-button click-button" @click="choose(item.short_id)">select</div>
+            <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
           </div>
     </section>
 </template>
@@ -112,6 +111,7 @@ export default {
           this.commits = JSON.parse(response.bodyText)
           this.branch = Object.keys(this.commits)
           this.loaded = true
+          this.curBranch = this.branch[0]
         })
         .then(() => {
           this.branch.forEach(list => {
@@ -122,8 +122,17 @@ export default {
           })
         })
     },
-    choose: function (shortID) {
+    commitChoose: function (shortID) {
       alert(shortID)
+    },
+    branchSelect: function (param) {
+      this.curBranch = param.innerHTML
+      Array.from(document.querySelectorAll('li[class="select-item"]')).forEach(
+        item => {
+          item.classList.remove('select-item-selected')
+        }
+      )
+      param.classList.add('select-item-selected')
     }
   }
 }
@@ -140,7 +149,6 @@ export default {
 
 .commit-list {
   width: 100%;
-  background-color: #f9f9f9;
 }
 .commit-row {
   width: 100%;
@@ -152,11 +160,13 @@ export default {
   align-items: center;
   border-top: 1px solid #8c8c8c;
   box-sizing: border-box;
+  background-color: #f9f9f9;
 }
 
 .commit-header-row {
   background-color: steelblue;
   color: #fff;
+  height: 35px;
 }
 
 .commit-item {
@@ -196,6 +206,41 @@ export default {
   background-color: #009688;
   cursor: pointer;
   color: #fff;
+}
+
+.branch-selector {
+  width: 100%;
+}
+
+.branch-select {
+  float: right;
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.select-item {
+  float: right;
+  margin: 2px 5px;
+  background-color: #fff;
+  color: #000;
+  padding: 10px;
+  border-radius: 10px;
+  width: 80px;
+  border: 1px solid #bcbcbc;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.select-item-selected {
+  background-color: #777;
+  color: #fff;
+}
+
+.select-item:hover {
+  background-color: #777;
+  color: #fff;
+  cursor: pointer;
 }
 
 @media screen and (min-width: 1200px) {

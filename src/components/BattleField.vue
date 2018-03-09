@@ -10,6 +10,6 @@
 </script>
 
 <!-- css part -->
-<style scope>
+<style scoped>
 
 </style>
