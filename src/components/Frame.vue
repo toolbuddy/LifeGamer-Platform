@@ -48,6 +48,12 @@
                 </router-link>
             </li>
             <li class="menu-list">
+                <router-link class="menu-content link" :to="{ name: 'commit' , query: {edit: editMode}}">
+                  <img class="icon" src="../assets/Git-icon-white.svg" />
+                  <span>Commit</span>
+                </router-link>
+            </li>
+            <li class="menu-list">
                 <span class="menu-content" @click="cleanCookie">
                   <img class="icon" src="../assets/sign-out-alt.svg" />
                   <span>Logout</span>
