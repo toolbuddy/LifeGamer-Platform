@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 
 const { OAuthService } = require("./backend/oauth");
 const { platformMarkdown } = require("./backend/platformMarkdown");
-const { platformGrade } = require("./backend/platformGrade");
+const { platformCommit } = require("./backend/platformCommit");
 
 var port = process.env.PORT || 3000;
 
@@ -16,7 +16,7 @@ app.use(express.static(path.resolve(__dirname + "/dist")));
 // module init
 OAuthService.init(app);
 platformMarkdown.init(app);
-platformGrade.init(app);
+platformCommit.init(app);
 
 app.listen(port, () => {
   console.log("Express server started on port " + port); // eslint-disable-line

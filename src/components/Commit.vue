@@ -1,6 +1,7 @@
 <!-- HTML part -->
 <template>
     <section class="section-wrapper">
+      <div v-if='this.stage === "commitSelect"'>
         <div class="branch-selector">
             <div class="current-branch"> Branch: {{ this.curBranch }} </div>
             <ul class="branch-select">
@@ -15,12 +16,13 @@
             <div class="commit-item commit-button"></div>
           </div>
         </div>
-          <div class="commit-row" v-if="loaded" v-for="item in commits[this.curBranch]" :key="item.id">
-            <div class="commit-item commit-shortid">{{ item.short_id }}</div>
-            <div class="commit-item commit-title"> {{ item.title }} </div>
-            <div class="commit-item commit-time">{{ item.committed_date }}</div>
-            <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
-          </div>
+        <div class="commit-row" v-for="item in commits[this.curBranch]" :key="item.id">
+          <div class="commit-item commit-shortid">{{ item.short_id }}</div>
+          <div class="commit-item commit-title"> {{ item.title }} </div>
+          <div class="commit-item commit-time">{{ item.committed_date }}</div>
+          <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
+        </div>
+      </div>
     </section>
 </template>
 
@@ -83,7 +85,7 @@ export default {
       branch: null,
       curBranch: null,
       commits: null,
-      loaded: false
+      stage: 'waiting'
     }
   },
   created: function () {
@@ -111,7 +113,7 @@ export default {
         .then(response => {
           this.commits = JSON.parse(response.bodyText)
           this.branch = Object.keys(this.commits)
-          this.loaded = true
+          this.stage = 'commitSelect'
           this.curBranch = this.branch[0]
         })
         .then(() => {

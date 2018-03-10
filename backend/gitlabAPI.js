@@ -79,7 +79,6 @@ class gitlabAPI {
       let url = `${
         config.hostname
       }/gitlab/api/v4/projects/${projectID}/repository/commits?page=${page}&ref_name=${refName}&access_token=${token}`;
-      console.log(url);
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = JSON.parse(body);
