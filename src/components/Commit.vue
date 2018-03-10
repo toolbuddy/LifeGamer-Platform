@@ -23,6 +23,7 @@
           <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
         </div>
       </div>
+      <div v-if='this.stage === "commitSelected"'></div>
     </section>
 </template>
 
@@ -34,7 +35,7 @@ const config = require('../../config/config')
 Date.prototype.pattern = function (fmt) {
   var o = {
     'M+': this.getMonth() + 1, // month
-    'd+': this.getDate(), // dat
+    'd+': this.getDate(), // date
     'h+': this.getHours() % 12 === 0 ? 12 : this.getHours() % 12, // hour
     'H+': this.getHours(), // hour
     'm+': this.getMinutes(), // minute

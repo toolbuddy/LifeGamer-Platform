@@ -154,5 +154,5 @@ export default {
 }
 </style>
 
-<style scoped src="./style/monokai-sublime.css"></style>
-<style scoped src="./style/github-style.css"></style>
+<style src="./style/monokai-sublime.css"></style>
+<style src="./style/github-style.css"></style>
