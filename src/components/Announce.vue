@@ -106,8 +106,9 @@ export default {
 
 .edit-section {
   float: left;
-  border: 2px solid #888;
+  border: 2px dashed #888;
   box-sizing: border-box;
+  margin: 10px;
   padding: 5px;
   overflow: auto;
 }
