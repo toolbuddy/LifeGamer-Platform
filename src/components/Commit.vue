@@ -86,7 +86,13 @@ export default {
       branch: null,
       curBranch: null,
       commits: null,
+      socket: null,
       stage: 'waiting'
+    }
+  },
+  sockets: {
+    connect: function () {
+      console.log('socket connected')
     }
   },
   created: function () {
@@ -127,6 +133,18 @@ export default {
         })
     },
     commitChoose: function (shortID) {
+      this.socket = require('socket.io-client')(config.hostname)
+      /* connection */
+      this.socket.on('connect', () => {
+        console.log('[%s]on connect', this.socket.id)
+      })
+      /* send client ID to server to save in table */
+      this.socket.emit('addClient', this.token)
+      this.stage = 'commitSelected'
+      /* set receive function */
+      this.socket.on('sendData', function (data) {
+        console.log(data)
+      })
       alert(shortID)
     },
     branchSelect: function (branch) {
