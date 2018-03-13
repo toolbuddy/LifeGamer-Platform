@@ -1,5 +1,6 @@
 const config = require("../config/config");
 const { DBModule } = require("./dbmodule");
+const { gitlabAPI } = require("./gitlabAPI");
 const request = require("request");
 
 class platformMarkdown {
@@ -14,23 +15,12 @@ class platformMarkdown {
       let page = req.body.page;
       let content = req.body.content;
       let token = req.body.token;
-      let isAdmin = await this.checkAdmin(token);
+      let isAdmin = await gitlabAPI.checkAdmin(token);
       let flag = null;
       if (isAdmin == "true")
         flag = await DBModule.setBoardContent(page, content);
       else flag = "false";
       res.end(flag);
-    });
-  }
-  checkAdmin(cookie) {
-    return new Promise((resolve, reject) => {
-      let url = `${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`;
-      request.get(url, (error, rsp, body) => {
-        if (error) reject(error);
-        let result = JSON.parse(body);
-        if (result.is_admin) resolve("true");
-        else resolve("false");
-      });
     });
   }
 }

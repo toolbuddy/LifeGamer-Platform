@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const { OAuthService } = require("./backend/oauth");
 const { platformMarkdown } = require("./backend/platformMarkdown");
 const { platformCommit } = require("./backend/platformCommit");
+const { platformPipelines } = require("./backend/platformPipelines");
 const { websocket } = require("./backend/websocket");
 
 var port = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use(express.static(path.resolve(__dirname + "/dist")));
 OAuthService.init(app);
 platformMarkdown.init(app);
 platformCommit.init(app);
+platformPipelines.init(app);
 websocket.init(socketIO);
 
 server.listen(port, () => {

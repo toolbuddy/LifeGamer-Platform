@@ -90,11 +90,6 @@ export default {
       stage: 'waiting'
     }
   },
-  sockets: {
-    connect: function () {
-      console.log('socket connected')
-    }
-  },
   created: function () {
     /* get token from cookie */
     this.token = this.$cookies.get('token')
@@ -118,12 +113,14 @@ export default {
           }`
         )
         .then(response => {
+          /* get response, changing commit page stage */
           this.commits = JSON.parse(response.bodyText)
           this.branch = Object.keys(this.commits)
           this.stage = 'commitSelect'
           this.curBranch = this.branch[0]
         })
         .then(() => {
+          /* change date time format */
           this.branch.forEach(list => {
             this.commits[list].forEach(item => {
               let datetime = new Date(item.committed_date)

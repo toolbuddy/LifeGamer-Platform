@@ -6,9 +6,9 @@ class websocket {
       client.on("addClient", clientID => {
         socketsPool[clientID] = client;
         console.log(socketsPool);
-        /* Test socket */
+        /* let client know server has received */
         this.sendData(clientID, "server receive~");
-        console.log('send');
+        console.log("send");
       });
     });
   }

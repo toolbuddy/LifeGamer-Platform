@@ -2,6 +2,17 @@ const config = require("../config/config");
 const request = require("request");
 
 class gitlabAPI {
+  checkAdmin(token) {
+    return new Promise((resolve, reject) => {
+      let url = `${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`;
+      request.get(url, (error, rsp, body) => {
+        if (error) reject(error);
+        let result = JSON.parse(body);
+        if (result.is_admin) resolve("true");
+        else resolve("false");
+      });
+    });
+  }
   getProjectID(userID, projectname, token) {
     return new Promise((resolve, reject) => {
       let url = `${
@@ -30,7 +41,7 @@ class gitlabAPI {
     let pipelines = new Array();
     let pagePipeline = null;
     let page = 1;
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async resolve => {
       while (1) {
         pagePipeline = await this.getPagePipeline(projectID, token, page);
         /* means no existing pipeline */

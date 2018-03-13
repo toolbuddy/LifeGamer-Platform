@@ -6,7 +6,6 @@ const request = require("request");
 class platformCommit {
   init(app) {
     app.get("/commits", async (req, res) => {
-      /* using async need reject handler, so using try and catch */
       res.set("Content-Type", "application/json");
       let userID = req.query.userID;
       let token = req.query.token;
