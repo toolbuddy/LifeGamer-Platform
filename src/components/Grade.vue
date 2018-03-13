@@ -1,7 +1,7 @@
 <!-- HTML part -->
 <template>
     <section class="section-wrapper">
-
+        {{ pipelinejobs }}
     </section>
 </template>
 
@@ -29,10 +29,6 @@ export default {
       })
       .then(() => {
         this.getPipelineJobs()
-      })
-      .then(() => {
-        /* for test */
-        console.log(this.pipelinejobs)
       })
   },
   methods: {

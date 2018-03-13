@@ -4,7 +4,6 @@ const { gitlabAPI } = require("./gitlabAPI");
 class platformPipelines {
   init(app) {
     app.get("/pipelinejobs", async (req, res) => {
-      console.log(req);
       res.set("Content-Type", "application/json");
       let userID = req.query.userID;
       let token = req.query.token;

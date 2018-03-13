@@ -32,7 +32,7 @@ class gitlabAPI {
       }/gitlab/api/v4/projects/${projectID}/pipelines?page=${page}&access_token=${token}`;
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
-        let result = JSON.parse(body);
+        let result = Array.from(JSON.parse(body));
         resolve(result);
       });
     });
@@ -46,7 +46,7 @@ class gitlabAPI {
         pagePipeline = await this.getPagePipeline(projectID, token, page);
         /* means no existing pipeline */
         if (pagePipeline.length == 0) break;
-        Array.from(pagePipeline).forEach(item => {
+        pagePipeline.forEach(item => {
           pipelines.push(item);
         });
         page = page + 1;
