@@ -8,13 +8,11 @@
                 <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(item)"> {{ item }} </li>
             </ul>
         </div>
-        <div class="commit-list">
-          <div class="commit-row commit-header-row">
-            <div class="commit-item commit-shortid">Short ID</div>
-            <div class="commit-item commit-title">Title</div>
-            <div class="commit-item commit-time">Commit Time</div>
-            <div class="commit-item commit-button"></div>
-          </div>
+        <div class="commit-row commit-header-row">
+          <div class="commit-item commit-shortid">Short ID</div>
+          <div class="commit-item commit-title">Title</div>
+          <div class="commit-item commit-time">Commit Time</div>
+          <div class="commit-item commit-button"></div>
         </div>
         <div class="commit-row" v-for="item in commits[this.curBranch]" :key="item.id">
           <div class="commit-item commit-shortid"><a :href="dynamicURL(item.id)">{{ item.short_id }}</a></div>
@@ -162,12 +160,9 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 50px 7%;
+  padding: 80px 7%;
 }
 
-.commit-list {
-  width: 100%;
-}
 .commit-row {
   width: 100%;
   height: 70px;

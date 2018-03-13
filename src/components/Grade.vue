@@ -1,7 +1,14 @@
 <!-- HTML part -->
 <template>
     <section class="section-wrapper">
-        {{ pipelinejobs }}
+      <div v-if='this.stage === "finish"'>
+        <div class="pipelines-row pipelines-header-row">
+          <div class="pipelines-item pipelines-id">ID</div>
+          <div class="pipelines-item pipelines-commit-id">Commit ID</div>
+          <div class="pipelines-item pipelines-score">Score</div>
+          <div class="pipelines-item pipelines-button"></div>
+        </div>
+      </div>
     </section>
 </template>
 
@@ -15,7 +22,8 @@ export default {
     return {
       token: null,
       userdata: null,
-      pipelinejobs: null
+      pipelinejobs: null,
+      stage: 'waiting'
     }
   },
   created: function () {
@@ -41,6 +49,7 @@ export default {
         )
         .then(response => {
           this.pipelinejobs = JSON.parse(response.bodyText)
+          this.stage = 'finish'
         })
     }
   }
@@ -54,5 +63,63 @@ export default {
   height: 100%;
   box-sizing: border-box;
   padding: 50px 7%;
+}
+
+.pipelines-row {
+  width: 100%;
+  height: 70px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  border-top: 1px solid #8c8c8c;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+}
+
+.pipelines-header-row {
+  background-color: steelblue;
+  color: #fff;
+  height: 35px;
+}
+
+.pipelines-item {
+  float: left;
+  margin: 0 3.4%;
+  text-align: center;
+}
+
+.pipelines-id {
+  width: 25%;
+}
+
+.pipelines-commit-id {
+  width: 25%;
+}
+
+.pipelines-score {
+  width: 25%;
+}
+
+.pipelines-button {
+  width: 25%;
+}
+
+.click-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60%;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid #006d70;
+  transition: all 0.3s ease;
+}
+
+.pipelines-button:hover {
+  background-color: #009688;
+  cursor: pointer;
+  color: #fff;
 }
 </style>
