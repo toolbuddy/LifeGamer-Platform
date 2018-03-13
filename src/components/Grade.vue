@@ -62,7 +62,7 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 50px 7%;
+  padding: 90px 7%;
 }
 
 .pipelines-row {

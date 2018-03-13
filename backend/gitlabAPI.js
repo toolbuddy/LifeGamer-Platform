@@ -103,8 +103,8 @@ class gitlabAPI {
         config.hostname
       }/gitlab/api/v4/projects/${projectID}/pipelines?ref_name=${refName}&access_token=${token}`;
       request.post(url, (error, rsp, body) => {
-        if (error) reject("false");
-        resolve("true");
+        if (error) reject(error);
+        resolve(rsp);
       });
     });
   }

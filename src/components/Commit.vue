@@ -3,7 +3,7 @@
     <section class="section-wrapper">
       <div v-if='this.stage === "commitSelect"'>
         <div class="branch-selector">
-            <div class="current-branch"> Branch: {{ this.curBranch }} </div>
+            <div class="current-branch"> {{ this.curBranch }} </div>
             <ul class="branch-select">
                 <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(item)"> {{ item }} </li>
             </ul>
@@ -133,8 +133,14 @@ export default {
       this.socket.on('connect', () => {
         console.log('[%s]on connect', this.socket.id)
       })
-      /* send client ID to server to save in table */
-      this.socket.emit('addClient', this.token)
+      /* send data to server to save in table */
+      this.socket.emit('client commit', {
+        token: this.token,
+        user: this.userdata.username,
+        userID: this.userdata.id,
+        branch: this.curBranch,
+        sha: shortID
+      })
       this.stage = 'commitSelected'
       /* set receive function */
       this.socket.on('sendData', function (data) {
@@ -160,7 +166,7 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 80px 7%;
+  padding: 50px 7%;
 }
 
 .commit-row {
@@ -236,6 +242,7 @@ export default {
   float: left;
   padding: 12px;
   margin: 10px 0;
+  border-left: 5px solid #bcbcbc;
 }
 
 .select-item {
