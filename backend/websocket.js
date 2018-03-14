@@ -7,6 +7,7 @@ var socketsPool = {};
 class websocket {
   init(socketIO) {
     socketIO.on("connection", client => {
+      console.log(`one client connected: ${client}`);
       client.on("client commit", async data => {
         socketsPool[data.token] = client;
         /* write config data, let game engine read */
