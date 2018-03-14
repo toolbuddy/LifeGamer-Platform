@@ -9,7 +9,7 @@ class DBModule {
       host: "localhost",
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      database: "lifegamer_platform"
+      database: config.db_database
     });
     /* create connection */
     this.con.connect(error => {
@@ -23,7 +23,7 @@ class DBModule {
   /* database operate */
   getBoardContent(page) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * FROM markdown WHERE page = '${page}'`;
+      let sql = `SELECT * FROM web_content WHERE page = '${page}'`;
       this.con.query(sql, (error, result) => {
         if (error) {
           reject("Error querying database");
@@ -35,7 +35,7 @@ class DBModule {
   }
   setBoardContent(page, content) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE markdown SET content = '${content}' WHERE page = '${page}'`;
+      let sql = `UPDATE web_content SET content = '${content}' WHERE page = '${page}'`;
       console.log("sql: " + sql);
       this.con.query(sql, (error, result) => {
         if (error) {
@@ -80,6 +80,25 @@ class DBModule {
       this.con.query(sql, (error, result) => {
         if (error) reject("false");
         console.log(result.affectedRows + " record(s) updated");
+        resolve("true");
+      });
+    });
+  }
+  getCommitTable(pipelineID) {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * from commit_table WHERE pipelineID = '${pipelineID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        resolve(result[0]);
+      });
+    });
+  }
+  insertCommitTable(pipelineID, user, sha) {
+    return new Promise((resolve, reject) => {
+      let sql = `INSERT into commit_table(pipelineID, user, sha) VALUES ('${pipelineID}', '${user}', '${sha}')`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        console.log("commit table updated");
         resolve("true");
       });
     });

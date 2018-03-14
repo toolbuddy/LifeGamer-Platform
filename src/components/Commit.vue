@@ -146,7 +146,6 @@ export default {
       this.socket.on('sendData', function (data) {
         console.log(data)
       })
-      alert(shortID)
     },
     branchSelect: function (branch) {
       this.curBranch = branch

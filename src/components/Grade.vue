@@ -3,8 +3,8 @@
     <section class="section-wrapper">
       <div v-if='this.stage === "finish"'>
         <div class="pipelines-row pipelines-header-row">
-          <div class="pipelines-item pipelines-id">ID</div>
-          <div class="pipelines-item pipelines-commit-id">Commit ID</div>
+          <div class="pipelines-item pipelines-id">Pipeline ID</div>
+          <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
           <div class="pipelines-item pipelines-score">Score</div>
           <div class="pipelines-item pipelines-button"></div>
         </div>
@@ -49,6 +49,7 @@ export default {
         )
         .then(response => {
           this.pipelinejobs = JSON.parse(response.bodyText)
+          console.log(this.pipelinejobs)
           this.stage = 'finish'
         })
     }

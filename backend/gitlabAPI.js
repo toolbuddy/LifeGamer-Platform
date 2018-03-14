@@ -101,10 +101,11 @@ class gitlabAPI {
     return new Promise((resolve, reject) => {
       let url = `${
         config.hostname
-      }/gitlab/api/v4/projects/${projectID}/pipelines?ref_name=${refName}&access_token=${token}`;
+      }/gitlab/api/v4/projects/${projectID}/pipeline?ref=${refName}&access_token=${token}`;
+      console.log(`post pipeline url: ${url}`);
       request.post(url, (error, rsp, body) => {
         if (error) reject(error);
-        resolve(rsp);
+        resolve(JSON.parse(body));
       });
     });
   }
