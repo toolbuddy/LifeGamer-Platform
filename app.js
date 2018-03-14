@@ -24,7 +24,8 @@ OAuthService.init(app);
 platformMarkdown.init(app);
 platformCommit.init(app);
 platformPipelines.init(app);
-websocket.init(socketIO);
+websocket.WebSocketInit(socketIO);
+websocket.appInit(app);
 
 server.listen(port, () => {
   console.log("Express server started on port " + port); // eslint-disable-line

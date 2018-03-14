@@ -5,7 +5,7 @@ const { DBModule } = require("./dbmodule");
 var socketsPool = {};
 
 class websocket {
-  init(socketIO) {
+  WebSocketInit(socketIO) {
     socketIO.on("connection", client => {
       console.log(`one client connected: ${client}`);
       client.on("client commit", async data => {
@@ -14,9 +14,16 @@ class websocket {
         await this.writeConfig(data.user, data.sha, data.token);
         await this.newCommit(data);
       });
-      client.on("level 1", async datum => {
-        this.sendData(datum.token, datum.data);
-      });
+    });
+  }
+  appInit(app) {
+    app.post("/game", (req, res) => {
+      console.log(`game request: ${req}`);
+      let level = req.body.level;
+      let token = req.body.token;
+      let data = req.body.data;
+      this.sendData(token, data);
+      res.end();
     });
   }
   newCommit(data) {
