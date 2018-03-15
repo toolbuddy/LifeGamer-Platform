@@ -17,12 +17,13 @@ class websocket {
     });
   }
   appInit(app) {
+    /* handle post request from game engine */
     app.post("/game", (req, res) => {
       console.log(`game request: ${req}`);
       let level = req.body.level;
       let token = req.body.token;
       let data = req.body.data;
-      this.sendData(token, data);
+      this.sendData(token, `level ${level}`, data);
       res.end();
     });
   }
@@ -47,8 +48,8 @@ class websocket {
       resolve("true");
     });
   }
-  sendData(clientID, data) {
-    socketsPool[clientID].emit("sendData", data);
+  sendData(clientID, method, data) {
+    socketsPool[clientID].emit(method, data);
   }
   writeConfig(studentID, sha, token) {
     return new Promise(resolve => {

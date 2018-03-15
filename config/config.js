@@ -1,5 +1,5 @@
 module.exports = {
   hostname: "https://hmkrl.com",
   db_database: "lifegamer_platform",
-  projectName: "Project-1"
+  projectName: "2018-pd2-Project1"
 };

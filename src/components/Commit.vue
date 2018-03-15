@@ -21,7 +21,12 @@
           <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
         </div>
       </div>
-      <div v-if='this.stage === "commitSelected"'></div>
+      <div class="gameRendering" v-if='this.stage === "commitSelected"'>
+        <pre class="gameProcess" v-html="this.gamedata.level1"></pre>
+        <pre class="gameProcess" v-html="this.gamedata.level2"></pre>
+        <pre class="gameProcess" v-html="this.gamedata.level3"></pre>
+        <pre class="gameProcess" v-html="this.gamedata.level4"></pre>
+      </div>
     </section>
 </template>
 
@@ -85,7 +90,13 @@ export default {
       curBranch: null,
       commits: null,
       socket: null,
-      stage: 'waiting'
+      stage: 'waiting',
+      gamedata: {
+        level1: null,
+        level2: null,
+        level3: null,
+        level4: null
+      }
     }
   },
   created: function () {
@@ -143,8 +154,17 @@ export default {
       })
       this.stage = 'commitSelected'
       /* set receive function */
-      this.socket.on('sendData', function (data) {
-        console.log(data)
+      this.socket.on('level 1', function (data) {
+        this.gamedata.level1 = data
+      })
+      this.socket.on('level 2', function (data) {
+        this.gamedata.level2 = data
+      })
+      this.socket.on('level 3', function (data) {
+        this.gamedata.level3 = data
+      })
+      this.socket.on('level 4', function (data) {
+        this.gamedata.level4 = data
       })
     },
     branchSelect: function (branch) {
@@ -282,5 +302,17 @@ export default {
   .commit-button {
     width: 25%;
   }
+}
+
+.gameRendering {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.gameProcess {
+  width: 450px;
+  height: 450px;
+  color: #fff;
 }
 </style>
