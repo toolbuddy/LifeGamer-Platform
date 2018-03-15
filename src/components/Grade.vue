@@ -8,6 +8,12 @@
           <div class="pipelines-item pipelines-score">Score</div>
           <div class="pipelines-item pipelines-button"></div>
         </div>
+        <div class="pipelines-row" v-for="(pipeline,index) in pipelinejobs" :key="index">
+          <div class="pipelines-item pipelines-id">{{ pipeline.id }}</div>
+          <div class="pipelines-item pipelines-commit-id"></div>
+          <div class="pipelines-item pipelines-score" v-html="totalScore(pipeline.jobs)"></div>
+          <div class="pipelines-item pipelines-button click-button">Detail</div>
+        </div>
       </div>
     </section>
 </template>
@@ -49,9 +55,17 @@ export default {
         )
         .then(response => {
           this.pipelinejobs = JSON.parse(response.bodyText)
-          console.log(this.pipelinejobs)
           this.stage = 'finish'
         })
+    },
+    totalScore: function (jobs) {
+      let score = 0
+      jobs.forEach(job => {
+        if (job.status === 'success') {
+          score = score + config.stageScore[job.name]
+        }
+      })
+      return score
     }
   }
 }
@@ -118,7 +132,7 @@ export default {
   transition: all 0.3s ease;
 }
 
-.pipelines-button:hover {
+.click-button:hover {
   background-color: #009688;
   cursor: pointer;
   color: #fff;
