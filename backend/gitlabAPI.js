@@ -4,7 +4,7 @@ const request = require("request");
 class gitlabAPI {
   checkAdmin(token) {
     return new Promise((resolve, reject) => {
-      let url = `${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`;
+      let url = `${config.hostname}/gitlab/api/v4/user?access_token=${token}`;
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = JSON.parse(body);

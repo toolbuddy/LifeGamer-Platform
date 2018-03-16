@@ -8,11 +8,16 @@
           <div class="pipelines-item pipelines-score">Score</div>
           <div class="pipelines-item pipelines-button"></div>
         </div>
-        <div class="pipelines-row" v-for="(pipeline,index) in pipelinejobs" :key="index">
-          <div class="pipelines-item pipelines-id">{{ pipeline.id }}</div>
-          <div class="pipelines-item pipelines-commit-id"></div>
-          <div class="pipelines-item pipelines-score" v-html="totalScore(pipeline.jobs)"></div>
-          <div class="pipelines-item pipelines-button click-button">Detail</div>
+        <div v-for="(pipeline,index) in pipelinejobs" :key="index">
+          <div class="pipelines-row">
+            <div class="pipelines-item pipelines-id">{{ pipeline.id }}</div>
+            <div class="pipelines-item pipelines-commit-id"></div>
+            <div class="pipelines-item pipelines-score" v-html="totalScore(pipeline.jobs)"></div>
+            <div class="pipelines-item pipelines-button click-button">Detail</div>
+          </div>
+          <div class="pipelines-details">
+
+          </div>
         </div>
       </div>
     </section>
@@ -59,6 +64,13 @@ export default {
         })
     },
     totalScore: function (jobs) {
+      /* check pipeline status */
+      if (
+        jobs[0].pipeline.status === 'running' ||
+        jobs[0].pipeline.status === 'pending'
+      ) {
+        return 'running'
+      }
       let score = 0
       jobs.forEach(job => {
         if (job.status === 'success') {
