@@ -22,11 +22,11 @@
           <!-- start -->
           <div class="pipelines-details">
             <!-- unordered list show all stage -->
-            <ul v-for="(stage, index) in pipeline.jobs.stages" :key="index">
-              {{ stage }}
+            <ul style="list-style: none;" v-for="(stage, index) in pipeline.jobs.stages" :key="index">
+              <span class="stageStyle" :style="stageColor(pipeline.jobs[stage])">{{ stage }}</span>
               <!-- list show all jobs in stage -->
-              <li v-for="(job, index) in pipeline.jobs[stage]" :key="index">
-                {{ job }}
+              <li style="padding: 10px;" v-for="(job, index) in pipeline.jobs[stage]" :key="index">
+                <span class="jobStyle" :style="jobColor(job)">{{ job.name }}</span>
               </li>
             </ul>
           </div>
@@ -139,6 +139,20 @@ export default {
         })
       })
       return score
+    },
+    /* show stage span color according to its jobs' status */
+    stageColor: function (stage) {
+      let status = true
+      stage.forEach(job => {
+        if (job.status === 'failed') status = false
+      })
+      return status
+        ? { color: 'green', 'border-left': '5px solid green' }
+        : { color: 'red', 'border-left': '5px solid red' }
+    },
+    /* show job span color according to its status */
+    jobColor: function (job) {
+      return job.status === 'success' ? { color: 'green' } : { color: 'red' }
     }
   }
 }
@@ -209,5 +223,15 @@ export default {
   background-color: #009688;
   cursor: pointer;
   color: #fff;
+}
+
+.stageStyle {
+  font-size: 25px;
+  font-weight: bold;
+  padding-left: 15px;
+}
+
+.jobStyle {
+  padding-left: 50px;
 }
 </style>

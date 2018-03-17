@@ -42,15 +42,15 @@
               </a>
             </li>
             <li class="menu-list">
-                <router-link class="menu-content link" :to="{ name: 'grade' , query: {edit: editMode}}">
-                  <img class="icon" src="../assets/flag-checkered.svg" />
-                  <span>Grade</span>
+                <router-link class="menu-content link" :to="{ name: 'commit' , query: {edit: editMode}}">
+                  <img class="icon" src="../assets/Git-icon-white.svg" />
+                  <span>Commits</span>
                 </router-link>
             </li>
             <li class="menu-list">
-                <router-link class="menu-content link" :to="{ name: 'commit' , query: {edit: editMode}}">
-                  <img class="icon" src="../assets/Git-icon-white.svg" />
-                  <span>Commit</span>
+                <router-link class="menu-content link" :to="{ name: 'grade' , query: {edit: editMode}}">
+                  <img class="icon" src="../assets/flag-checkered.svg" />
+                  <span>Grade</span>
                 </router-link>
             </li>
             <li class="menu-list">
