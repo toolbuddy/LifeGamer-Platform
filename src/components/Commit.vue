@@ -22,10 +22,10 @@
         </div>
       </div>
       <div class="gameRendering" v-if='this.stage === "commitSelected"'>
-        <pre class="gameProcess" v-html="this.gamedata.level1"></pre>
-        <pre class="gameProcess" v-html="this.gamedata.level2"></pre>
-        <pre class="gameProcess" v-html="this.gamedata.level3"></pre>
-        <pre class="gameProcess" v-html="this.gamedata.level4"></pre>
+        <pre class="gameProcess" v-html="level1"></pre>
+        <pre class="gameProcess" v-html="level2"></pre>
+        <pre class="gameProcess" v-html="level3"></pre>
+        <pre class="gameProcess" v-html="level4"></pre>
       </div>
     </section>
 </template>
@@ -91,12 +91,10 @@ export default {
       commits: null,
       socket: null,
       stage: 'waiting',
-      gamedata: {
-        level1: null,
-        level2: null,
-        level3: null,
-        level4: null
-      }
+      level1: null,
+      level2: null,
+      level3: null,
+      level4: null
     }
   },
   created: function () {
@@ -155,16 +153,20 @@ export default {
       this.stage = 'commitSelected'
       /* set receive function */
       this.socket.on('level 1', function (data) {
-        this.gamedata.level1 = data
+        this.level1 = data
+        console.log('data')
+        console.log(data)
+        console.log('this level1')
+        console.log(this.level1)
       })
       this.socket.on('level 2', function (data) {
-        this.gamedata.level2 = data
+        this.level2 = data
       })
       this.socket.on('level 3', function (data) {
-        this.gamedata.level3 = data
+        this.level3 = data
       })
       this.socket.on('level 4', function (data) {
-        this.gamedata.level4 = data
+        this.level4 = data
       })
     },
     branchSelect: function (branch) {

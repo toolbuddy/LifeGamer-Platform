@@ -50,6 +50,7 @@ class websocket {
   }
   sendData(clientID, method, data) {
     socketsPool[clientID].emit(method, data);
+    console.log(`${method} send`);
   }
   writeConfig(studentID, sha, token) {
     return new Promise(resolve => {

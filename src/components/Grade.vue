@@ -12,7 +12,7 @@
         </div>
         <div v-for="(pipeline,index) in pipelinejobs" :key="index">
           <div class="pipelines-row">
-            <div class="pipelines-item pipelines-commit-id"></div>
+            <div class="pipelines-item pipelines-commit-id" v-html="convertCommitSHA(pipeline.id)"></div>
             <div class="pipelines-item pipelines-result"></div>
             <div class="pipelines-item pipelines-score" v-html="totalScore(pipeline.jobs)"></div>
             <div class="pipelines-item pipelines-button click-button">Detail</div>
@@ -20,7 +20,7 @@
           <!-- end -->
           <!-- The template here showing jobs detail inside a pipeline -->
           <!-- start -->
-          <div class="pipelines-details">
+          <div class="pipelines-details details-off" :id="dynamicID(index)">
             <!-- unordered list show all stage -->
             <ul style="list-style: none;" v-for="(stage, index) in pipeline.jobs.stages" :key="index">
               <span class="stageStyle">{{ stage }}</span>
@@ -109,6 +109,9 @@ export default {
           let jobSort = {}
           /* set stages array */
           jobSort['stages'] = []
+          /* set pipeline status */
+          jobSort['pipelineStatus'] = item.jobs[0].pipeline.status
+          console.log(item.jobs[0])
           item.jobs.forEach(job => {
             /* check json has key or not */
             if (jobSort.hasOwnProperty(job.stage)) {
@@ -127,8 +130,6 @@ export default {
               jobSort[job.stage].push(jobData)
             }
           })
-          /* set pipeline stage key */
-          jobSort['pipelineStatus'] = item.jobs[0].pipeline.status
           item.jobs = jobSort
         })
         resolve('true')
@@ -155,6 +156,19 @@ export default {
     /* show job span color according to its status */
     jobColor: function (job) {
       return job.status === 'success' ? { color: 'green' } : { color: 'red' }
+    },
+    /* convert pipeline ID to commit SHA */
+    convertCommitSHA: function (pipelineID) {
+      let commitSHA = null
+      this.commitTable.forEach(item => {
+        if (item.pipelineID === pipelineID) {
+          commitSHA = item.sha
+        }
+      })
+      return commitSHA
+    },
+    dynamicID: function (index) {
+      return `pipeline-detail-${index}`
     }
   }
 }
@@ -225,6 +239,20 @@ export default {
   background-color: #009688;
   cursor: pointer;
   color: #fff;
+}
+
+.pipelines-details {
+  transition: all 0.3s ease;
+}
+
+.details-off {
+  display: none;
+  opacity: 0;
+}
+
+.details-on {
+  display: block;
+  opacity: 1;
 }
 
 .stageStyle {
