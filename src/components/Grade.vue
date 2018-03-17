@@ -5,15 +5,15 @@
         <!-- The template here showing all pipelines status -->
         <!-- start -->
         <div class="pipelines-row pipelines-header-row">
-          <div class="pipelines-item pipelines-id">Pipeline ID</div>
           <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
+          <div class="pipelines-item pipelines-result">Result</div>
           <div class="pipelines-item pipelines-score">Score</div>
           <div class="pipelines-item pipelines-button"></div>
         </div>
         <div v-for="(pipeline,index) in pipelinejobs" :key="index">
           <div class="pipelines-row">
-            <div class="pipelines-item pipelines-id">{{ pipeline.id }}</div>
             <div class="pipelines-item pipelines-commit-id"></div>
+            <div class="pipelines-item pipelines-result"></div>
             <div class="pipelines-item pipelines-score" v-html="totalScore(pipeline.jobs)"></div>
             <div class="pipelines-item pipelines-button click-button">Detail</div>
           </div>
@@ -23,7 +23,7 @@
           <div class="pipelines-details">
             <!-- unordered list show all stage -->
             <ul style="list-style: none;" v-for="(stage, index) in pipeline.jobs.stages" :key="index">
-              <span class="stageStyle" :style="stageColor(pipeline.jobs[stage])">{{ stage }}</span>
+              <span class="stageStyle">{{ stage }}</span>
               <!-- list show all jobs in stage -->
               <li style="padding: 10px;" v-for="(job, index) in pipeline.jobs[stage]" :key="index">
                 <span class="jobStyle" :style="jobColor(job)">{{ job.name }}</span>
@@ -47,6 +47,7 @@ export default {
       token: null,
       userdata: null,
       pipelinejobs: null,
+      commitTable: null,
       stage: 'waiting'
     }
   },
@@ -61,6 +62,7 @@ export default {
       })
       .then(() => {
         this.getPipelineJobs()
+        this.getCommitTable()
       })
   },
   methods: {
@@ -78,6 +80,16 @@ export default {
           await this.stageSorting()
           this.stage = 'finish'
           console.log(this.pipelinejobs[0].jobs)
+        })
+    },
+    getCommitTable: function () {
+      this.$http
+        .get(`${config.hostname}/commitTable?user=${this.userdata.username}`)
+        .then(response => {
+          this.commitTable = JSON.parse(response.bodyText)
+        })
+        .then(() => {
+          console.log(this.commitTable)
         })
     },
     stageSorting: function () {
@@ -140,16 +152,6 @@ export default {
       })
       return score
     },
-    /* show stage span color according to its jobs' status */
-    stageColor: function (stage) {
-      let status = true
-      stage.forEach(job => {
-        if (job.status === 'failed') status = false
-      })
-      return status
-        ? { color: 'green', 'border-left': '5px solid green' }
-        : { color: 'red', 'border-left': '5px solid red' }
-    },
     /* show job span color according to its status */
     jobColor: function (job) {
       return job.status === 'success' ? { color: 'green' } : { color: 'red' }
@@ -192,7 +194,7 @@ export default {
   text-align: center;
 }
 
-.pipelines-id {
+.pipelines-result {
   width: 25%;
 }
 

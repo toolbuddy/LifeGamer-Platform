@@ -1,5 +1,6 @@
 const config = require("../config/config");
 const { gitlabAPI } = require("./gitlabAPI");
+const { DBModule } = require("./dbmodule");
 
 class platformPipelines {
   init(app) {
@@ -16,6 +17,18 @@ class platformPipelines {
       /* get pipelines and jobs */
       let pipelinejobs = await this.getPipelineJobs(projectID, token);
       res.end(JSON.stringify(pipelinejobs));
+    });
+    app.get("/commitTable", async (req, res) => {
+      res.set("Content-Type", "application/json");
+      let user = req.query.user;
+      let commitTable = await this.getCommitTable(user);
+      res.send(JSON.stringify(commitTable));
+    });
+  }
+  getCommitTable(user) {
+    return new Promise(async resolve => {
+      let commitTable = await DBModule.getCommitTable(user);
+      resolve(commitTable);
     });
   }
   getPipelineJobs(projectID, token) {

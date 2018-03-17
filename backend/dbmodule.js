@@ -84,12 +84,12 @@ class DBModule {
       });
     });
   }
-  getCommitTable(pipelineID) {
+  getCommitTable(user) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * from commit_table WHERE pipelineID = '${pipelineID}'`;
+      let sql = `SELECT * from commit_table WHERE user = '${user}'`;
       this.con.query(sql, (error, result) => {
         if (error) reject(error);
-        resolve(result[0]);
+        resolve(result);
       });
     });
   }
