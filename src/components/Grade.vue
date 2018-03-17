@@ -79,7 +79,6 @@ export default {
         .then(async () => {
           await this.stageSorting()
           this.stage = 'finish'
-          console.log(this.pipelinejobs[0].jobs)
         })
     },
     getCommitTable: function () {
@@ -87,9 +86,6 @@ export default {
         .get(`${config.hostname}/commitTable?user=${this.userdata.username}`)
         .then(response => {
           this.commitTable = JSON.parse(response.bodyText)
-        })
-        .then(() => {
-          console.log(this.commitTable)
         })
     },
     stageSorting: function () {
@@ -111,7 +107,6 @@ export default {
           jobSort['stages'] = []
           /* set pipeline status */
           jobSort['pipelineStatus'] = item.jobs[0].pipeline.status
-          console.log(item.jobs[0])
           item.jobs.forEach(job => {
             /* check json has key or not */
             if (jobSort.hasOwnProperty(job.stage)) {
@@ -144,18 +139,29 @@ export default {
         return 'running'
       }
       let score = 0
+      console.log('config')
+      console.log(config)
       jobs.stages.forEach(stage => {
         jobs[stage].forEach(job => {
+          console.log('job name: ')
+          console.log(job.name)
+          console.log('job status: ')
+          console.log(job.status)
           if (job.status === 'success') {
+            console.log(config.stageScore[job.name])
             score = score + config.stageScore[job.name]
           }
         })
       })
-      return score
+      console.log(score)
+      console.log(parseInt(score, 10))
+      return parseInt(score, 10)
     },
     /* show job span color according to its status */
     jobColor: function (job) {
-      return job.status === 'success' ? { color: 'green' } : { color: 'red' }
+      return job.status === 'success'
+        ? { color: 'green' }
+        : job.status === 'failed' ? { color: 'red' } : { color: 'blue' }
     },
     /* convert pipeline ID to commit SHA */
     convertCommitSHA: function (pipelineID) {

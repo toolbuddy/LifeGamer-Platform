@@ -22,10 +22,10 @@
         </div>
       </div>
       <div class="gameRendering" v-if='this.stage === "commitSelected"'>
-        <pre class="gameProcess" v-html="level1"></pre>
-        <pre class="gameProcess" v-html="level2"></pre>
-        <pre class="gameProcess" v-html="level3"></pre>
-        <pre class="gameProcess" v-html="level4"></pre>
+        <pre id="level-1" class="gameProcess"></pre>
+        <pre id="level-2" class="gameProcess"></pre>
+        <pre id="level-3" class="gameProcess"></pre>
+        <pre id="level-4" class="gameProcess"></pre>
       </div>
     </section>
 </template>
@@ -90,11 +90,7 @@ export default {
       curBranch: null,
       commits: null,
       socket: null,
-      stage: 'waiting',
-      level1: null,
-      level2: null,
-      level3: null,
-      level4: null
+      stage: 'waiting'
     }
   },
   created: function () {
@@ -153,20 +149,16 @@ export default {
       this.stage = 'commitSelected'
       /* set receive function */
       this.socket.on('level 1', function (data) {
-        this.level1 = data
-        console.log('data')
-        console.log(data)
-        console.log('this level1')
-        console.log(this.level1)
+        document.querySelector('pre[id="level-1"]').innerHTML = data
       })
       this.socket.on('level 2', function (data) {
-        this.level2 = data
+        document.querySelector('pre[id="level-2"]').innerHTML = data
       })
       this.socket.on('level 3', function (data) {
-        this.level3 = data
+        document.querySelector('pre[id="level-3"]').innerHTML = data
       })
       this.socket.on('level 4', function (data) {
-        this.level4 = data
+        document.querySelector('pre[id="level-4"]').innerHTML = data
       })
     },
     branchSelect: function (branch) {
