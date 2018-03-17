@@ -15,7 +15,7 @@
             <div class="pipelines-item pipelines-commit-id" v-html="convertCommitSHA(pipeline.id)"></div>
             <div class="pipelines-item pipelines-result"></div>
             <div class="pipelines-item pipelines-score" v-html="totalScore(pipeline.jobs)"></div>
-            <div class="pipelines-item pipelines-button click-button">Detail</div>
+            <div class="pipelines-item pipelines-button click-button" @click="detailToggle(index)">Detail</div>
           </div>
           <!-- end -->
           <!-- The template here showing jobs detail inside a pipeline -->
@@ -169,6 +169,16 @@ export default {
     },
     dynamicID: function (index) {
       return `pipeline-detail-${index}`
+    },
+    detailToggle: function (index) {
+      let detail = document.querySelector(`div[id='pipeline-detail-${index}']`)
+      if (detail.classList.contains('details-off')) {
+        detail.classList.remove('details-off')
+        detail.classList.add('details-on')
+      } else {
+        detail.classList.remove('details-on')
+        detail.classList.add('details-off')
+      }
     }
   }
 }
