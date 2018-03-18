@@ -22,10 +22,10 @@
         </div>
       </div>
       <div class="gameRendering" v-if='this.stage === "commitSelected"'>
-        <div><h4>Level 1:</h4><pre id="level-1" class="gameProcess"></pre></div>
-        <div><h4>Level 2:</h4><pre id="level-2" class="gameProcess"></pre></div>
-        <div><h4>Level 3:</h4><pre id="level-3" class="gameProcess"></pre></div>
-        <div><h4>Level 4:</h4><pre id="level-4" class="gameProcess"></pre></div>
+        <div><h4>Level 1:</h4><pre id="level-1" class="gameProcess">pending.....</pre></div>
+        <div><h4>Level 2:</h4><pre id="level-2" class="gameProcess">pending.....</pre></div>
+        <div><h4>Level 3:</h4><pre id="level-3" class="gameProcess">pending.....</pre></div>
+        <div><h4>Level 4:</h4><pre id="level-4" class="gameProcess">pending.....</pre></div>
       </div>
     </section>
 </template>
@@ -107,6 +107,12 @@ export default {
         this.getCommits()
       })
   },
+  beforeDestroy: function () {
+    if (this.socket !== null) {
+      console.log('disconnect~')
+      this.socket.disconnect()
+    }
+  },
   methods: {
     getCommits: function () {
       this.$http
@@ -134,6 +140,8 @@ export default {
     },
     commitChoose: function (shortID) {
       this.socket = require('socket.io-client')(config.hostname)
+      console.log('sockets')
+      console.log(this.socket)
       /* connection */
       this.socket.on('connect', () => {
         console.log('[%s]on connect', this.socket.id)

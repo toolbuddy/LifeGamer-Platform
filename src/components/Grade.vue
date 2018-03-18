@@ -146,7 +146,8 @@ export default {
         pipeline.jobs.pipelineStatus === 'running' ||
         pipeline.jobs.pipelineStatus === 'pending'
       ) {
-        return 'running'
+        pipeline['score'] = 'running'
+        return
       }
       let score = 0
       pipeline.jobs.stages.forEach(stage => {
