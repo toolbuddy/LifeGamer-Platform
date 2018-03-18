@@ -143,19 +143,13 @@ export default {
       console.log(config)
       jobs.stages.forEach(stage => {
         jobs[stage].forEach(job => {
-          console.log('job name: ')
-          console.log(job.name)
-          console.log('job status: ')
-          console.log(job.status)
           if (job.status === 'success') {
             console.log(config.stageScore[job.name])
             score = score + config.stageScore[job.name]
           }
         })
       })
-      console.log(score)
-      console.log(parseInt(score, 10))
-      return parseInt(score, 10)
+      return score
     },
     /* show job span color according to its status */
     jobColor: function (job) {

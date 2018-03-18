@@ -7,7 +7,7 @@ module.exports = {
     "Coding style checking (5%)": 5,
     "Card registering (10%)": 10,
     "Communicate with server (15%)": 15,
-    "Finish correctly": 10,
+    "Finish correctly (10%)": 10,
     "Level 1 (20%)": 20,
     "Level 2 (10%)": 10,
     "Level 3 (10%)": 10,
