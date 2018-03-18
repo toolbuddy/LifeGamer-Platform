@@ -82,9 +82,12 @@ export default {
         })
         .then(async () => {
           await this.stageSorting()
+          /* set all pipeline score */
           this.pipelinejobs.forEach(pipeline => {
             this.getScore(pipeline)
           })
+          /* set max score */
+          this.Maxscore()
           this.stage = 'finish'
         })
     },
@@ -211,7 +214,13 @@ export default {
       }
     },
     /* get max score */
-    Maxscore: function () {}
+    Maxscore: function () {
+      this.pipelinejobs.forEach(pipeline => {
+        if (pipeline.score !== 'running') {
+          this.bestScore = Math.max(this.bestScore, pipeline.score)
+        }
+      })
+    }
   }
 }
 </script>

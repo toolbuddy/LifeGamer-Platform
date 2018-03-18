@@ -10,6 +10,7 @@ class websocket {
       console.log(`one client connected: ${client}`);
       client.on("client commit", async data => {
         socketsPool[data.Ttoken] = client;
+        console.log(data.Ttoken);
         /* write config data, let game engine read */
         await this.writeConfig(data.user, data.sha, data.Ttoken);
         await this.newCommit(data);
@@ -19,11 +20,12 @@ class websocket {
   appInit(app) {
     /* handle post request from game engine */
     app.post("/game", (req, res) => {
-      console.log(`game request: ${req}`);
       let level = req.body.level;
       let token = req.body.token;
       let data = req.body.data;
-      this.sendData(Ttoken, `level ${level}`, data);
+      console.log(level);
+      console.log(token);
+      this.sendData(token, `level ${level}`, data);
       res.end();
     });
   }
