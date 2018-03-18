@@ -8,13 +8,13 @@
           <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
           <div class="pipelines-item pipelines-time">Time</div>
           <div class="pipelines-item pipelines-score">Score</div>
-          <div class="pipelines-item pipelines-button"></div>
+          <div class="pipelines-item pipelines-button">Best: {{ bestScore }}</div>
         </div>
         <div v-for="(pipeline,index) in pipelinejobs" :key="index">
           <div class="pipelines-row">
             <div class="pipelines-item pipelines-commit-id" v-html="convertCommitSHA(pipeline.id)"></div>
             <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
-            <div class="pipelines-item pipelines-score" v-html="totalScore(pipeline.jobs)"></div>
+            <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
             <div class="pipelines-item pipelines-button click-button" @click="detailToggle(index)">Detail</div>
           </div>
           <!-- end -->
@@ -48,6 +48,7 @@ export default {
       userdata: null,
       pipelinejobs: null,
       commitTable: null,
+      bestScore: 0,
       stage: 'waiting'
     }
   },
@@ -81,6 +82,9 @@ export default {
         })
         .then(async () => {
           await this.stageSorting()
+          this.pipelinejobs.forEach(pipeline => {
+            this.getScore(pipeline)
+          })
           this.stage = 'finish'
         })
     },
@@ -133,26 +137,23 @@ export default {
         resolve('true')
       })
     },
-    totalScore: function (jobs) {
+    getScore: function (pipeline) {
       /* check pipeline status */
       if (
-        jobs.pipelineStatus === 'running' ||
-        jobs.pipelineStatus === 'pending'
+        pipeline.jobs.pipelineStatus === 'running' ||
+        pipeline.jobs.pipelineStatus === 'pending'
       ) {
         return 'running'
       }
       let score = 0
-      console.log('config')
-      console.log(config)
-      jobs.stages.forEach(stage => {
-        jobs[stage].forEach(job => {
+      pipeline.jobs.stages.forEach(stage => {
+        pipeline.jobs[stage].forEach(job => {
           if (job.status === 'success') {
-            console.log(config.stageScore[job.name])
             score = score + config.stageScore[job.name]
           }
         })
       })
-      return score
+      pipeline['score'] = score
     },
     /* show job span color according to its status */
     jobColor: function (job) {
@@ -198,6 +199,7 @@ export default {
         strTime
       )
     },
+    /* open/off the details info */
     detailToggle: function (index) {
       let detail = document.querySelector(`div[id='pipeline-detail-${index}']`)
       if (detail.classList.contains('details-off')) {
@@ -207,7 +209,9 @@ export default {
         detail.classList.remove('details-on')
         detail.classList.add('details-off')
       }
-    }
+    },
+    /* get max score */
+    Maxscore: function () {}
   }
 }
 </script>
