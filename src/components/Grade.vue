@@ -49,6 +49,7 @@ export default {
       pipelinejobs: null,
       commitTable: null,
       bestScore: 0,
+      dbScore: null,
       stage: 'waiting'
     }
   },
@@ -65,6 +66,32 @@ export default {
         this.getPipelineJobs()
         this.getCommitTable()
       })
+      /* deal with db data */
+      .then(() => {
+        /* get score from db in server */
+        this.$http
+          .get(
+            `${config.hostname}/user_grade?studentID=${this.userdata.username}`
+          )
+          .then(response => {
+            this.dbScore = response.body
+          })
+      })
+  },
+  watch: {
+    bestScore: function () {
+      if (this.bestScore > this.dbScore || this.dbScore === null) {
+        this.dbScore = this.bestScore
+        this.$http.post(
+          `${config.hostname}/user_grade`,
+          {
+            studentID: this.userdata.username,
+            score: this.bestScore
+          },
+          { headers: { 'Content-Type': 'application/json' } }
+        )
+      }
+    }
   },
   methods: {
     getPipelineJobs: function () {
@@ -87,7 +114,7 @@ export default {
             this.getScore(pipeline)
           })
           /* set max score */
-          this.Maxscore()
+          this.setMaxscore()
           this.stage = 'finish'
         })
     },
@@ -215,7 +242,7 @@ export default {
       }
     },
     /* get max score */
-    Maxscore: function () {
+    setMaxscore: function () {
       this.pipelinejobs.forEach(pipeline => {
         if (pipeline.score !== 'running') {
           this.bestScore = Math.max(this.bestScore, pipeline.score)

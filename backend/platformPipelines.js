@@ -22,7 +22,20 @@ class platformPipelines {
       res.set("Content-Type", "application/json");
       let user = req.query.user;
       let commitTable = await this.getCommitTable(user);
-      res.send(JSON.stringify(commitTable));
+      res.end(JSON.stringify(commitTable));
+    });
+    /* deal with score */
+    app.get("/user_grade", async (req, res) => {
+      res.set("Content-Type", "application/json");
+      let studentID = req.query.studentID;
+      let score = await DBModule.getUserScore(studentID);
+      res.end(JSON.stringify(score));
+    });
+    app.post("/user_grade", async (req, res) => {
+      let studentID = req.body.studentID;
+      let score = req.body.score;
+      let result = await DBModule.setUserScore(studentID, score);
+      res.end();
     });
   }
   getCommitTable(user) {
