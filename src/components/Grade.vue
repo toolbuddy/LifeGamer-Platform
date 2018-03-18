@@ -6,14 +6,14 @@
         <!-- start -->
         <div class="pipelines-row pipelines-header-row">
           <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
-          <div class="pipelines-item pipelines-result">Result</div>
+          <div class="pipelines-item pipelines-time">Time</div>
           <div class="pipelines-item pipelines-score">Score</div>
           <div class="pipelines-item pipelines-button"></div>
         </div>
         <div v-for="(pipeline,index) in pipelinejobs" :key="index">
           <div class="pipelines-row">
             <div class="pipelines-item pipelines-commit-id" v-html="convertCommitSHA(pipeline.id)"></div>
-            <div class="pipelines-item pipelines-result"></div>
+            <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
             <div class="pipelines-item pipelines-score" v-html="totalScore(pipeline.jobs)"></div>
             <div class="pipelines-item pipelines-button click-button" @click="detailToggle(index)">Detail</div>
           </div>
@@ -75,6 +75,9 @@ export default {
         )
         .then(response => {
           this.pipelinejobs = JSON.parse(response.bodyText)
+        })
+        .then(() => {
+          this.addPipelineTime()
         })
         .then(async () => {
           await this.stageSorting()
@@ -157,6 +160,12 @@ export default {
         ? { color: 'green' }
         : job.status === 'failed' ? { color: 'red' } : { color: 'blue' }
     },
+    /* add created time to pipeline */
+    addPipelineTime: function () {
+      this.pipelinejobs.forEach(pipeline => {
+        pipeline['time'] = pipeline.jobs[0].created_at
+      })
+    },
     /* convert pipeline ID to commit SHA */
     convertCommitSHA: function (pipelineID) {
       let commitSHA = null
@@ -169,6 +178,25 @@ export default {
     },
     dynamicID: function (index) {
       return `pipeline-detail-${index}`
+    },
+    formatDate: function (date) {
+      var hours = date.getHours()
+      var minutes = date.getMinutes()
+      var ampm = hours >= 12 ? 'pm' : 'am'
+      hours = hours % 12
+      hours = hours || 12 // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes
+      var strTime = hours + ':' + minutes + ' ' + ampm
+      return (
+        date.getMonth() +
+        1 +
+        '/' +
+        date.getDate() +
+        '/' +
+        date.getFullYear() +
+        '  ' +
+        strTime
+      )
     },
     detailToggle: function (index) {
       let detail = document.querySelector(`div[id='pipeline-detail-${index}']`)
@@ -218,7 +246,7 @@ export default {
   text-align: center;
 }
 
-.pipelines-result {
+.pipelines-time {
   width: 25%;
 }
 
