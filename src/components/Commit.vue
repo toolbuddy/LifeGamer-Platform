@@ -138,9 +138,12 @@ export default {
       this.socket.on('connect', () => {
         console.log('[%s]on connect', this.socket.id)
       })
+      let timestamp = Date.parse(new Date()).toString()
+      let Ttoken = this.token + timestamp
       /* send data to server to save in table */
       this.socket.emit('client commit', {
         token: this.token,
+        Ttoken: Ttoken,
         user: this.userdata.username,
         userID: this.userdata.id,
         branch: this.curBranch,
