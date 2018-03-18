@@ -22,10 +22,10 @@
         </div>
       </div>
       <div class="gameRendering" v-if='this.stage === "commitSelected"'>
-        <pre id="level-1" class="gameProcess"></pre>
-        <pre id="level-2" class="gameProcess"></pre>
-        <pre id="level-3" class="gameProcess"></pre>
-        <pre id="level-4" class="gameProcess"></pre>
+        <div><h4>Level 1:</h4><pre id="level-1" class="gameProcess"></pre></div>
+        <div><h4>Level 2:</h4><pre id="level-2" class="gameProcess"></pre></div>
+        <div><h4>Level 3:</h4><pre id="level-3" class="gameProcess"></pre></div>
+        <div><h4>Level 4:</h4><pre id="level-4" class="gameProcess"></pre></div>
       </div>
     </section>
 </template>
@@ -311,5 +311,6 @@ export default {
   width: 450px;
   height: 450px;
   color: #fff;
+  margin: 0;
 }
 </style>
