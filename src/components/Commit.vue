@@ -140,8 +140,6 @@ export default {
     },
     commitChoose: function (shortID) {
       this.socket = require('socket.io-client')(config.hostname)
-      console.log('sockets')
-      console.log(this.socket)
       /* connection */
       this.socket.on('connect', () => {
         console.log('[%s]on connect', this.socket.id)
