@@ -7,18 +7,21 @@ build:
   script:
     - npm install
     - npm run build
+  artifacts:
+    paths:
+      - dist
 
-check coding style: 
+check coding style:
   stage: Build homepage
   script:
     - npm install
     - npm run lint
   allow_failure: true
-      
+
 deploy to dev server:
   stage: Deploy
-  only:
-    - dev
+  except:
+    - master
   script:
     - pm2 deploy scripts/ecosystem.config.js dev
   dependencies:

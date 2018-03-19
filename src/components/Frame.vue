@@ -42,6 +42,12 @@
               </a>
             </li>
             <li class="menu-list">
+                <router-link class="menu-content link" :to="{ name: 'commit' , query: {edit: editMode}}">
+                  <img class="icon" src="../assets/Git-icon-white.svg" />
+                  <span>Commits</span>
+                </router-link>
+            </li>
+            <li class="menu-list">
                 <router-link class="menu-content link" :to="{ name: 'grade' , query: {edit: editMode}}">
                   <img class="icon" src="../assets/flag-checkered.svg" />
                   <span>Grade</span>
@@ -166,7 +172,7 @@ export default {
 }
 </script>
 
-<style scope>
+<style>
 :root {
   --fullWidth: 100%;
   --headerbar-height: 48px;
@@ -186,12 +192,6 @@ export default {
   top: 0;
   left: 0;
   transition: all 0.5s ease;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 
 .headerbar-menu-wrapper {
@@ -288,12 +288,6 @@ export default {
   width: var(--menu-width);
   height: 100%;
   overflow: auto;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   /* set position */
   top: 0;
   left: calc(var(--menu-width) * (-1));

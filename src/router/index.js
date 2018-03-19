@@ -7,6 +7,7 @@ import DemoTime from '@/components/DemoTime'
 import BattleField from '@/components/BattleField'
 import Resource from '@/components/Resource'
 import Grade from '@/components/Grade'
+import Commit from '@/components/Commit'
 
 Vue.use(Router)
 
@@ -36,6 +37,11 @@ export default new Router({
       path: '/grade',
       name: 'grade',
       component: Grade
+    },
+    {
+      path: '/commit',
+      name: 'commit',
+      component: Commit
     }
   ]
 })

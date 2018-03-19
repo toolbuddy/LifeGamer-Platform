@@ -64,7 +64,6 @@ export default {
         .get(`${config.hostname}/db_page?page=Announce`)
         .then(response => {
           this.markdownString = response.bodyText
-          console.log(response)
         })
     },
     checkAdmin: function () {
@@ -83,15 +82,11 @@ export default {
         content: this.markdownString,
         token: cookie
       }
-      this.$http
-        .post(url, data, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(response => {
-          console.log(response)
-        })
+      this.$http.post(url, data, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
     }
   }
 }
@@ -110,8 +105,9 @@ export default {
 
 .edit-section {
   float: left;
-  border: 2px solid #888;
+  border: 2px dashed #888;
   box-sizing: border-box;
+  margin: 10px;
   padding: 5px;
   overflow: auto;
 }
@@ -158,5 +154,5 @@ export default {
 }
 </style>
 
-<style scoped src="./style/monokai-sublime.css"></style>
-<style scoped src="./style/github-style.css"></style>
+<style src="./style/monokai-sublime.css"></style>
+<style src="./style/github-style.css"></style>
