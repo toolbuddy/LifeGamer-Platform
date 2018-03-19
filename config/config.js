@@ -1,5 +1,5 @@
 module.exports = {
-  hostname: "https://pd2b.imslab.org"
+  hostname: "https://pd2b.imslab.org",
   db_database: "lifegamer_platform",
   projectName: "2018-pd2-Project1",
   stageScore: {
