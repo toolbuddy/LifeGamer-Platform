@@ -5,29 +5,29 @@
         <div class="branch-selector">
             <div class="current-branch"> {{ this.curBranch }} </div>
             <ul class="branch-select">
-                <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(item)"> {{ item }} </li>
-            </ul>
+                  <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(item)"> {{ item }} </li>
+              </ul>
+          </div>
+          <div class="commit-row commit-header-row">
+            <div class="commit-item commit-shortid">Short ID</div>
+            <div class="commit-item commit-title">Title</div>
+            <div class="commit-item commit-time">Commit Time</div>
+            <div class="commit-item commit-button"></div>
+          </div>
+          <div class="commit-row" v-for="item in commits[this.curBranch]" :key="item.id">
+            <div class="commit-item commit-shortid"><a :href="dynamicURL(item.id)">{{ item.short_id }}</a></div>
+            <div class="commit-item commit-title"> {{ item.title }} </div>
+            <div class="commit-item commit-time">{{ item.committed_date }}</div>
+            <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
+          </div>
         </div>
-        <div class="commit-row commit-header-row">
-          <div class="commit-item commit-shortid">Short ID</div>
-          <div class="commit-item commit-title">Title</div>
-          <div class="commit-item commit-time">Commit Time</div>
-          <div class="commit-item commit-button"></div>
+        <div class="gameRendering" v-if='this.stage === "commitSelected"'>
+          <div><h4>Level 1:</h4><pre id="level-1" class="gameProcess">pending.....</pre></div>
+          <div><h4>Level 2:</h4><pre id="level-2" class="gameProcess">pending.....</pre></div>
+          <div><h4>Level 3:</h4><pre id="level-3" class="gameProcess">pending.....</pre></div>
+          <div><h4>Level 4:</h4><pre id="level-4" class="gameProcess">pending.....</pre></div>
         </div>
-        <div class="commit-row" v-for="item in commits[this.curBranch]" :key="item.id">
-          <div class="commit-item commit-shortid"><a :href="dynamicURL(item.id)">{{ item.short_id }}</a></div>
-          <div class="commit-item commit-title"> {{ item.title }} </div>
-          <div class="commit-item commit-time">{{ item.committed_date }}</div>
-          <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
-        </div>
-      </div>
-      <div class="gameRendering" v-if='this.stage === "commitSelected"'>
-        <div><h4>Level 1:</h4><pre id="level-1" class="gameProcess">pending.....</pre></div>
-        <div><h4>Level 2:</h4><pre id="level-2" class="gameProcess">pending.....</pre></div>
-        <div><h4>Level 3:</h4><pre id="level-3" class="gameProcess">pending.....</pre></div>
-        <div><h4>Level 4:</h4><pre id="level-4" class="gameProcess">pending.....</pre></div>
-      </div>
-    </section>
+      </section>
 </template>
 
 <!-- js part -->
@@ -89,18 +89,31 @@ export default {
       branch: null,
       curBranch: null,
       commits: null,
+      serverStatus: 'on',
+      is_admin: true,
       socket: null,
       stage: 'waiting'
+    }
+  },
+  watch: {
+    is_admin: function () {
+      if (!this.is_admin && this.serverStatus === 'off') {
+        window.location.href = config.hostname
+      }
     }
   },
   created: function () {
     /* get token from cookie */
     this.token = this.$cookies.get('token')
+    this.$http.get(`${config.hostname}/db_serverStatus`).then(response => {
+      this.serverStatus = response.body
+    })
     /* get user data via gitlab api */
     this.$http
       .get(`${config.hostname}/gitlab/api/v4/user?access_token=${this.token}`)
       .then(response => {
         this.userdata = response.body
+        this.is_admin = response.body.is_admin
       })
       .then(function () {
         /* send request to server, asking server to update user pipelines history */
@@ -185,8 +198,8 @@ export default {
 <!-- css part -->
 <style scoped>
 .section-wrapper {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   box-sizing: border-box;
   padding: 50px 7%;
 }

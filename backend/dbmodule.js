@@ -103,6 +103,15 @@ class DBModule {
       });
     });
   }
+  getServerStatus() {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * from server_status`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        resolve(result[0].status);
+      });
+    });
+  }
 }
 
 module.exports = {

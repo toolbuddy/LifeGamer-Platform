@@ -1,8 +1,17 @@
 <template>
   <div id="app">
     <div id="content" v-if="hasCookie">
-      <Frame/>
-      <router-view></router-view>
+      <div v-if="platformUse">
+        <Frame/>
+        <router-view></router-view>
+      </div>
+      <div class="serverOff" v-else>
+        <div class="message">
+          <p>伺服器維護中</p>
+          <p>Server under maintenance</p>
+          <div class="logoutButton" @click="cleanCookie">Logout</div>
+        </div>
+      </div>
     </div>
     <div id="login" v-else>
       <Login/>
@@ -14,21 +23,54 @@
 import Frame from './components/Frame'
 import Login from './components/Login'
 
+const config = require('../config/config')
+
 export default {
   name: 'App',
   components: { Frame, Login },
   data: function () {
     return {
-      hasCookie: false
+      hasCookie: false,
+      serverStatus: 'on',
+      is_admin: true
+    }
+  },
+  computed: {
+    platformUse: function () {
+      return this.is_admin || this.serverStatus === 'on'
     }
   },
   created: function () {
     this.checkCookie()
+    this.getServerStatus()
+    this.checkAdmin()
     this.$router.replace({ query: { edit: false } })
   },
   methods: {
     checkCookie: function () {
       this.hasCookie = this.$cookies.isKey('token')
+    },
+    getServerStatus: function () {
+      if (this.hasCookie) {
+        this.$http.get(`${config.hostname}/db_serverStatus`).then(response => {
+          this.serverStatus = response.body
+        })
+      }
+    },
+    checkAdmin: function () {
+      if (this.hasCookie) {
+        let cookie = this.$cookies.get('token')
+        this.$http
+          .get(`${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`)
+          .then(response => {
+            this.is_admin = response.body.is_admin
+          })
+      }
+    },
+    cleanCookie: function () {
+      this.$http.get(`${config.hostname}/gitlab/users/sign_out`)
+      this.$cookies.remove('token')
+      window.location.reload()
     }
   }
 }
@@ -62,5 +104,32 @@ body {
 #login {
   width: 100%;
   height: 100%;
+}
+
+.serverOff {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background: #666;
+}
+
+.message {
+  font-weight: bold;
+  font-size: 35px;
+  width: 70vw;
+  border: 5px solid #fff;
+  text-align: center;
+  color: #fff;
+}
+
+.logoutButton {
+  margin: 15px;
+}
+
+.logoutButton:hover {
+  cursor: pointer;
+  background: #aaa;
 }
 </style>

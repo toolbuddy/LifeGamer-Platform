@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const { OAuthService } = require("./backend/oauth");
 const { platformMarkdown } = require("./backend/platformMarkdown");
 const { platformCommit } = require("./backend/platformCommit");
+const { platformStatus } = require("./backend/platformStatus");
 const { platformPipelines } = require("./backend/platformPipelines");
 const { websocket } = require("./backend/websocket");
 
@@ -24,6 +25,7 @@ OAuthService.init(app);
 platformMarkdown.init(app);
 platformCommit.init(app);
 platformPipelines.init(app);
+platformStatus.init(app);
 websocket.WebSocketInit(socketIO);
 websocket.appInit(app);
 

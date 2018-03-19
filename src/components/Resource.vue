@@ -64,7 +64,6 @@ export default {
         .get(`${config.hostname}/db_page?page=Resource`)
         .then(response => {
           this.markdownString = response.bodyText
-          console.log(response)
         })
     },
     checkAdmin: function () {
