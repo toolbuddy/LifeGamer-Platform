@@ -62,10 +62,6 @@ export default {
       .then(response => {
         this.userdata = response.body
       })
-      .then(() => {
-        this.getPipelineJobs()
-        this.getCommitTable()
-      })
       /* deal with db data */
       .then(() => {
         /* get score from db in server */
@@ -75,7 +71,12 @@ export default {
           )
           .then(response => {
             this.dbScore = response.body
+            this.bestScore = this.dbScore
           })
+      })
+      .then(() => {
+        this.getPipelineJobs()
+        this.getCommitTable()
       })
   },
   watch: {
