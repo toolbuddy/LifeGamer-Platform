@@ -46,7 +46,7 @@ class platformPipelines {
   }
   getPipelineJobs(projectID, token) {
     return new Promise(async resolve => {
-      let pipelines = await gitlabAPI.getPipelines(projectID, token);
+      let pipelines = await gitlabAPI.getPipeline(projectID, token);
       for (let i = 0; i < pipelines.length; i++) {
         pipelines[i].jobs = await gitlabAPI.getPipelineJob(
           projectID,
