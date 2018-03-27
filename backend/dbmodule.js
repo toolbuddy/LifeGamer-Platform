@@ -112,6 +112,25 @@ class DBModule {
       });
     });
   }
+  getUserRegisterStatus(studentID) {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * from user_register WHERE studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        resolve(result[0].status);
+      });
+    });
+  }
+  setUserRegisterStatus(studentID) {
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE user_register SET status = 'registered' WHERE studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject("false");
+        console.log(result.affectedRows + " record(s) updated");
+        resolve("true");
+      });
+    });
+  }
 }
 
 module.exports = {

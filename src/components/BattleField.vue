@@ -19,6 +19,7 @@ export default {
     return {
       token: null,
       userdata: null,
+      register: null,
       pipelinejobs: null
     }
   },
@@ -30,13 +31,37 @@ export default {
       .get(`${config.hostname}/gitlab/api/v4/user?access_token=${this.token}`)
       .then(response => {
         this.userdata = response.body
-        console.log(this.userdata)
       })
       .then(() => {
+        /* check user register or not */
+        this.getUserRegisterStatus()
         this.getPipelineJobs()
       })
   },
   methods: {
+    /* get user register or not */
+    getUserRegisterStatus: function () {
+      this.$http
+        .get(
+          `${config.hostname}/register_status?studentID=${
+            this.userdata.username
+          }`
+        )
+        .then(response => {
+          this.register = response.body
+        })
+    },
+    /* user register */
+    userRegister: function () {
+      this.$http
+        .get(`${config.hostname}/register?studentID=${this.userdata.username}`)
+        .then(response => {
+          /* let user know register success or not */
+          alert(`register ${response.body}`)
+          /* reload page */
+          location.reload()
+        })
+    },
     getPipelineJobs: function () {
       this.$http
         .get(
