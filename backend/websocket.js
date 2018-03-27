@@ -1,4 +1,5 @@
 const fs = require("fs");
+const shell = require("shelljs");
 const config = require("../config/config");
 const { gitlabAPI } = require("./gitlabAPI");
 const { DBModule } = require("./dbmodule");
@@ -13,6 +14,7 @@ class websocket {
         console.log(data.Ttoken);
         /* write config data, let game engine read */
         await this.writeConfig(data.user, data.sha, data.Ttoken);
+        this.copyData(`/tmp/${data.user}`, "hmkrl", "hmkrl.com", "/tmp/");
         await this.newCommit(data);
       });
     });
@@ -63,6 +65,15 @@ class websocket {
         }
       });
     });
+  }
+  /* copy config data to another server */
+  copyData(filename, user, server, path) {
+    let shellCommand = `scp ${filename} ${user}@${server}:${path}`;
+    console.log(`shell command: ${shellCommand}`);
+    if (shell.exec(shellCommand).code !== 0) {
+      shell.echo("Error: scp failed");
+      shell.exit(1);
+    }
   }
 }
 module.exports = {
