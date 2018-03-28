@@ -62,10 +62,6 @@ export default {
       .then(response => {
         this.userdata = response.body
       })
-      .then(() => {
-        this.getPipelineJobs()
-        this.getCommitTable()
-      })
       /* deal with db data */
       .then(() => {
         /* get score from db in server */
@@ -75,12 +71,17 @@ export default {
           )
           .then(response => {
             this.dbScore = response.body
+            this.bestScore = response.body
+          })
+          .then(() => {
+            this.getPipelineJobs()
+            this.getCommitTable()
           })
       })
   },
   watch: {
     bestScore: function () {
-      if (this.bestScore > this.dbScore || this.dbScore === null) {
+      if (this.bestScore > this.dbScore) {
         this.dbScore = this.bestScore
         this.$http.post(
           `${config.hostname}/user_grade`,

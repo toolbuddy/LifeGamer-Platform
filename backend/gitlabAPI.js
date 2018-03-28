@@ -25,11 +25,11 @@ class gitlabAPI {
       });
     });
   }
-  getPagePipeline(projectID, token, page) {
+  getPipeline(projectID, token) {
     return new Promise((resolve, reject) => {
       let url = `${
         config.hostname
-      }/gitlab/api/v4/projects/${projectID}/pipelines?page=${page}&access_token=${token}`;
+      }/gitlab/api/v4/projects/${projectID}/pipelines?access_token=${token}`;
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = Array.from(JSON.parse(body));
@@ -37,28 +37,11 @@ class gitlabAPI {
       });
     });
   }
-  getPipelines(projectID, token) {
-    let pipelines = new Array();
-    let pagePipeline = null;
-    let page = 1;
-    return new Promise(async resolve => {
-      while (1) {
-        pagePipeline = await this.getPagePipeline(projectID, token, page);
-        /* means no existing pipeline */
-        if (pagePipeline.length == 0) break;
-        pagePipeline.forEach(item => {
-          pipelines.push(item);
-        });
-        page = page + 1;
-      }
-      resolve(pipelines);
-    });
-  }
   getPipelineJob(projectID, pipelineID, token) {
     return new Promise((resolve, reject) => {
       let url = `${
         config.hostname
-      }/gitlab/api/v4/projects/${projectID}/pipelines/${pipelineID}/jobs?&access_token=${token}`;
+      }/gitlab/api/v4/projects/${projectID}/pipelines/${pipelineID}/jobs?access_token=${token}`;
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = JSON.parse(body);

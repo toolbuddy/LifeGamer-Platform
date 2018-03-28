@@ -1,11 +1,18 @@
 <!-- HTML part -->
 <template>
     <div class="battleField-wrapper">
-      <ul class="mode-select">
-        <li class="mode">Attack select</li>
-        <li class="mode">Defend select</li>
-        <li class="mode">Battle</li>
-      </ul>
+      <section v-if='stage === "unregistered"'>
+      </section>
+      <section v-if='stage === "registered"'>
+        <ul class="mode-select">
+          <li class="mode">Attack select</li>
+          <li class="mode">Defend select</li>
+          <li class="mode">Battle</li>
+        </ul>
+      </section>
+      <section v-if='stage === "battle"'>
+
+      </section>
     </div>
 </template>
 
@@ -20,7 +27,8 @@ export default {
       token: null,
       userdata: null,
       register: null,
-      pipelinejobs: null
+      pipelinejobs: null,
+      stage: 'unregistered'
     }
   },
   created: function () {
