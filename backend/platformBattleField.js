@@ -8,14 +8,14 @@ class platformBattleField {
       res.set("Content-Type", "application/json");
       let studentID = req.query.studentID;
       let status = await this.getRegister(studentID);
-      res.end(status);
+      res.end(JSON.stringify(status));
     });
     app.get("/register", async (req, res) => {
       res.set("Content-Type", "application/json");
       let studentID = req.query.studentID;
       let success =
         (await this.setRegister(studentID)) === "true" ? "success" : "failed";
-      res.end(success);
+      res.end(JSON.stringify(success));
     });
   }
   getRegister(studentID) {
@@ -31,3 +31,7 @@ class platformBattleField {
     });
   }
 }
+
+module.exports = {
+  platformBattleField: new platformBattleField()
+};

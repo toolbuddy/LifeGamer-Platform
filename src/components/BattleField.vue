@@ -1,16 +1,30 @@
 <!-- HTML part -->
 <template>
     <div class="battleField-wrapper">
-      <section v-if='stage === "unregistered"'>
+      <section v-if='this.stage === "unregistered" && this.loaded === true'>
+        <div class="pipelines-row pipelines-header-row">
+          <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
+          <div class="pipelines-item pipelines-time">Time</div>
+          <div class="pipelines-item pipelines-score">Score</div>
+          <div class="pipelines-item pipelines-button"></div>
+        </div>
+        <div v-for="(pipeline,index) in pipelinejobs" :key="index">
+          <div class="pipelines-row">
+            <div class="pipelines-item pipelines-commit-id" v-html="convertCommitSHA(pipeline.id)"></div>
+            <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
+            <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
+            <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline.id)">Select</div>
+          </div>
+        </div>
       </section>
-      <section v-if='stage === "registered"'>
+      <section v-if='this.stage === "registered" && this.loaded === true'>
         <ul class="mode-select">
           <li class="mode">Attack select</li>
           <li class="mode">Defend select</li>
           <li class="mode">Battle</li>
         </ul>
       </section>
-      <section v-if='stage === "battle"'>
+      <section v-if='this.stage === "battle"'>
 
       </section>
     </div>
@@ -26,9 +40,10 @@ export default {
     return {
       token: null,
       userdata: null,
-      register: null,
       pipelinejobs: null,
-      stage: 'unregistered'
+      commitTable: null,
+      stage: null,
+      loaded: false
     }
   },
   created: function () {
@@ -44,6 +59,7 @@ export default {
         /* check user register or not */
         this.getUserRegisterStatus()
         this.getPipelineJobs()
+        this.getCommitTable()
       })
   },
   methods: {
@@ -56,7 +72,7 @@ export default {
           }`
         )
         .then(response => {
-          this.register = response.body
+          this.stage = response.body
         })
     },
     /* user register */
@@ -70,6 +86,13 @@ export default {
           location.reload()
         })
     },
+    getCommitTable: function () {
+      this.$http
+        .get(`${config.hostname}/commitTable?user=${this.userdata.username}`)
+        .then(response => {
+          this.commitTable = JSON.parse(response.bodyText)
+        })
+    },
     getPipelineJobs: function () {
       this.$http
         .get(
@@ -81,56 +104,54 @@ export default {
           this.pipelinejobs = JSON.parse(response.bodyText)
         })
         .then(async () => {
-          await this.stageSorting()
+          await this.setPipelineParam()
           /* set all pipeline score */
           this.pipelinejobs.forEach(pipeline => {
             this.getScore(pipeline)
           })
+          this.loaded = true
           console.log(this.pipelinejobs)
-          this.stage = 'finish'
         })
     },
-    stageSorting: function () {
+    setPipelineParam: function () {
       return new Promise(resolve => {
-        /* pipeline jobs json format
-         *
-         * {
-         *    'stage': [stage1, stage2, ...],
-         *    'pipelineStatus': pipelineStatus,
-         *    'stage1': [{'name': jobName, 'status': jobStatus }],
-         *    'stage2': [{'name': jobName, 'status': jobStatus }],
-         *     ...
-         * }
-         *
-        */
-        this.pipelinejobs.forEach(item => {
-          let jobSort = {}
-          /* set stages array */
-          jobSort['stages'] = []
-          /* set pipeline status */
-          jobSort['pipelineStatus'] = item.jobs[0].pipeline.status
-          item.jobs.forEach(job => {
-            /* check json has key or not */
-            if (jobSort.hasOwnProperty(job.stage)) {
-              let jobData = {
-                status: job.status,
-                name: job.name
-              }
-              jobSort[job.stage].push(jobData)
-            } else {
-              jobSort['stages'].push(job.stage)
-              jobSort[job.stage] = []
-              let jobData = {
-                status: job.status,
-                name: job.name
-              }
-              jobSort[job.stage].push(jobData)
-            }
-          })
-          item.jobs = jobSort
+        this.pipelinejobs.forEach(pipeline => {
+          /* set pipeline time */
+          pipeline['time'] = pipeline.jobs[0].created_at
+          /* set artifact job id */
+          pipeline['artifact_id'] = pipeline.jobs[0].id
         })
         resolve('true')
       })
+    },
+    /* convert pipeline ID to commit SHA */
+    convertCommitSHA: function (pipelineID) {
+      let commitSHA = null
+      this.commitTable.forEach(item => {
+        if (item.pipelineID === pipelineID) {
+          commitSHA = item.sha
+        }
+      })
+      return commitSHA
+    },
+    formatDate: function (date) {
+      var hours = date.getHours()
+      var minutes = date.getMinutes()
+      var ampm = hours >= 12 ? 'pm' : 'am'
+      hours = hours % 12
+      hours = hours || 12 // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes
+      var strTime = hours + ':' + minutes + ' ' + ampm
+      return (
+        date.getMonth() +
+        1 +
+        '/' +
+        date.getDate() +
+        '/' +
+        date.getFullYear() +
+        '  ' +
+        strTime
+      )
     },
     getScore: function (pipeline) {
       /* check pipeline status */
@@ -142,12 +163,10 @@ export default {
         return
       }
       let score = 0
-      pipeline.jobs.stages.forEach(stage => {
-        pipeline.jobs[stage].forEach(job => {
-          if (job.status === 'success') {
-            score = score + config.stageScore[job.name]
-          }
-        })
+      pipeline.jobs.forEach(job => {
+        if (job.status === 'success') {
+          score = score + config.stageScore[job.name]
+        }
       })
       pipeline['score'] = score
     }
@@ -187,5 +206,63 @@ export default {
   background-color: #666;
   color: #fff;
   cursor: pointer;
+}
+
+.pipelines-row {
+  width: 100%;
+  height: 70px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  border-top: 1px solid #8c8c8c;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+}
+
+.pipelines-header-row {
+  background-color: steelblue;
+  color: #fff;
+  height: 35px;
+}
+
+.pipelines-item {
+  float: left;
+  margin: 0 3.4%;
+  text-align: center;
+}
+
+.pipelines-time {
+  width: 25%;
+}
+
+.pipelines-commit-id {
+  width: 25%;
+}
+
+.pipelines-score {
+  width: 25%;
+}
+
+.pipelines-button {
+  width: 25%;
+}
+
+.click-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60%;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid #006d70;
+  transition: all 0.3s ease;
+}
+
+.click-button:hover {
+  background-color: #009688;
+  cursor: pointer;
+  color: #fff;
 }
 </style>
