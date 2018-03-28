@@ -12,7 +12,7 @@
         </div>
         <div v-for="(pipeline,index) in pipelinejobs" :key="index">
           <div class="pipelines-row">
-            <div class="pipelines-item pipelines-commit-id" v-html="convertCommitSHA(pipeline.id)"></div>
+            <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
             <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
             <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
             <div class="pipelines-item pipelines-button click-button" @click="detailToggle(index)">Detail</div>
@@ -198,6 +198,12 @@ export default {
       this.pipelinejobs.forEach(pipeline => {
         pipeline['time'] = pipeline.jobs[0].created_at
       })
+    },
+    /* pipeline url */
+    pipelineURL: function (id) {
+      return `${config.hostname}/gitlab/${this.userdata.username}/${
+        config.projectName
+      }/pipelines/${id}`
     },
     /* convert pipeline ID to commit SHA */
     convertCommitSHA: function (pipelineID) {

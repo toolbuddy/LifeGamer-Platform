@@ -2,6 +2,10 @@
 <template>
     <div class="battleField-wrapper">
       <section v-if='this.stage === "unregistered" && this.loaded === true'>
+        <article>
+          <h2>You have not registered yet, please select one pipeline to register</h2>
+          <p>The pipeline you select will become your defend and attack code, but you can change them after you register.</p>
+        </article>
         <div class="pipelines-row pipelines-header-row">
           <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
           <div class="pipelines-item pipelines-time">Time</div>
@@ -10,10 +14,10 @@
         </div>
         <div v-for="(pipeline,index) in pipelinejobs" :key="index">
           <div class="pipelines-row">
-            <div class="pipelines-item pipelines-commit-id" v-html="convertCommitSHA(pipeline.id)"></div>
+            <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
             <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
             <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
-            <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline.id)">Select</div>
+            <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline)">Select</div>
           </div>
         </div>
       </section>
@@ -124,6 +128,12 @@ export default {
         resolve('true')
       })
     },
+    /* pipeline url */
+    pipelineURL: function (id) {
+      return `${config.hostname}/gitlab/${this.userdata.username}/${
+        config.projectName
+      }/pipelines/${id}`
+    },
     /* convert pipeline ID to commit SHA */
     convertCommitSHA: function (pipelineID) {
       let commitSHA = null
@@ -169,7 +179,8 @@ export default {
         }
       })
       pipeline['score'] = score
-    }
+    },
+    selectPipeline: function (pipeline) {}
   }
 }
 </script>

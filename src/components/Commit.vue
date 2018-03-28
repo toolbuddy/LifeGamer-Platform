@@ -15,7 +15,7 @@
             <div class="commit-item commit-button"></div>
           </div>
           <div class="commit-row" v-for="item in commits[this.curBranch]" :key="item.id">
-            <div class="commit-item commit-shortid"><a :href="dynamicURL(item.id)">{{ item.short_id }}</a></div>
+            <div class="commit-item commit-shortid"><a :href="commitURL(item.id)">{{ item.short_id }}</a></div>
             <div class="commit-item commit-title"> {{ item.title }} </div>
             <div class="commit-item commit-time">{{ item.committed_date }}</div>
             <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
@@ -186,7 +186,7 @@ export default {
     branchSelect: function (branch) {
       this.curBranch = branch
     },
-    dynamicURL: function (id) {
+    commitURL: function (id) {
       return `${config.hostname}/gitlab/${this.userdata.username}/${
         config.projectName
       }/commit/${id}`
