@@ -17,7 +17,7 @@ class gitlabAPI {
     return new Promise((resolve, reject) => {
       let url = `${
         config.hostname
-      }/gitlab/api/v4/users/${userID}/projects?search=${projectname}access_token=${token}`;
+      }/gitlab/api/v4/users/${userID}/projects?search=${projectname}&access_token=${token}`;
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = JSON.parse(body);
@@ -41,7 +41,7 @@ class gitlabAPI {
     return new Promise((resolve, reject) => {
       let url = `${
         config.hostname
-      }/gitlab/api/v4/projects/${projectID}/pipelines/${pipelineID}/jobs?&access_token=${token}`;
+      }/gitlab/api/v4/projects/${projectID}/pipelines/${pipelineID}/jobs?access_token=${token}`;
       request.get(url, (error, rsp, body) => {
         if (error) reject(error);
         let result = JSON.parse(body);
