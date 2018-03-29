@@ -17,7 +17,7 @@
             <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
             <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
             <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
-            <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline, defend)">Select</div>
+            <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline, 'both')">Select</div>
           </div>
         </div>
       </section>
@@ -180,14 +180,15 @@ export default {
       })
       pipeline['score'] = score
     },
-    selectPipeline: function (pipeline, type) {
+    selectPipeline: function (pipeline, filename) {
+      console.log(filename)
       /* send request to server, asking for getting artifact file */
       this.$http.get(
         `${config.hostname}/artifact?studentID=${
           this.userdata.username
         }&userID=${this.userdata.id}&token=${this.token}&jobID=${
           pipeline.artifact_id
-        }&filename=${type}`
+        }&filename=${filename}`
       )
       /* register if not register yet */
       if (this.stage === 'unregistered') {

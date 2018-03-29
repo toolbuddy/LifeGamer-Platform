@@ -50,15 +50,24 @@ class platformBattleField {
   getArtifact(studentID, projectID, jobID, token, filename) {
     return new Promise(resolve => {
       /* check folder exist or not */
-      fs.exists(`/tmp/${studentID}`, exists => {
-        if (!exists) shell.exec(`mkdir /tmp/${studentID}`);
+      fs.exists(`/tmp/battle_${studentID}`, exists => {
+        if (!exists) shell.exec(`mkdir /tmp/battle_${studentID}`);
       });
       /* wget artifact file */
-      shell.exec(
-        `wget '${
+      /* register, need defend and attack code */
+      if (filename === "both") {
+        let command = `wget '${
           config.hostname
-        }/gitlab/api/v4/projects/${projectID}/jobs/${jobID}/artifacts/player?access_token=${token}' -O ${filename} -P /tmp/${studentID}/`
-      );
+        }/gitlab/api/v4/projects/${projectID}/jobs/${jobID}/artifacts/player?access_token=${token}' -O /tmp/battle_${studentID}/defend && chmod 777 /tmp/battle_${studentID}/defend && cp /tmp/battle_${studentID}/defend /tmp/battle_${studentID}/attack`;
+        console.log(command);
+        shell.exec(command);
+      } else {
+        let command = `wget '${
+          config.hostname
+        }/gitlab/api/v4/projects/${projectID}/jobs/${jobID}/artifacts/player?access_token=${token}' -O /tmp/battle_${studentID}/${filename} && chmod 777 /tmp/battle_${studentID}/${filename}`;
+        console.log(command);
+        shell.exec(command);
+      }
       resolve("true");
     });
   }
