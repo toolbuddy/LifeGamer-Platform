@@ -1,35 +1,37 @@
 <!-- HTML part -->
 <template>
     <div class="battleField-wrapper">
+      <section v-if='this.stage === "registered" && this.loaded === true'>
+        <ul class="mode-select">
+          <li id="defend" class="mode select" @click="selectMode('defend')">Defend select</li>
+          <li id="attack" class="mode" @click="selectMode('attack')">Attack select</li>
+          <li class="mode" @click="selectMode('battle')">Battle</li>
+        </ul>
+      </section>
+      <section v-if='this.stage === "battle"'>
+
+      </section>
       <section v-if='this.stage === "unregistered" && this.loaded === true'>
         <article>
           <h2>You have not registered yet, please select one pipeline to register</h2>
           <p>The pipeline you select will become your defend and attack code, but you can change them after you register.</p>
         </article>
-        <div class="pipelines-row pipelines-header-row">
+      </section>
+      <section v-if='this.stage === "registered" || this.stage === "unregistered"'>
+        <div v-if='this.loaded === true' class="pipelines-row pipelines-header-row">
           <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
           <div class="pipelines-item pipelines-time">Time</div>
           <div class="pipelines-item pipelines-score">Score</div>
           <div class="pipelines-item pipelines-button"></div>
         </div>
-        <div v-for="(pipeline,index) in pipelinejobs" :key="index">
+        <div v-for="(pipeline,index) in pipelinejobs" :key="index" v-if="pipeline.score >= 25">
           <div class="pipelines-row">
             <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
             <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
             <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
-            <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline, 'both')">Select</div>
+            <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline)">Select</div>
           </div>
         </div>
-      </section>
-      <section v-if='this.stage === "registered" && this.loaded === true'>
-        <ul class="mode-select">
-          <li class="mode">Attack select</li>
-          <li class="mode">Defend select</li>
-          <li class="mode">Battle</li>
-        </ul>
-      </section>
-      <section v-if='this.stage === "battle"'>
-
       </section>
     </div>
 </template>
@@ -47,6 +49,7 @@ export default {
       pipelinejobs: null,
       commitTable: null,
       stage: null,
+      select: 'defend',
       loaded: false
     }
   },
@@ -65,6 +68,17 @@ export default {
         this.getPipelineJobs()
         this.getCommitTable()
       })
+  },
+  watch: {
+    select: function () {
+      /* if select battle, change stage */
+      if (this.select === 'battle') this.stage = 'battle'
+      /* remove class 'select' from all mode select item */
+      Array.from(document.querySelectorAll('li.mode')).forEach(item => {
+        item.classList.remove('select')
+      })
+      document.querySelector(`li#${this.select}`).classList.add('select')
+    }
   },
   methods: {
     /* get user register or not */
@@ -180,20 +194,30 @@ export default {
       })
       pipeline['score'] = score
     },
-    selectPipeline: function (pipeline, filename) {
+    selectPipeline: function (pipeline) {
+      let filename = null
+      if (this.stage === 'unregistered') filename = 'both'
+      else filename = this.select
       console.log(filename)
       /* send request to server, asking for getting artifact file */
-      this.$http.get(
-        `${config.hostname}/artifact?studentID=${
-          this.userdata.username
-        }&userID=${this.userdata.id}&token=${this.token}&jobID=${
-          pipeline.artifact_id
-        }&filename=${filename}`
-      )
+      this.$http
+        .get(
+          `${config.hostname}/artifact?studentID=${
+            this.userdata.username
+          }&userID=${this.userdata.id}&token=${this.token}&jobID=${
+            pipeline.artifact_id
+          }&filename=${filename}`
+        )
+        .then(response => {
+          alert(`select ${response.body}`)
+        })
       /* register if not register yet */
       if (this.stage === 'unregistered') {
         this.userRegister()
       }
+    },
+    selectMode: function (mode) {
+      this.select = mode
     }
   }
 }
@@ -231,6 +255,11 @@ export default {
   background-color: #666;
   color: #fff;
   cursor: pointer;
+}
+
+.select {
+  background-color: #666;
+  color: #fff;
 }
 
 .pipelines-row {

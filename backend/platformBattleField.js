@@ -20,6 +20,7 @@ class platformBattleField {
       res.end(JSON.stringify(success));
     });
     app.get("/artifact", async (req, res) => {
+      res.set("Content-Type", "application/json");
       let studentID = req.query.studentID;
       let userID = req.query.userID;
       let token = req.query.token;
@@ -30,8 +31,14 @@ class platformBattleField {
       );
       let jobID = req.query.jobID;
       let filename = req.query.filename;
-      this.getArtifact(studentID, projectID, jobID, token, filename);
-      res.end();
+      let result = await this.getArtifact(
+        studentID,
+        projectID,
+        jobID,
+        token,
+        filename
+      );
+      res.end(JSON.stringify(result));
     });
   }
   getRegister(studentID) {
@@ -60,15 +67,19 @@ class platformBattleField {
           config.hostname
         }/gitlab/api/v4/projects/${projectID}/jobs/${jobID}/artifacts/player?access_token=${token}' -O /tmp/battle_${studentID}/defend && chmod 777 /tmp/battle_${studentID}/defend && cp /tmp/battle_${studentID}/defend /tmp/battle_${studentID}/attack`;
         console.log(command);
-        shell.exec(command);
+        if (shell.exec(command).code !== 0) {
+          reject("failed");
+        }
       } else {
         let command = `wget '${
           config.hostname
         }/gitlab/api/v4/projects/${projectID}/jobs/${jobID}/artifacts/player?access_token=${token}' -O /tmp/battle_${studentID}/${filename} && chmod 777 /tmp/battle_${studentID}/${filename}`;
         console.log(command);
-        shell.exec(command);
+        if (shell.exec(command).code !== 0) {
+          reject("failed");
+        }
       }
-      resolve("true");
+      resolve("success");
     });
   }
 }
