@@ -131,6 +131,37 @@ class DBModule {
       });
     });
   }
+  /* get all list except user who want to search */
+  getBattleList(studentID) {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * from user_register where status = 'registered' ORDER BY elo DESC`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        resolve(result);
+      });
+    });
+  }
+  setUserBattleELO(studentID, elo) {
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE user_register SET elo = ${elo} where studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        console.log(result.affectedRows + " record(s) updated");
+        resolve("true");
+      });
+    });
+  }
+  /* user Attack, set user inAttack to true */
+  userAttacktoggle(studentID, mode) {
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE user_register SET inAttack = '${mode}' where studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        console.log(result.affectedRows + " record(s) updated");
+        resolve("true");
+      });
+    });
+  }
 }
 
 module.exports = {

@@ -5,11 +5,20 @@
         <ul class="mode-select">
           <li id="defend" class="mode select" @click="selectMode('defend')">Defend select</li>
           <li id="attack" class="mode" @click="selectMode('attack')">Attack select</li>
-          <li class="mode" @click="selectMode('battle')">Battle</li>
+          <li id="battle" class="mode" @click="selectMode('battle')">Battle</li>
         </ul>
       </section>
-      <section v-if='this.stage === "battle"'>
-
+      <section v-if='this.select === "battle" && this.battleList !== null'>
+        <div class="battle-list-row battle-list-header-row">
+          <div class="battle-list-item battle-list-player">Player</div>
+          <div class="battle-list-item battle-list-elo">ELO</div>
+          <div class="battle-list-item battle-list-button"></div>
+        </div>
+        <div class="battle-list-row" v-for="(item, index) in battleList" :key="index">
+          <div class="battle-list-item battle-list-player">{{ item.studentID }}</div>
+          <div class="battle-list-item battle-list-elo"> {{ item.elo }} </div>
+          <div class="battle-list-item battle-list-button click-button" v-if='item.studentID !== userdata.username'>Battle</div>
+        </div>
       </section>
       <section v-if='this.stage === "unregistered" && this.loaded === true'>
         <article>
@@ -18,20 +27,22 @@
         </article>
       </section>
       <section v-if='this.stage === "registered" || this.stage === "unregistered"'>
-        <div v-if='this.loaded === true' class="pipelines-row pipelines-header-row">
-          <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
-          <div class="pipelines-item pipelines-time">Time</div>
-          <div class="pipelines-item pipelines-score">Score</div>
-          <div class="pipelines-item pipelines-button"></div>
-        </div>
-        <div v-for="(pipeline,index) in pipelinejobs" :key="index" v-if="pipeline.score >= 25">
-          <div class="pipelines-row">
-            <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
-            <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
-            <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
-            <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline)">Select</div>
+        <section v-if='this.select !== "battle"'>
+          <div v-if='this.loaded === true' class="pipelines-row pipelines-header-row">
+            <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
+            <div class="pipelines-item pipelines-time">Time</div>
+            <div class="pipelines-item pipelines-score">Score</div>
+            <div class="pipelines-item pipelines-button"></div>
           </div>
-        </div>
+          <div v-for="(pipeline,index) in pipelinejobs" :key="index" v-if="pipeline.score >= 25">
+            <div class="pipelines-row">
+              <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
+              <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
+              <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
+              <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline)">Select</div>
+            </div>
+          </div>
+        </section>
       </section>
     </div>
 </template>
@@ -50,7 +61,8 @@ export default {
       commitTable: null,
       stage: null,
       select: 'defend',
-      loaded: false
+      loaded: false,
+      battleList: null
     }
   },
   created: function () {
@@ -71,8 +83,6 @@ export default {
   },
   watch: {
     select: function () {
-      /* if select battle, change stage */
-      if (this.select === 'battle') this.stage = 'battle'
       /* remove class 'select' from all mode select item */
       Array.from(document.querySelectorAll('li.mode')).forEach(item => {
         item.classList.remove('select')
@@ -128,7 +138,6 @@ export default {
             this.getScore(pipeline)
           })
           this.loaded = true
-          console.log(this.pipelinejobs)
         })
     },
     setPipelineParam: function () {
@@ -218,6 +227,14 @@ export default {
     },
     selectMode: function (mode) {
       this.select = mode
+      if (mode === 'battle') this.getBattleList()
+    },
+    /* get battle enemy list */
+    getBattleList: function () {
+      this.$http.get(`${config.hostname}/battle_list`).then(response => {
+        this.battleList = response.body
+        console.log(this.battleList)
+      })
     }
   }
 }
@@ -262,7 +279,8 @@ export default {
   color: #fff;
 }
 
-.pipelines-row {
+.pipelines-row,
+.battle-list-row {
   width: 100%;
   height: 70px;
   font-size: 14px;
@@ -275,31 +293,31 @@ export default {
   background-color: #f9f9f9;
 }
 
-.pipelines-header-row {
+.pipelines-header-row,
+.battle-list-header-row {
   background-color: steelblue;
   color: #fff;
   height: 35px;
 }
 
-.pipelines-item {
+.pipelines-item,
+.battle-list-item {
   float: left;
   margin: 0 3.4%;
   text-align: center;
 }
 
-.pipelines-time {
-  width: 25%;
-}
-
-.pipelines-commit-id {
-  width: 25%;
-}
-
-.pipelines-score {
-  width: 25%;
-}
-
+.pipelines-time,
+.pipelines-commit-id,
+.pipelines-score,
 .pipelines-button {
+  width: 25%;
+}
+
+.battle-list-rank,
+.battle-list-player,
+.battle-list-elo,
+.battle-list-button {
   width: 25%;
 }
 

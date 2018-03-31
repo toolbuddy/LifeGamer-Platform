@@ -6,12 +6,14 @@ const { DBModule } = require("./dbmodule");
 
 class platformBattleField {
   init(app) {
+    /* get user status: registered or unregistered */
     app.get("/register_status", async (req, res) => {
       res.set("Content-Type", "application/json");
       let studentID = req.query.studentID;
       let status = await this.getRegister(studentID);
       res.end(JSON.stringify(status));
     });
+    /* user register */
     app.get("/register", async (req, res) => {
       res.set("Content-Type", "application/json");
       let studentID = req.query.studentID;
@@ -19,6 +21,7 @@ class platformBattleField {
         (await this.setRegister(studentID)) === "true" ? "success" : "failed";
       res.end(JSON.stringify(success));
     });
+    /* select code for attack or defend */
     app.get("/artifact", async (req, res) => {
       res.set("Content-Type", "application/json");
       let studentID = req.query.studentID;
@@ -39,6 +42,12 @@ class platformBattleField {
         filename
       );
       res.end(JSON.stringify(result));
+    });
+    /* get battle list */
+    app.get("/battle_list", async (req, res) => {
+      res.set("Content-Type", "application/json");
+      let data = await this.getBattleList();
+      res.end(JSON.stringify(data));
     });
   }
   getRegister(studentID) {
@@ -80,6 +89,13 @@ class platformBattleField {
         }
       }
       resolve("success");
+    });
+  }
+  /* function getting all user data that have registered already */
+  getBattleList() {
+    return new Promise(async resolve => {
+      let data = await DBModule.getBattleList();
+      resolve(data);
     });
   }
 }
