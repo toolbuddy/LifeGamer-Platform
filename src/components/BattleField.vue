@@ -1,49 +1,75 @@
 <!-- HTML part -->
 <template>
     <div class="battleField-wrapper">
-      <section v-if='this.stage === "registered" && this.loaded === true'>
-        <ul class="mode-select">
-          <li id="defend" class="mode select" @click="selectMode('defend')">Defend select</li>
-          <li id="attack" class="mode" @click="selectMode('attack')">Attack select</li>
-          <li id="battle" class="mode" @click="selectMode('battle')">Battle</li>
-        </ul>
-      </section>
-      <section v-if='this.select === "battle" && this.battleList !== null'>
-        <div class="battle-list-row battle-list-header-row">
-          <div class="battle-list-item battle-list-player">Player</div>
-          <div class="battle-list-item battle-list-elo">ELO</div>
-          <div class="battle-list-item battle-list-button"></div>
-        </div>
-        <div class="battle-list-row" v-for="(item, index) in battleList" :key="index">
-          <div class="battle-list-item battle-list-player">{{ item.studentID }}</div>
-          <div class="battle-list-item battle-list-elo"> {{ item.elo }} </div>
-          <div class="battle-list-item battle-list-button click-button" v-if='item.studentID !== userdata.username'>Battle</div>
-        </div>
-      </section>
+      <!-- unregistered part, show message let user to register -->
+      <!-- begin -->
       <section v-if='this.stage === "unregistered" && this.loaded === true'>
         <article>
           <h2>You have not registered yet, please select one pipeline to register</h2>
           <p>The pipeline you select will become your defend and attack code, but you can change them after you register.</p>
         </article>
       </section>
+      <!-- end -->
+
+      <!-- registered part, show mode select button -->
+      <!-- begin -->
+      <section v-if='this.stage === "registered" && this.loaded === true'>
+        <ul class="mode-select">
+          <li id="defend" class="mode select" @click="selectMode('defend')">Defend select</li>
+          <li id="attack" class="mode" @click="selectMode('attack')">Attack select</li>
+          <li id="battle" class="mode" @click="selectMode('battle')">Battle</li>
+          <li id="replay" class="mode" @click="selectMode('replay')">Replay</li>
+        </ul>
+      </section>
+      <!-- end -->
+
+      <!-- attack/defend mode -->
+      <!-- begin -->
       <section v-if='this.stage === "registered" || this.stage === "unregistered"'>
-        <section v-if='this.select !== "battle"'>
+        <section v-if='this.select === "defend" || this.select === "attack"'>
           <div v-if='this.loaded === true' class="pipelines-row pipelines-header-row">
             <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
-            <div class="pipelines-item pipelines-time">Time</div>
-            <div class="pipelines-item pipelines-score">Score</div>
+            <div class="pipelines-item pipelines-title">Title</div>
             <div class="pipelines-item pipelines-button"></div>
           </div>
           <div v-for="(pipeline,index) in pipelinejobs" :key="index" v-if="pipeline.score >= 25">
             <div class="pipelines-row">
               <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
-              <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
-              <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
+              <div class="pipelines-item pipelines-title" v-html="pipeline.title"></div>
               <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline)">Select</div>
             </div>
           </div>
         </section>
       </section>
+      <!-- end -->
+
+      <!-- battle mode -->
+      <!-- begin -->
+      <section v-if='this.select === "battle" && this.battleList !== null'>
+        <section v-if='attackWho === "none" || attackWho === null'>
+          <div class="battle-list-row battle-list-header-row">
+            <div class="battle-list-item battle-list-player">Player</div>
+            <div class="battle-list-item battle-list-elo">ELO</div>
+            <div class="battle-list-item battle-list-button"></div>
+          </div>
+          <div class="battle-list-row" v-for="(item, index) in battleList" :key="index">
+            <div class="battle-list-item battle-list-player">{{ item.studentID }}</div>
+            <div class="battle-list-item battle-list-elo"> {{ item.elo }} </div>
+            <div class="battle-list-item battle-list-button click-button" v-if='item.studentID !== userdata.username' @click="batoru(item.studentID)">Battle</div>
+          </div>
+        </section>
+        <section v-else>
+          <iframe :src='`${this.hostname}:3001/game_start?p1=${this.userdata.username}&p2=${this.attackWho}`'></iframe>
+        </section>
+      </section>
+      <!-- end -->
+
+      <!-- battle mode -->
+      <!-- begin -->
+      <section v-if='this.select === "replay"'>
+        <iframe :src='`${this.hostname}:3001/replay_list`'></iframe>
+      </section>
+      <!-- end -->
     </div>
 </template>
 
@@ -56,12 +82,16 @@ export default {
   data: function () {
     return {
       token: null,
+      hostname: config.hostname,
       userdata: null,
       pipelinejobs: null,
       commitTable: null,
+      /* stage: registered or unregistered */
       stage: null,
+      /* select: defend, attack, battle, or replay */
       select: 'defend',
       loaded: false,
+      attackWho: null,
       battleList: null
     }
   },
@@ -143,8 +173,8 @@ export default {
     setPipelineParam: function () {
       return new Promise(resolve => {
         this.pipelinejobs.forEach(pipeline => {
-          /* set pipeline time */
-          pipeline['time'] = pipeline.jobs[0].created_at
+          /* set pipeline title */
+          pipeline['title'] = pipeline.jobs[0].commit.title
           /* set artifact job id */
           pipeline['artifact_id'] = pipeline.jobs[0].id
         })
@@ -166,25 +196,6 @@ export default {
         }
       })
       return commitSHA
-    },
-    formatDate: function (date) {
-      var hours = date.getHours()
-      var minutes = date.getMinutes()
-      var ampm = hours >= 12 ? 'pm' : 'am'
-      hours = hours % 12
-      hours = hours || 12 // the hour '0' should be '12'
-      minutes = minutes < 10 ? '0' + minutes : minutes
-      var strTime = hours + ':' + minutes + ' ' + ampm
-      return (
-        date.getMonth() +
-        1 +
-        '/' +
-        date.getDate() +
-        '/' +
-        date.getFullYear() +
-        '  ' +
-        strTime
-      )
     },
     getScore: function (pipeline) {
       /* check pipeline status */
@@ -233,8 +244,22 @@ export default {
     getBattleList: function () {
       this.$http.get(`${config.hostname}/battle_list`).then(response => {
         this.battleList = response.body
-        console.log(this.battleList)
+        this.battleList.forEach(user => {
+          if (user.studentID === this.userdata.username) {
+            this.attackWho = user.attackWho
+          }
+        })
       })
+    },
+    /* let's battle battle oh, battle battle oh, battle battle oh nice */
+    batoru: function (enemy) {
+      /* send request to server, asking for battle */
+      this.$http.get(
+        `${config.hostname}/battle?userAttack=${
+          this.userdata.username
+        }&userDefend=${enemy}`
+      )
+      this.attackWho = enemy
     }
   }
 }
@@ -254,14 +279,14 @@ export default {
   padding: 0;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .mode {
   text-align: center;
   float: left;
-  margin: 15px;
-  min-width: 120px;
-  width: 30%;
+  margin: 5px;
+  width: 250px;
   border-radius: 8px;
   border: 1px solid #666;
   padding: 5px 0;
@@ -307,11 +332,10 @@ export default {
   text-align: center;
 }
 
-.pipelines-time,
+.pipelines-title,
 .pipelines-commit-id,
-.pipelines-score,
 .pipelines-button {
-  width: 25%;
+  width: calc(100% /3);
 }
 
 .battle-list-rank,
@@ -336,5 +360,21 @@ export default {
   background-color: #009688;
   cursor: pointer;
   color: #fff;
+}
+
+iframe {
+  border: 0;
+  width: 100%;
+  height: 500px;
+}
+
+iframe::-webkit-scrollbar {
+  width: 6px;
+  background-color: steelblue;
+}
+
+iframe::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
 }
 </style>

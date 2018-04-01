@@ -141,7 +141,16 @@ class DBModule {
       });
     });
   }
-  setUserBattleELO(studentID, elo) {
+  getUserELO(studentID) {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * from user_register where studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        resolve(result[0].elo);
+      });
+    });
+  }
+  setUserELO(studentID, elo) {
     return new Promise((resolve, reject) => {
       let sql = `UPDATE user_register SET elo = ${elo} where studentID = '${studentID}'`;
       this.con.query(sql, (error, result) => {
@@ -152,9 +161,9 @@ class DBModule {
     });
   }
   /* user Attack, set user inAttack to true */
-  userAttacktoggle(studentID, mode) {
+  userAttacktoggle(studentID, enemy) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE user_register SET inAttack = '${mode}' where studentID = '${studentID}'`;
+      let sql = `UPDATE user_register SET attackWho = '${enemy}' where studentID = '${studentID}'`;
       this.con.query(sql, (error, result) => {
         if (error) reject(error);
         console.log(result.affectedRows + " record(s) updated");

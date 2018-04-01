@@ -49,6 +49,13 @@ class platformBattleField {
       let data = await this.getBattleList();
       res.end(JSON.stringify(data));
     });
+    /* batoru (duel. boku no tann, doro) */
+    app.get("/battle", async (req, res) => {
+      let userAttack = req.query.userAttack;
+      let userDefend = req.query.userDefend;
+      await this.battle(userAttack, userDefend);
+      res.end();
+    });
   }
   getRegister(studentID) {
     return new Promise(async resolve => {
@@ -96,6 +103,18 @@ class platformBattleField {
     return new Promise(async resolve => {
       let data = await DBModule.getBattleList();
       resolve(data);
+    });
+  }
+  /* ask server to call program battling */
+  battle(userAttack, userDefend) {
+    return new Promise(async (resolve, reject) => {
+      let command = `CR_server -1 ${userAttack} -2 ${userDefend} /tmp/battle_${userAttack}/attack /tmp/battle_${userDefend}/defend`;
+      if (shell.exec(command).code !== 0) {
+        shell.echo("CR_server: CR_server done");
+      }
+      /* set data inAttack to 'true' of user who attack */
+      await DBModule.userAttacktoggle(userAttack, userDefend);
+      resolve("success");
     });
   }
 }
