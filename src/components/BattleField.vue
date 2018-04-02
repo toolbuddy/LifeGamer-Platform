@@ -237,10 +237,12 @@ export default {
         .then(response => {
           alert(`select ${response.body}`)
         })
-      /* register if not register yet */
-      if (this.stage === 'unregistered') {
-        this.userRegister()
-      }
+        .then(() => {
+          /* register if not register yet */
+          if (this.stage === 'unregistered') {
+            this.userRegister()
+          }
+        })
     },
     selectMode: function (mode) {
       this.select = mode
@@ -248,10 +250,8 @@ export default {
     },
     /* get battle enemy list */
     getBattleList: function () {
-      if (this.battleList === null) this.loaded = false
       this.$http.get(`${config.hostname}/battle_list`).then(response => {
         this.battleList = response.body
-        this.loaded = true
         this.battleList.forEach(user => {
           if (user.studentID === this.userdata.username) {
             this.attackWho = user.attackWho

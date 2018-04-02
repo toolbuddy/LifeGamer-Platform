@@ -24,28 +24,18 @@ class websocket {
     app.post("/game", (req, res) => {
       let level = req.body.level;
       let token = req.body.token;
-      let data = JSON.parse(req.body.data);
-      console.log(level);
-      console.log(data);
+      let data = req.body.data;
+      let p1 = req.body.p1;
+      let p2 = req.body.p2;
+      let result = req.body.result;
+      console.log(p1);
+      console.log(p2);
+      console.log(result);
       if (level === "battle") {
         /* for battle field */
-        let attack_user =
-          data[0]; /* set attack user's data: attackWho to 'none' */
-        let winner = null;
-        let loser = null;
-        switch (data[2]) {
-          case 1 /* p1 win */:
-            winner = data[0];
-            loser = data[1];
-          case 2 /* p2 win */:
-            winner = data[1];
-            loser = data[0];
-          case 3 /* draw */:
-            winner = loser = "draw";
-        }
-        this.ELOcalculate(winner, loser);
+        this.ELOcalculate(p1, p2, result);
         /* set attack user attackWho to none */
-        DBModule.userAttacktoggle(attack_user, "none");
+        DBModule.userAttacktoggle(p1, "none");
       } else {
         /* for judge */
         this.sendData(token, `level ${level}`, data);
@@ -98,27 +88,36 @@ class websocket {
     }
   }
   /* calculate ELO */
-  async ELOcalculate(winner, loser) {
-    let winnerELO = await DBModule.getUserELO(winner);
-    let loserELO = await DBModule.getUserELO(loser);
+  async ELOcalculate(p1, p2, result) {
+    let p1_ELO = await DBModule.getUserELO(p1);
+    let p2_ELO = await DBModule.getUserELO(p2);
     /* expected score */
-    let expectWinner = 1 / (1 + 10 ** ((loserELO - winnerELO) / 400));
-    let expectLoser = 1 / (1 + 10 ** ((winnerELO - loserELO) / 400));
+    let expect_p1 = 1 / (1 + 10 ** ((p2_ELO - p1_ELO) / 400));
+    let expect_p2 = 1 / (1 + 10 ** ((p1_ELO - p2_ELO) / 400));
     /* new score */
     let K = 32;
     /* draw situation */
-    let S_A = (S_B = null);
-    if ((winner === loser) === "draw") {
-      S_A = S_B = 0.5;
-    } else {
-      S_A = 1;
-      S_B = 0;
+    let S_A = null;
+    let S_B = null;
+    switch (result) {
+      case 1:
+        S_A = 1;
+        S_B = 0;
+        break;
+      case 2:
+        S_A = 0;
+        S_B = 1;
+        break;
+      case 3:
+        S_A = 0.5;
+        S_B = 0.5;
+        break;
     }
-    let WinnerNewELO = Math.floor(winnerELO + K * (S_A - expectWinner));
-    let LoserNewELO = Math.floor(loserELO + K * (S_B - expectLoser));
+    let p1_NewELO = Math.floor(p1_ELO + K * (S_A - expect_p1));
+    let p2_NewELO = Math.floor(p2_ELO + K * (S_B - expect_p2));
     /* save ELO */
-    await DBModule.setUserELO(winner, WinnerNewELO);
-    await DBModule.setUserELO(loser, LoserNewELO);
+    await DBModule.setUserELO(p1, p1_NewELO);
+    await DBModule.setUserELO(p2, p2_NewELO);
   }
 }
 module.exports = {

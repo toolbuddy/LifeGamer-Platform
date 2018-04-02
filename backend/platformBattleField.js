@@ -1,5 +1,6 @@
 const shell = require("shelljs");
 const fs = require("fs");
+const childprocess = require("child_process");
 const config = require("../config/config");
 const { gitlabAPI } = require("./gitlabAPI");
 const { DBModule } = require("./dbmodule");
@@ -108,10 +109,18 @@ class platformBattleField {
   /* ask server to call program battling */
   battle(userAttack, userDefend) {
     return new Promise(async (resolve, reject) => {
-      let command = `CR_battle -1 ${userAttack} -2 ${userDefend} /tmp/battle_${userAttack}/attack /tmp/battle_${userDefend}/defend &`;
-      shell.exec(command);
-      /* set data inAttack to 'true' of user who attack */
+      /* set data attackWho of user who attack */
       await DBModule.userAttacktoggle(userAttack, userDefend);
+      /* create child process */
+      childprocess.exec(
+        `CR_battle -1 ${userAttack} -2 ${userDefend} /tmp/battle_${userAttack}/attack /tmp/battle_${userDefend}/defend`,
+        (err, stdout, stderr) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+        }
+      );
       resolve("success");
     });
   }
