@@ -24,7 +24,9 @@ class websocket {
     app.post("/game", (req, res) => {
       let level = req.body.level;
       let token = req.body.token;
-      let data = req.body.data;
+      let data = JSON.parse(req.body.data);
+      console.log(level);
+      console.log(data);
       if (level === "battle") {
         /* for battle field */
         let attack_user =

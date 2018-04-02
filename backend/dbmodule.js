@@ -143,10 +143,10 @@ class DBModule {
   }
   getUserELO(studentID) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * from user_register where studentID = '${studentID}'`;
+      let sql = `SELECT elo from user_register where studentID = '${studentID}'`;
       this.con.query(sql, (error, result) => {
         if (error) reject(error);
-        resolve(result[0].elo);
+        resolve(result[0]);
       });
     });
   }
@@ -164,6 +164,7 @@ class DBModule {
   userAttacktoggle(studentID, enemy) {
     return new Promise((resolve, reject) => {
       let sql = `UPDATE user_register SET attackWho = '${enemy}' where studentID = '${studentID}'`;
+      console.log(sql);
       this.con.query(sql, (error, result) => {
         if (error) reject(error);
         console.log(result.affectedRows + " record(s) updated");

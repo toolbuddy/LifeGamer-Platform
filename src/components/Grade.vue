@@ -33,6 +33,11 @@
           <!-- end -->
         </div>
       </div>
+      <!-- waiting data -->
+      <div class="waiting-page" v-else>
+        <div class="waiting-box"></div>
+        <div>please wait...</div>
+      </div>
     </section>
 </template>
 
@@ -349,5 +354,35 @@ export default {
 
 .jobStyle {
   padding-left: 50px;
+}
+
+/* for waiting content */
+.waiting-page {
+  display: flex;
+  width: 100%;
+  height: 450px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.waiting-page > div {
+  margin: 15px;
+}
+
+.waiting-box {
+  width: 80px;
+  height: 80px;
+  background-color: red;
+  animation: 1s animate-inifite infinite;
+}
+
+@keyframes animate-inifite {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

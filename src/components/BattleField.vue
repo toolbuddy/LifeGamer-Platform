@@ -3,7 +3,7 @@
     <div class="battleField-wrapper">
       <!-- unregistered part, show message let user to register -->
       <!-- begin -->
-      <section v-if='this.stage === "unregistered" && this.loaded === true'>
+      <section v-if='this.stage === "unregistered" && this.loaded'>
         <article>
           <h2>You have not registered yet, please select one pipeline to register</h2>
           <p>The pipeline you select will become your defend and attack code, but you can change them after you register.</p>
@@ -13,7 +13,7 @@
 
       <!-- registered part, show mode select button -->
       <!-- begin -->
-      <section v-if='this.stage === "registered" && this.loaded === true'>
+      <section v-if='this.stage === "registered" && this.loaded'>
         <ul class="mode-select">
           <li id="defend" class="mode select" @click="selectMode('defend')">Defend select</li>
           <li id="attack" class="mode" @click="selectMode('attack')">Attack select</li>
@@ -27,17 +27,23 @@
       <!-- begin -->
       <section v-if='this.stage === "registered" || this.stage === "unregistered"'>
         <section v-if='this.select === "defend" || this.select === "attack"'>
-          <div v-if='this.loaded === true' class="pipelines-row pipelines-header-row">
-            <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
-            <div class="pipelines-item pipelines-title">Title</div>
-            <div class="pipelines-item pipelines-button"></div>
-          </div>
-          <div v-for="(pipeline,index) in pipelinejobs" :key="index" v-if="pipeline.score >= 25">
-            <div class="pipelines-row">
-              <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
-              <div class="pipelines-item pipelines-title" v-html="pipeline.title"></div>
-              <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline)">Select</div>
+          <div v-if='this.loaded'>
+            <div class="pipelines-row pipelines-header-row">
+              <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
+              <div class="pipelines-item pipelines-title">Title</div>
+              <div class="pipelines-item pipelines-button"></div>
             </div>
+            <div v-for="(pipeline,index) in pipelinejobs" :key="index" v-if="pipeline.score >= 25">
+              <div class="pipelines-row">
+                <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
+                <div class="pipelines-item pipelines-title" v-html="pipeline.title"></div>
+                <div class="pipelines-item pipelines-button click-button" @click="selectPipeline(pipeline)">Select</div>
+              </div>
+            </div>
+          </div>
+          <div class="waiting-page" v-else>
+            <div class="waiting-box"></div>
+            <div>please wait...</div>
           </div>
         </section>
       </section>
@@ -242,8 +248,10 @@ export default {
     },
     /* get battle enemy list */
     getBattleList: function () {
+      if (this.battleList === null) this.loaded = false
       this.$http.get(`${config.hostname}/battle_list`).then(response => {
         this.battleList = response.body
+        this.loaded = true
         this.battleList.forEach(user => {
           if (user.studentID === this.userdata.username) {
             this.attackWho = user.attackWho
@@ -368,13 +376,33 @@ iframe {
   height: 500px;
 }
 
-iframe::-webkit-scrollbar {
-  width: 6px;
-  background-color: steelblue;
+/* for waiting content */
+.waiting-page {
+  display: flex;
+  width: 100%;
+  height: 450px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-iframe::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #f5f5f5;
+.waiting-page > div {
+  margin: 15px;
+}
+
+.waiting-box {
+  width: 80px;
+  height: 80px;
+  background-color: red;
+  animation: 1s animate-inifite infinite;
+}
+
+@keyframes animate-inifite {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

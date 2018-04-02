@@ -1,33 +1,37 @@
 <!-- HTML part -->
 <template>
     <section class="section-wrapper">
+      <div class="waiting-page" v-if='this.stage === "waiting"'>
+        <div class="waiting-box"></div>
+        <div>please wait...</div>
+      </div>
       <div v-if='this.stage === "commitSelect"'>
         <div class="branch-selector">
-            <div class="current-branch"> {{ this.curBranch }} </div>
+          <div class="current-branch"> {{ this.curBranch }} </div>
             <ul class="branch-select">
-                  <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(item)"> {{ item }} </li>
+              <li class="select-item" v-for="(item, index) in branch" :key="index" @click="branchSelect(item)"> {{ item }} </li>
               </ul>
           </div>
-          <div class="commit-row commit-header-row">
-            <div class="commit-item commit-shortid">Short ID</div>
-            <div class="commit-item commit-title">Title</div>
-            <div class="commit-item commit-time">Commit Time</div>
-            <div class="commit-item commit-button"></div>
-          </div>
-          <div class="commit-row" v-for="item in commits[this.curBranch]" :key="item.id">
-            <div class="commit-item commit-shortid"><a :href="commitURL(item.id)">{{ item.short_id }}</a></div>
-            <div class="commit-item commit-title"> {{ item.title }} </div>
-            <div class="commit-item commit-time">{{ item.committed_date }}</div>
-            <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
-          </div>
+        <div class="commit-row commit-header-row">
+          <div class="commit-item commit-shortid">Short ID</div>
+          <div class="commit-item commit-title">Title</div>
+          <div class="commit-item commit-time">Commit Time</div>
+          <div class="commit-item commit-button"></div>
         </div>
-        <div class="gameRendering" v-if='this.stage === "commitSelected"'>
-          <div><h4>Level 1:</h4><pre id="level-1" class="gameProcess">pending.....</pre></div>
-          <div><h4>Level 2:</h4><pre id="level-2" class="gameProcess">pending.....</pre></div>
-          <div><h4>Level 3:</h4><pre id="level-3" class="gameProcess">pending.....</pre></div>
-          <div><h4>Level 4:</h4><pre id="level-4" class="gameProcess">pending.....</pre></div>
+        <div class="commit-row" v-for="item in commits[this.curBranch]" :key="item.id">
+          <div class="commit-item commit-shortid"><a :href="commitURL(item.id)">{{ item.short_id }}</a></div>
+          <div class="commit-item commit-title"> {{ item.title }} </div>
+          <div class="commit-item commit-time">{{ item.committed_date }}</div>
+          <div class="commit-item commit-button click-button" @click="commitChoose(item.short_id)">select</div>
         </div>
-      </section>
+      </div>
+      <div class="gameRendering" v-if='this.stage === "commitSelected"'>
+        <div><h4>Level 1:</h4><pre id="level-1" class="gameProcess">pending.....</pre></div>
+        <div><h4>Level 2:</h4><pre id="level-2" class="gameProcess">pending.....</pre></div>
+        <div><h4>Level 3:</h4><pre id="level-3" class="gameProcess">pending.....</pre></div>
+        <div><h4>Level 4:</h4><pre id="level-4" class="gameProcess">pending.....</pre></div>
+      </div>
+    </section>
 </template>
 
 <!-- js part -->
@@ -89,6 +93,7 @@ export default {
       branch: null,
       curBranch: null,
       commits: null,
+      loaded: false,
       serverStatus: 'on',
       is_admin: true,
       socket: null,
@@ -139,6 +144,7 @@ export default {
           this.commits = JSON.parse(response.bodyText)
           this.branch = Object.keys(this.commits)
           this.stage = 'commitSelect'
+          this.loaded = true
           this.curBranch = this.branch[0]
         })
         .then(() => {
@@ -331,5 +337,35 @@ export default {
   height: 450px;
   color: #fff;
   margin: 0;
+}
+
+/* for waiting content */
+.waiting-page {
+  display: flex;
+  width: 100%;
+  height: 450px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.waiting-page > div {
+  margin: 15px;
+}
+
+.waiting-box {
+  width: 80px;
+  height: 80px;
+  background-color: red;
+  animation: 1s animate-inifite infinite;
+}
+
+@keyframes animate-inifite {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
