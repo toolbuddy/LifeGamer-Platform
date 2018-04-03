@@ -41,7 +41,7 @@ class DBModule {
         if (error) {
           reject("false");
         }
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("board updated");
         resolve("true");
       });
     });
@@ -60,7 +60,7 @@ class DBModule {
       let sql = `UPDATE users SET score = '${score}' WHERE id = '${studentID}'`;
       this.con.query(sql, (error, result) => {
         if (error) reject("false");
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("user score updated");
         resolve("true");
       });
     });
@@ -79,7 +79,7 @@ class DBModule {
       let sql = `INSERT into history(name, id, datetime, score) VALUES ('${name}','${studentID}','${datetime}',${score})`;
       this.con.query(sql, (error, result) => {
         if (error) reject("false");
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("user history updated");
         resolve("true");
       });
     });
@@ -109,6 +109,66 @@ class DBModule {
       this.con.query(sql, (error, result) => {
         if (error) reject(error);
         resolve(result[0].status);
+      });
+    });
+  }
+  getUserRegisterStatus(studentID) {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * from user_register WHERE studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        resolve(result[0].status);
+      });
+    });
+  }
+  setUserRegisterStatus(studentID) {
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE user_register SET status = 'registered' WHERE studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject("false");
+        console.log("user status updated");
+        resolve("true");
+      });
+    });
+  }
+  /* get all list except user who want to search */
+  getBattleList(studentID) {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * from user_register where status = 'registered' ORDER BY elo DESC`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        resolve(result);
+      });
+    });
+  }
+  getUserELO(studentID) {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * from user_register where studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        resolve(result[0].elo);
+      });
+    });
+  }
+  setUserELO(studentID, elo) {
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE user_register SET elo = ${elo} where studentID = '${studentID}'`;
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        console.log("user elo updated");
+        resolve("true");
+      });
+    });
+  }
+  /* user Attack, set user inAttack to true */
+  userAttacktoggle(studentID, enemy) {
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE user_register SET attackWho = '${enemy}' where studentID = '${studentID}'`;
+      console.log(sql);
+      this.con.query(sql, (error, result) => {
+        if (error) reject(error);
+        console.log("user attack updated");
+        resolve("true");
       });
     });
   }

@@ -7,6 +7,7 @@ const { platformMarkdown } = require("./backend/platformMarkdown");
 const { platformCommit } = require("./backend/platformCommit");
 const { platformStatus } = require("./backend/platformStatus");
 const { platformPipelines } = require("./backend/platformPipelines");
+const { platformBattleField } = require("./backend/platformBattleField");
 const { websocket } = require("./backend/websocket");
 
 var port = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ platformMarkdown.init(app);
 platformCommit.init(app);
 platformPipelines.init(app);
 platformStatus.init(app);
+platformBattleField.init(app);
 websocket.WebSocketInit(socketIO);
 websocket.appInit(app);
 
