@@ -109,18 +109,23 @@ class platformBattleField {
   /* ask server to call program battling */
   battle(userAttack, userDefend) {
     return new Promise(async (resolve, reject) => {
+      /* check folder exist or not */
+      fs.exists(`/tmp/battleFile`, exists => {
+        if (!exists) shell.exec(`mkdir /tmp/battleFile`);
+      });
       /* set data attackWho of user who attack */
       await DBModule.userAttacktoggle(userAttack, userDefend);
+      /* copy program to another folder */
+      let date = new Date();
+      let datetime = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
       /* create child process */
-      childprocess.exec(
-        `CR_battle -1 ${userAttack} -2 ${userDefend} /tmp/battle_${userAttack}/attack /tmp/battle_${userDefend}/defend &> /dev/null`,
-        (err, stdout, stderr) => {
-          if (err) {
-            console.log(err);
-            return;
-          }
+      let command = `cp /tmp/battle_${userAttack}/attack /tmp/battleFile/${userAttack}_attack_${datetime} && cp /tmp/battle_${userDefend}/defend /tmp/battleFile/${userDefend}_defend_${datetime} && CR_battle -1 ${userAttack} -2 ${userDefend} /tmp/battleFile/${userAttack}_attack_${datetime} /tmp/battleFile/${userDefend}_defend_${datetime} &> /dev/null`;
+      childprocess.exec(command, (err, stdout, stderr) => {
+        if (err) {
+          console.log(err);
+          return;
         }
-      );
+      });
       resolve("success");
     });
   }
