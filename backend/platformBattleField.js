@@ -113,7 +113,7 @@ class platformBattleField {
       await DBModule.userAttacktoggle(userAttack, userDefend);
       /* create child process */
       childprocess.exec(
-        `CR_battle -1 ${userAttack} -2 ${userDefend} /tmp/battle_${userAttack}/attack /tmp/battle_${userDefend}/defend`,
+        `CR_battle -1 ${userAttack} -2 ${userDefend} /tmp/battle_${userAttack}/attack /tmp/battle_${userDefend}/defend &> /dev/null`,
         (err, stdout, stderr) => {
           if (err) {
             console.log(err);

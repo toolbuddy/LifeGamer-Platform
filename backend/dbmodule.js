@@ -41,7 +41,7 @@ class DBModule {
         if (error) {
           reject("false");
         }
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("board updated");
         resolve("true");
       });
     });
@@ -60,7 +60,7 @@ class DBModule {
       let sql = `UPDATE users SET score = '${score}' WHERE id = '${studentID}'`;
       this.con.query(sql, (error, result) => {
         if (error) reject("false");
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("user score updated");
         resolve("true");
       });
     });
@@ -79,7 +79,7 @@ class DBModule {
       let sql = `INSERT into history(name, id, datetime, score) VALUES ('${name}','${studentID}','${datetime}',${score})`;
       this.con.query(sql, (error, result) => {
         if (error) reject("false");
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("user history updated");
         resolve("true");
       });
     });
@@ -126,7 +126,7 @@ class DBModule {
       let sql = `UPDATE user_register SET status = 'registered' WHERE studentID = '${studentID}'`;
       this.con.query(sql, (error, result) => {
         if (error) reject("false");
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("user status updated");
         resolve("true");
       });
     });
@@ -143,10 +143,10 @@ class DBModule {
   }
   getUserELO(studentID) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT elo from user_register where studentID = '${studentID}'`;
+      let sql = `SELECT * from user_register where studentID = '${studentID}'`;
       this.con.query(sql, (error, result) => {
         if (error) reject(error);
-        resolve(result[0]);
+        resolve(result[0].elo);
       });
     });
   }
@@ -155,7 +155,7 @@ class DBModule {
       let sql = `UPDATE user_register SET elo = ${elo} where studentID = '${studentID}'`;
       this.con.query(sql, (error, result) => {
         if (error) reject(error);
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("user elo updated");
         resolve("true");
       });
     });
@@ -167,7 +167,7 @@ class DBModule {
       console.log(sql);
       this.con.query(sql, (error, result) => {
         if (error) reject(error);
-        console.log(result.affectedRows + " record(s) updated");
+        console.log("user attack updated");
         resolve("true");
       });
     });
