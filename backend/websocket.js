@@ -14,7 +14,7 @@ class websocket {
         console.log(data.Ttoken);
         /* write config data, let game engine read */
         await this.writeConfig(data.user, data.sha, data.Ttoken);
-        this.copyData(`/tmp/${data.user}`, "hmkrl", "hmkrl.com", "/tmp/");
+        // this.copyData(`/tmp/${data.user}`, "hmkrl", "hmkrl.com", "/tmp/");
         await this.newCommit(data);
       });
     });
