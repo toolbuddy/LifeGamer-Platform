@@ -67,7 +67,6 @@
 
 <script>
 const headerlist = [
-  { value: 'Demo Time', path: 'demotime' },
   { value: 'Battle Field', path: 'battle' },
   { value: 'Resources', path: 'resource' }
 ]

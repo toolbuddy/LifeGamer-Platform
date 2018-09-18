@@ -3,7 +3,6 @@ import Router from 'vue-router'
 
 /* import vue component */
 import Announce from '@/components/Announce'
-import DemoTime from '@/components/DemoTime'
 import BattleField from '@/components/BattleField'
 import Resource from '@/components/Resource'
 import Grade from '@/components/Grade'
@@ -17,11 +16,6 @@ export default new Router({
       path: '/',
       name: 'announce',
       component: Announce
-    },
-    {
-      path: '/demotime',
-      name: 'demotime',
-      component: DemoTime
     },
     {
       path: '/battle',
