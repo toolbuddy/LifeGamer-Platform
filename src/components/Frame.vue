@@ -71,7 +71,7 @@ const headerlist = [
   { value: 'Resources', path: 'resource' }
 ]
 
-const config = require('../../config/config')
+const config = require('../../config/config')[process.env.NODE_ENV]
 
 export default {
   name: 'Frame',

@@ -1,7 +1,7 @@
 const shell = require("shelljs");
 const fs = require("fs");
 const childprocess = require("child_process");
-const config = require("../config/config");
+const config = require("../config/config")[process.env.NODE_ENV];
 const { gitlabAPI } = require("./gitlabAPI");
 const { DBModule } = require("./dbmodule");
 

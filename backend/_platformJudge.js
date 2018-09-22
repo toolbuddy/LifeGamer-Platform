@@ -1,7 +1,5 @@
 import gitlabAPI from './_gitlabAPI';
 import databaseAPI from './databaseAPI';
-import { rejects } from 'assert';
-const config = require("../config/config");
 const fs = require("fs");
 
 /**
@@ -13,9 +11,10 @@ class platformJudge {
    * init the server request handler
    * 
    * @param {Object} router 
-   * @param {Connection} con - mysql connection 
+   * @param {Connection} con - mysql connection
+   * @param {Object} config - config file setting 
    */
-  init(router, con) {
+  init(router, con, config) {
     /** 
      * Request for getting branch list
      * 

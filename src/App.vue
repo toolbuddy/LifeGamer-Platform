@@ -23,7 +23,7 @@
 import Frame from './components/Frame'
 import Login from './components/Login'
 
-const config = require('../config/config')
+const config = require('../config/config')[process.env.NODE_ENV]
 
 export default {
   name: 'App',

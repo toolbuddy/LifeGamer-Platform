@@ -11,12 +11,14 @@
 
 <!-- javascript part -->
 <script>
-const config = require('../../config/config')
+const config = require('../../config/config')[process.env.NODE_ENV]
 
 export default {
   name: 'Login',
   methods: {
     login: function () {
+      console.log(process.env)
+      console.log(config)
       window.location.href = `${config.hostname}/auth`
     }
   }

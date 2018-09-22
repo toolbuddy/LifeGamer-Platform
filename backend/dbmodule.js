@@ -1,6 +1,6 @@
 const mysql = require("mysql");
 const request = require("request");
-const config = require("../config/config");
+const config = require("../config/config")[process.env.NODE_ENV];
 
 class DBModule {
   constructor() {

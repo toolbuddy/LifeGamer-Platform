@@ -1,6 +1,6 @@
 const fs = require("fs");
 const shell = require("shelljs");
-const config = require("../config/config");
+const config = require("../config/config")[process.env.NODE_ENV];
 const { gitlabAPI } = require("./gitlabAPI");
 const { DBModule } = require("./dbmodule");
 var socketsPool = {};
