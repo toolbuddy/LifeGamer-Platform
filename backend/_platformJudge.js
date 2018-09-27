@@ -4,11 +4,13 @@ const fs = require('fs')
 
 /**
  * @class
+ *
  * platformJudge: using for handling request about judge part from frontend.
  */
 class platformJudge {
   /**
    * init the server request handler
+   *
    * @param {Object} router - router
    * @param {Connection} con - mysql connection
    * @param {Object} config - config file setting
@@ -16,6 +18,7 @@ class platformJudge {
   init (router, con, config) {
     /**
      * Request for getting branch list
+     *
      * @name get/branchList
      * @param {number} req.query.userID - user ID
      * @param {string} req.query.token - gitlab access token
@@ -35,9 +38,9 @@ class platformJudge {
         res.status(500).end(error) // internal server error
       }
     })
-
     /**
      * Request for getting commit list
+     *
      * @name get/commitList
      * @param {number} req.query.userID - user ID
      * @param {string} req.query.branch - the branch wonna getting commit data
@@ -61,6 +64,7 @@ class platformJudge {
     })
     /**
      * Request for getting commit table
+     *
      * @name get/commitTable
      * @param {string} req.query.user - username
      * @inner
@@ -101,6 +105,7 @@ class platformJudge {
     })
     /**
      * Request for posting user's grade
+     *
      * @name post/grade
      * @param {string} req.body.user - username
      * @param {number} req.body.grade - the grade is going to be updated
@@ -121,6 +126,7 @@ class platformJudge {
     })
     /**
      * Request for getting pipelines and jobs of them
+     *
      * @name get/pipelinejobs
      * @param {number} req.query.userID - user ID
      * @param {string} req.query.token - gitlab access token
@@ -149,6 +155,7 @@ class platformJudge {
     })
     /**
      * Request for judging code
+     *
      * @param {number} req.query.userID - user ID
      * @param {string} req.query.username - username
      * @param {string} req.query.sha - commit sha
@@ -174,6 +181,7 @@ class platformJudge {
   }
   /**
     * The function writting config for posting pipeline
+    *
     * @function
     * @param {string} username - user name
     * @param {string} sha - commit sha
