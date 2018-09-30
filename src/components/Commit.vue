@@ -135,7 +135,7 @@ export default {
     getCommits: function () {
       this.$http
         .get(
-          `${config.hostname}/commits?userID=${this.userdata.id}&token=${
+          `${config.hostname}/commits?userID=${this.userdata.id}&branch=master&page=1&token=${
             this.token
           }`
         )

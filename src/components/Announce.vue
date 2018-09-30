@@ -61,9 +61,9 @@ export default {
   methods: {
     getWebContent: function () {
       this.$http
-        .get(`${config.hostname}/db_page?page=Announce`)
+        .get(`${config.hostname}/markdownContent?page=Announce`)
         .then(response => {
-          this.markdownString = response.bodyText
+          this.markdownString = JSON.parse(response.bodyText)
         })
     },
     checkAdmin: function () {
@@ -75,7 +75,7 @@ export default {
         })
     },
     sendWebContent: function () {
-      let url = `${config.hostname}/db_page`
+      let url = `${config.hostname}/markdownContent`
       let cookie = this.$cookies.get('token')
       var data = {
         page: 'Announce',

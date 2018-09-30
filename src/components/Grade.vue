@@ -72,7 +72,7 @@ export default {
         /* get score from db in server */
         this.$http
           .get(
-            `${config.hostname}/user_grade?studentID=${this.userdata.username}`
+            `${config.hostname}/grade?user=${this.userdata.username}`
           )
           .then(response => {
             this.dbScore = response.body
@@ -103,7 +103,7 @@ export default {
     getPipelineJobs: function () {
       this.$http
         .get(
-          `${config.hostname}/pipelinejobs?userID=${this.userdata.id}&token=${
+          `${config.hostname}/pipelinejobs?userID=${this.userdata.id}&page=1&token=${
             this.token
           }`
         )

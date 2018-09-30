@@ -52,7 +52,7 @@ export default {
     },
     getServerStatus: function () {
       if (this.hasCookie) {
-        this.$http.get(`${config.hostname}/db_serverStatus`).then(response => {
+        this.$http.get(`${config.hostname}/serverStatus`).then(response => {
           this.serverStatus = response.body
         })
       }

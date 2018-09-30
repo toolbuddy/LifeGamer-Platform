@@ -1,6 +1,7 @@
 const config = {
   development: {
     hostname: "https://pd2a.imslab.org",
+    gameDatabase: 'pd2royale',
     db_database: "lifegamer_platform",
     projectName: "2018-pd2-Project1",
     stageScore: {
@@ -17,6 +18,7 @@ const config = {
   },
   production: {  
     hostname: "https://pd2a.imslab.org",
+    gameDatabase: 'pd2royale',
     db_database: "lifegamer_platform",
     projectName: "2018-pd2-Project1",
     stageScore: {

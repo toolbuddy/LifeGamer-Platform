@@ -131,7 +131,7 @@ export default {
     getUserRegisterStatus: function () {
       this.$http
         .get(
-          `${config.hostname}/register_status?studentID=${
+          `${config.hostname}/userRegisterStatus?user=${
             this.userdata.username
           }`
         )
@@ -142,7 +142,7 @@ export default {
     /* user register */
     userRegister: function () {
       this.$http
-        .get(`${config.hostname}/register?studentID=${this.userdata.username}`)
+        .get(`${config.hostname}/register?user=${this.userdata.username}`)
         .then(response => {
           /* let user know register success or not */
           alert(`register ${response.body}`)
@@ -160,7 +160,7 @@ export default {
     getPipelineJobs: function () {
       this.$http
         .get(
-          `${config.hostname}/pipelinejobs?userID=${this.userdata.id}&token=${
+          `${config.hostname}/pipelinejobs?userID=${this.userdata.id}&page=1&token=${
             this.token
           }`
         )
@@ -180,9 +180,10 @@ export default {
       return new Promise(resolve => {
         this.pipelinejobs.forEach(pipeline => {
           /* set pipeline title */
-          pipeline['title'] = pipeline.jobs[0].commit.title
+          pipeline['title'] = pipeline[0].commit.title
           /* set artifact job id */
-          pipeline['artifact_id'] = pipeline.jobs[0].id
+          pipeline['artifact_id'] = pipeline[0].id
+          pipeline['id'] = pipeline[0].pipeline.id
         })
         resolve('true')
       })
@@ -206,14 +207,14 @@ export default {
     getScore: function (pipeline) {
       /* check pipeline status */
       if (
-        pipeline.jobs.pipelineStatus === 'running' ||
-        pipeline.jobs.pipelineStatus === 'pending'
+        pipeline[0].pipelineStatus === 'running' ||
+        pipeline[0].pipelineStatus === 'pending'
       ) {
         pipeline['score'] = 'running'
         return
       }
       let score = 0
-      pipeline.jobs.forEach(job => {
+      pipeline.forEach(job => {
         if (job.status === 'success') {
           score = score + config.stageScore[job.name]
         }
@@ -250,7 +251,7 @@ export default {
     },
     /* get battle enemy list */
     getBattleList: function () {
-      this.$http.get(`${config.hostname}/battle_list`).then(response => {
+      this.$http.get(`${config.hostname}/memberList`).then(response => {
         this.battleList = response.body
         this.battleList.forEach(user => {
           if (user.studentID === this.userdata.username) {
