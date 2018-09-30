@@ -1,5 +1,4 @@
-const { gitlabAPI } = require('./_gitlabAPI')
-const { databaseAPI } = require('./databaseAPI')
+const { gitlabAPI, databaseAPI } = require('../API/API')
 const fs = require('fs')
 
 /**
