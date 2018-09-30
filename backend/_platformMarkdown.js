@@ -53,7 +53,7 @@ class _platformMarkdown {
         /* first checking user access right */
         let userData = await gitlabAPI.getUserData(config.hostname, req.body.token)
         if (!userData.is_admin) {
-          console.log(`\x1b[31m${new Date().toISOString()} [platformMarkdown operating] setting markdown content failed: permission denied\x1b[0m`)
+          console.error(`\x1b[31m${new Date().toISOString()} [platformMarkdown operating error] setting markdown content failed: permission denied\x1b[0m`)
           res.status(401).end(JSON.stringify('Updating markdown content error: Permission denied')) // 401 unauthorized
         } else {
           let result = await databaseAPI.setMarkdownContent(con, req.body.page, JSON.stringify(req.body.content))
