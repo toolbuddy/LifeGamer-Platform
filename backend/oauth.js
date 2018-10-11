@@ -23,7 +23,6 @@ class OAuthService {
   init(app) {
     // Initial page redirecting to Github
     app.get("/auth", (req, res) => {
-      console.log(authorizationUri);
       res.redirect(authorizationUri);
     });
 
@@ -41,7 +40,6 @@ class OAuthService {
           return res.json("Authentication failed");
         }
 
-        console.log("The resulting token: ", result);
         const token = oauth2.accessToken.create(result);
 
         res.cookie("token", token["token"]["access_token"], {

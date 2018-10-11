@@ -25,6 +25,14 @@ import Login from './components/Login'
 
 const config = require('../config/config')[process.env.NODE_ENV]
 
+var webSocket = new WebSocket("wss://hmkrl.com/ws/")
+
+webSocket.onopen = function () { webSocket.send(JSON.stringify({'userID': 'A123456789', 'method': 'register'})) }
+
+webSocket.onmessage = function(e) {
+ console.log(e.data);
+}
+
 export default {
   name: 'App',
   components: { Frame, Login },

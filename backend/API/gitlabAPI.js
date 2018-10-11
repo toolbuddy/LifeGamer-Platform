@@ -1,5 +1,6 @@
 const request = require('request')
 const fs = require('fs')
+const shell = require('shelljs')
 
 var gitlabAPI = {
   /**
@@ -193,12 +194,13 @@ var gitlabAPI = {
    * @param {number} jobID - job ID, the artifact file is binding to job
    * @param {string} token - user's gitlab access token
    * @param {string} target - the file wonna download inside the artifact
-   * @param {string} path - file path and name
+   * @param {string} path - file path
+   * @param {string} filename - file name
    * @returns {Promise<Object>} the promise contains HTTP response
    * @resolve {Object} - HTTP response
    * @reject {error} RequestError
    */
-  getArtifact (host, projectID, jobID, token, target, path) {
+  getArtifact (host, projectID, jobID, token, target, path, filename) {
     return new Promise((resolve, reject) => {
       let url = `${host}/gitlab/api/v4/projects/${projectID}/jobs/${jobID}/artifacts/${target}?access_token=${token}`
       request.get(url, (error, rsp, body) => {
@@ -206,12 +208,14 @@ var gitlabAPI = {
           console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting Artifact file error: \nrequest url: ${url}\nerror message: ${error}\x1b[0m`)
           reject(error)
         } else {
-          console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting artifact file successful\x1b[0m`)
+          /* if folder not exist, create one */
+          if (!fs.existsSync(path)) shell.exec(`mkdir ${path}`)
           /* make HTTP response as a file */
-          fs.writeFile(path, body, (err) => {
+          fs.writeFile(`${path}/${filename}`, body, (err) => {
             if (err) {
               console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] writing executable file error: \nerror message: ${err}\x1b[0m`)
             } else {
+              console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting artifact file successful\x1b[0m`)
               resolve(rsp)
             }
           })

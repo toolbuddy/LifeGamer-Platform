@@ -6,7 +6,7 @@ const { databaseAPI, gitlabAPI } = require('../API/API')
  * platformStatus: handling request about getting/toggling platform server status
  */
 
-class _platformStatus {
+class platformStatus {
   /**
    * init the server request handler
    *
@@ -64,4 +64,4 @@ class _platformStatus {
   }
 }
 
-module.exports = { _platformStatus }
+module.exports = { platformStatus }

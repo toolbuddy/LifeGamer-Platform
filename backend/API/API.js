@@ -1,5 +1,5 @@
 const { databaseAPI } = require('./databaseAPI')
-const { gitlabAPI } = require('./_gitlabAPI')
-const { gameDatabaseAPI } = require('./gameDatabaseAPI')
+const { gitlabAPI } = require('./gitlabAPI')
+const { gameDatabaseAPI } = require('./GameDatabase/gameDatabaseAPI')
 
 module.exports = { gitlabAPI, databaseAPI, gameDatabaseAPI }

@@ -6,7 +6,7 @@ const { databaseAPI, gitlabAPI } = require('../API/API')
  * platformMarkdown: using for handling request about getting/setting markdown content
  */
 
-class _platformMarkdown {
+class platformMarkdown {
   /**
    * init the server request handler
    *
@@ -67,4 +67,4 @@ class _platformMarkdown {
   }
 }
 
-module.exports = { _platformMarkdown };
+module.exports = { platformMarkdown };

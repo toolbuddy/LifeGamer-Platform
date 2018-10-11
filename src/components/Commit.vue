@@ -158,7 +158,7 @@ export default {
         })
     },
     commitChoose: function (shortID) {
-      this.socket = require('socket.io-client')(config.hostname)
+      this.socket = new WebSocket('wws://hmkrl.com/ws')
       /* connection */
       this.socket.on('connect', () => {
         console.log('[%s]on connect', this.socket.id)

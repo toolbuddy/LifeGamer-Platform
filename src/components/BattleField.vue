@@ -222,18 +222,18 @@ export default {
       pipeline['score'] = score
     },
     selectPipeline: function (pipeline) {
-      let filename = null
-      if (this.stage === 'unregistered') filename = 'both'
-      else filename = this.select
-      console.log(filename)
+      let mode = null
+      if (this.stage === 'unregistered') mode = 'both'
+      else mode = this.select
+      console.log(mode)
       /* send request to server, asking for getting artifact file */
       this.$http
         .get(
-          `${config.hostname}/artifact?studentID=${
+          `${config.hostname}/artifact?user=${
             this.userdata.username
           }&userID=${this.userdata.id}&token=${this.token}&jobID=${
             pipeline.artifact_id
-          }&filename=${filename}`
+          }&mode=${mode}`
         )
         .then(response => {
           alert(`select ${response.body}`)
@@ -264,9 +264,9 @@ export default {
     batoru: function (enemy) {
       /* send request to server, asking for battle */
       this.$http.get(
-        `${config.hostname}/battle?userAttack=${
+        `${config.hostname}/battle?user=${
           this.userdata.username
-        }&userDefend=${enemy}`
+        }&enemy=${enemy}`
       )
       this.attackWho = enemy
     }

@@ -205,4 +205,4 @@ class platformJudge {
   }
 }
 
-module.exports = { platformJudge };
+module.exports = { platformJudge }
