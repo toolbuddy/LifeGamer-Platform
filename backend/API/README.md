@@ -87,6 +87,7 @@
     > commit table is used for recording the data about **user, commit sha and pipelineID** because GitLabCI can only create the pipeline that run the **latest code version**, needed to change to certain version that user assigned, so it needs a table to record the pair of pipelineID and commit sha.
 
 
+
 ### insertCommitTable(con, user, pipelineID, sha)
 
 - `con` \<Connection> mysql connection
@@ -131,6 +132,7 @@
 ## gitlabAPI
 
 When user login, system will pass an **access token** to the client, and the token is correspond to user's permission. All gitlabAPI operation(get/post request) need one access token.
+
 
 ### getUserData(host, token)
 
@@ -188,6 +190,7 @@ When user login, system will pass an **access token** to the client, and the tok
     > **Pipelines**
     > 
     > Group of jobs that get executed in stages, if the job succeed, it'll go on next stage. We use it for auto executing **checking code format/debugging/judging**, and giving grades according to jobs' status of the pipelines.
+
 
 
 - Pipelines Response format:
