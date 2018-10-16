@@ -2,6 +2,8 @@
 
 ## databaseAPI
 
+Offer API operating LifeGamer platform database, the database saving the data about platform status, markdownContent, etc
+
 ### createConnect(host, user, passwd, db)
 
 - `host` \<string> server host

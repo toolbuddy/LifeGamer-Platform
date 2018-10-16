@@ -129,6 +129,9 @@ var pd2royaleDatabaseAPI = {
    * @param {Connection} con - connection
    * @param {string} username - user name
    * @param {number} elo - user's elo
+   * @returns {Promise<Object>} the promise contains sql execution result
+   * @resolve {Object} Mysql execution result
+   * @reject {error} MysqlError
    */
   updateUserELO (con, username, elo) {
     return new Promise((resolve, reject) => {
@@ -150,6 +153,9 @@ var pd2royaleDatabaseAPI = {
    * @param {Connection} con - mysql database connection
    * @param {string} username - user name
    * @param {string} enemy - enemy name
+   * @returns {Promise<Object>} the promise contains sql execution result
+   * @resolve {Object} Mysql execution result
+   * @reject {error} MysqlError
    */
   setUserAttack (con, username, enemy) {
     return new Promise((resolve, reject) => {
