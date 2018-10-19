@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## [1.0.0] - 2018-04-04
+### Added
+- BattleField
+    - User pd2royale game data stored in server database
+    - User can select attack/defend code version and fight with others in battle mode
+    - User can watch all fight replay in replay mode
+- Commit Page
+    - User select branch, commit version for judging
+    - After selecting, server will send judging process to the client
+- Grade Page
+    - After Judging, user can enter grade page to see the grade and details
+    - System will auto save the highest grade into server database
+
+
 ## [0.1.1] - 2018-03-01
 ### Fixed
 - Some hostname don't follow config
