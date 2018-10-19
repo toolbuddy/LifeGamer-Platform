@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [1.1.0] - 2018-04-04
+### Added
+- BattleField page
+    - User's pd2royale game data stored in server database
+    - User can select attack/defend code version and fight with others in battle mode
+    - User can watch all fight replay in replay mode
+
+
 ## [1.0.0] - 2018-03-20
 ### Added
 - Commit page
