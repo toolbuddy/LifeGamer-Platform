@@ -67,4 +67,4 @@ class platformMarkdown {
   }
 }
 
-module.exports = { platformMarkdown };
+module.exports = { platformMarkdown }
