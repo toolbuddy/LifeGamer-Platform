@@ -2,16 +2,10 @@
   <div id="app">
     <div id="content" v-if="hasCookie">
       <div v-if="platformUse">
-        <Frame/>
+        <Frame />
         <router-view></router-view>
       </div>
-      <div class="serverOff" v-else>
-        <div class="message">
-          <p>伺服器維護中</p>
-          <p>Server under maintenance</p>
-          <div class="logoutButton" @click="cleanCookie">Logout</div>
-        </div>
-      </div>
+      <Maintain v-else></Maintain>
     </div>
     <div id="login" v-else>
       <Login/>
@@ -20,22 +14,15 @@
 </template>
 
 <script>
-import Frame from './components/Frame'
-import Login from './components/Login'
+import Frame from '@/components/Frame'
+import Login from '@/components/Login'
+import Maintain from '@/components/Maintain'
 
 const config = require('../config/config')[process.env.NODE_ENV]
 
-var webSocket = new WebSocket("wss://hmkrl.com/ws/")
-
-webSocket.onopen = function () { webSocket.send(JSON.stringify({'userID': 'A123456789', 'method': 'register'})) }
-
-webSocket.onmessage = function(e) {
- console.log(e.data);
-}
-
 export default {
   name: 'App',
-  components: { Frame, Login },
+  components: { Frame, Login, Maintain },
   data: function () {
     return {
       hasCookie: false,
@@ -74,11 +61,6 @@ export default {
             this.is_admin = response.body.is_admin
           })
       }
-    },
-    cleanCookie: function () {
-      this.$http.get(`${config.hostname}/gitlab/users/sign_out`)
-      this.$cookies.remove('token')
-      window.location.reload()
     }
   }
 }
@@ -112,32 +94,5 @@ body {
 #login {
   width: 100%;
   height: 100%;
-}
-
-.serverOff {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background: #666;
-}
-
-.message {
-  font-weight: bold;
-  font-size: 35px;
-  width: 70vw;
-  border: 5px solid #fff;
-  text-align: center;
-  color: #fff;
-}
-
-.logoutButton {
-  margin: 15px;
-}
-
-.logoutButton:hover {
-  cursor: pointer;
-  background: #aaa;
 }
 </style>
