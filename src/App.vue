@@ -1,15 +1,13 @@
 <template>
   <div id="app">
-    <div id="content" v-if="hasCookie">
-      <div v-if="platformUse">
+    <div v-if="token !== null">
+      <div v-if="((!userdata.is_admin) ? false : userdata.is_admin) || serverStatus === 'on'">
         <Frame />
         <router-view></router-view>
       </div>
       <Maintain v-else></Maintain>
     </div>
-    <div id="login" v-else>
-      <Login/>
-    </div>
+    <Login v-else></Login>
   </div>
 </template>
 
@@ -18,50 +16,23 @@ import Frame from '@/components/Frame'
 import Login from '@/components/Login'
 import Maintain from '@/components/Maintain'
 
-const config = require('../config/config')[process.env.NODE_ENV]
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'App',
   components: { Frame, Login, Maintain },
-  data: function () {
-    return {
-      hasCookie: false,
-      serverStatus: 'on',
-      is_admin: true
-    }
-  },
   computed: {
-    platformUse: function () {
-      return this.is_admin || this.serverStatus === 'on'
-    }
+    ...mapState('platform', ['token', 'serverStatus', 'userdata'])
   },
   created: function () {
-    this.checkCookie()
+    this.getCookieToken()
+    this.getUserData()
     this.getServerStatus()
-    this.checkAdmin()
     this.$router.replace({ query: { edit: false } })
   },
   methods: {
-    checkCookie: function () {
-      this.hasCookie = this.$cookies.isKey('token')
-    },
-    getServerStatus: function () {
-      if (this.hasCookie) {
-        this.$http.get(`${config.hostname}/serverStatus`).then(response => {
-          this.serverStatus = response.body
-        })
-      }
-    },
-    checkAdmin: function () {
-      if (this.hasCookie) {
-        let cookie = this.$cookies.get('token')
-        this.$http
-          .get(`${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`)
-          .then(response => {
-            this.is_admin = response.body.is_admin
-          })
-      }
-    }
+    ...mapMutations('platform', ['getCookieToken']),
+    ...mapActions('platform', ['getUserData', 'getServerStatus'])
   }
 }
 </script>
@@ -91,8 +62,4 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#login {
-  width: 100%;
-  height: 100%;
-}
 </style>

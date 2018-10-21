@@ -16,11 +16,7 @@ const config = require('../../config/config')[process.env.NODE_ENV]
 export default {
   name: 'Login',
   methods: {
-    login: function () {
-      console.log(process.env)
-      console.log(config)
-      window.location.href = `${config.hostname}/auth`
-    }
+    login: () => { window.location.href = `${config.hostname}/auth` }
   }
 }
 </script>
@@ -31,7 +27,9 @@ export default {
   --login-button-color: #333;
   --login-button-hover-color: #666;
 }
+</style>
 
+<style scoped>
 #loginpage {
   width: 100%;
   height: 100%;
