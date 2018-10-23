@@ -2,7 +2,8 @@
   <div id="app">
     <div v-if="token !== null">
       <div v-if="((!userdata.is_admin) ? false : userdata.is_admin) || serverStatus === 'on'">
-        <Frame />
+        <HeadBar />
+        <AsideMenu />
         <router-view></router-view>
       </div>
       <Maintain v-else></Maintain>
@@ -12,15 +13,16 @@
 </template>
 
 <script>
-import Frame from '@/components/Frame'
+import HeadBar from '@/components/HeadBar'
 import Login from '@/components/Login'
 import Maintain from '@/components/Maintain'
+import AsideMenu from '@/components/AsideMenu'
 
 import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'App',
-  components: { Frame, Login, Maintain },
+  components: { HeadBar, Login, Maintain, AsideMenu },
   computed: {
     ...mapState('platform', ['token', 'serverStatus', 'userdata'])
   },
@@ -39,6 +41,17 @@ export default {
 
 <style>
 @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+
+:root {
+  --login-button-color: #333;
+  --login-button-hover-color: #666;
+  --fullWidth: 100%;
+  --headerbar-height: 48px;
+  --headerbar-color: #009688;
+  --headerbar-hover-color: #006d70;
+  --menu-background-color: #006d70;
+  --menu-width: 250px;
+}
 
 html,
 body {

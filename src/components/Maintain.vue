@@ -41,6 +41,7 @@ export default {
 
 .logoutButton {
   margin: 15px;
+  line-height: 2em;
 }
 
 .logoutButton:hover {

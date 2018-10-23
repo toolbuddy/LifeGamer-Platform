@@ -6,7 +6,9 @@ export default {
   state: {
     userdata: null,
     token: null,
-    serverStatus: 'off'
+    serverStatus: 'off',
+    asideMenuCollapse: 0,
+    editMode: 0
   },
   getters: {},
   mutations: {
@@ -45,6 +47,34 @@ export default {
      */
     setServerStatus (state, status) {
       state.serverStatus = status
+    },
+    /**
+     * show aside menu
+     *
+     * @param {Object} state - vuex store state
+     */
+    showAsideMenu (state) {
+      state.asideMenuCollapse = 1
+      window.addEventListener('click', this.hideAsideMenu)
+    },
+    /**
+     * hide aside menu
+     *
+     * @param {Object} state - vuex store state
+     */
+    hideAsideMenu (state) {
+      if (state.asideMenuCollapse && window.event.clientX > 250) {
+        state.asideMenuCollapse = 0
+        window.removeEventListener('click', this.hideAsideMenu)
+      }
+    },
+    /**
+     * Toggle edit mode(only admin)
+     *
+     * @param {Object} state - vuex store state
+     */
+    editModeToggle (state) {
+      state.editMode ^= 1
     }
   },
   actions: {
@@ -65,9 +95,11 @@ export default {
      * @param {Object} context - vuex store data
      */
     getUserData (context) {
-      axios.get(`${config.hostname}/userData?token=${context.state.token}`).then((response) => {
-        context.commit('updateUserData', response.data)
-      })
+      if (context.state.token) {
+        axios.get(`${config.hostname}/userData?token=${context.state.token}`).then((response) => {
+          context.commit('updateUserData', response.data)
+        })
+      }
     },
     getServerStatus (context) {
       axios.get(`${config.hostname}/serverStatus`).then((response) => {

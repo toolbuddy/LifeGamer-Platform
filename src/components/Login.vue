@@ -22,13 +22,6 @@ export default {
 </script>
 
 <!-- css part -->
-<style>
-:root {
-  --login-button-color: #333;
-  --login-button-hover-color: #666;
-}
-</style>
-
 <style scoped>
 #loginpage {
   width: 100%;

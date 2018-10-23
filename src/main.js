@@ -9,10 +9,6 @@ import store from './store'
 /* vuex */
 Vue.use(Vuex)
 
-/* vue cookies */
-const vueCookies = require('vue-cookies')
-Vue.use(vueCookies)
-
 /* vue resource */
 const vueResource = require('vue-resource')
 Vue.use(vueResource.default)
