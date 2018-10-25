@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div v-if="token !== null">
-      <div v-if="((!userdata.is_admin) ? false : userdata.is_admin) || serverStatus === 'on'">
+      <div v-if="isAdmin || serverStatus === 'on'">
         <HeadBar />
         <AsideMenu />
         <router-view></router-view>
@@ -18,19 +18,19 @@ import Login from '@/components/Login'
 import Maintain from '@/components/Maintain'
 import AsideMenu from '@/components/AsideMenu'
 
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   components: { HeadBar, Login, Maintain, AsideMenu },
   computed: {
-    ...mapState('platform', ['token', 'serverStatus', 'userdata'])
+    ...mapState('platform', ['token', 'serverStatus', 'userdata']),
+    ...mapGetters('platform', ['isAdmin'])
   },
   created: function () {
     this.getCookieToken()
     this.getUserData()
     this.getServerStatus()
-    this.$router.replace({ query: { edit: false } })
   },
   methods: {
     ...mapMutations('platform', ['getCookieToken']),

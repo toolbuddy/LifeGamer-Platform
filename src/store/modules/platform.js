@@ -10,7 +10,16 @@ export default {
     asideMenuCollapse: 0,
     editMode: 0
   },
-  getters: {},
+  getters: {
+    /**
+     * getting user is admin or not
+     *
+     * @param {Object} state - vuex store state
+     */
+    isAdmin (state) {
+      return (!state.userdata) ? false : state.userdata.is_admin
+    }
+  },
   mutations: {
     /**
      * Getting cookie token and saving into state
