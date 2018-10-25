@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## [1.2.0] - 2018-10-16
+### Changed
+- Backend Code Review
+    - Putting gitlabAPI, databaseAPI, gameDatabaseAPI into /API folder, export them in module API
+    - gameDatabaseAPI now import different game database API according to config file (we can change config file to import different game database module)
+    - Arrange code about platform request handler and put them into module platformBackend
+        - platformData: handling request for getting userdata from gitlab
+        - platformJudge: handling request about judge part from frontend
+        - platformMarkdown: handling request about getting/setting markdown
+        - platformStatus: handling request about getting/toggling platform server status
+    - Create gameModule folder, putting different game module to handle different game frontend request
+        - Create pd2royale module
+    - Arrange the code to let them fit eslint rule
+
+
 ## [1.1.0] - 2018-04-04
 ### Added
 - BattleField page
