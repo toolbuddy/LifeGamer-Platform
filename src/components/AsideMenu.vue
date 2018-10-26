@@ -16,9 +16,9 @@
           </a>
         </li>
         <li class="menu-list">
-          <router-link class="menu-content link" :to="{ name: 'commit' }">
+          <router-link class="menu-content link" :to="{ name: 'judge' }">
           <img class="icon" src="../assets/Git-icon-white.svg" />
-            <span>Commits</span>
+            <span>Judge</span>
           </router-link>
         </li>
         <li class="menu-list">

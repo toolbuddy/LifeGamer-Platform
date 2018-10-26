@@ -4,6 +4,8 @@ const config = require('../../../config/config')[process.env.NODE_ENV]
 export default {
   namespaced: true,
   state: {
+    hostname: config.hostname,
+    projectName: config.projectName,
     userdata: null,
     token: null,
     serverStatus: 'off',
@@ -90,7 +92,7 @@ export default {
     /**
      * method for user logout
      *
-     * @param {Object} context - vuex store data
+     * @param {Object} context - vuex store context
      */
     logout (context) {
       axios.get(`${config.hostname}/gitlab/users/sign_out`).then(() => {
@@ -101,7 +103,7 @@ export default {
     /**
      * getting user data
      *
-     * @param {Object} context - vuex store data
+     * @param {Object} context - vuex store context
      */
     getUserData (context) {
       if (context.state.token) {
@@ -110,6 +112,11 @@ export default {
         })
       }
     },
+    /**
+     * getting server status
+     *
+     * @param {Object} context - vue store context
+     */
     getServerStatus (context) {
       axios.get(`${config.hostname}/serverStatus`).then((response) => {
         context.commit('setServerStatus', response.data)

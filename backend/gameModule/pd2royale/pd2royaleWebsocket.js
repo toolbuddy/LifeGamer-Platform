@@ -30,10 +30,10 @@ class pd2royaleWebsocket {
         let data = JSON.parse(message)
         switch (data.method) {
           case 'register': // client register
-            this.socketpool[data.userID] = ws
+            this.socketpool[data.token] = ws
             break
           case 'unregister': // client exit
-            delete this.socketpool[data.userID]
+            delete this.socketpool[data.token]
             break
           default: break
         }
@@ -57,7 +57,7 @@ class pd2royaleWebsocket {
         console.log(`\x1b[32m${new Date().toISOString()} [pd2royale operating]updating user ELO successful\x1b[0m`)
       } else {
         this.socketpool[req.body.token].send(
-          {'level': req.body.level, 'data': req.body.data})
+          JSON.stringify({'level': 'level' + req.body.level, 'data': req.body.data}))
         console.log(`\x1b[32m${new Date().toISOString()} [pd2royale operating] sending ${req.body.token} judging data\x1b[0m`)
       }
       res.end()

@@ -25,7 +25,7 @@ class platformJudge {
      * @param {string} path - express path
      * @param {callback} middleware - express middleware
      */
-    router.get('./branchList', async (req, res) => {
+    router.get('/branchList', async (req, res) => {
       res.set('Content-Type', 'application/json')
       try {
         let projectID = await gitlabAPI.getProjectID(config.hostname, req.query.userID, config.projectName, req.query.token)
