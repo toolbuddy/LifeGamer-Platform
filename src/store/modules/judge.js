@@ -13,7 +13,7 @@ export default {
     curBranch: 'master',
     branchList: null,
     commits: null,
-    page: 2,
+    page: 1,
     status: 'loading'
   },
   getters: {
@@ -86,6 +86,15 @@ export default {
       axios.get(`${config.hostname}/branchList?userID=${param.userID}&token=${param.token}`).then(response => {
         context.commit('updateBranchList', response.data)
       })
+    },
+    /**
+     * Sending judge request
+     *
+     * @param {Object} context - vuex store context
+     * @param {Object} param - param, contains userID, username, sha, branch, and token
+     */
+    judgeRequest (context, param) {
+      axios.get(`${config.hostname}/judge?userID=${param.userID}&username=${param.username}&sha=${param.sha}&branch=${param.branch}&token=${param.token}`)
     }
   }
 }

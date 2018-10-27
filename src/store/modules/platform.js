@@ -6,6 +6,7 @@ export default {
   state: {
     hostname: config.hostname,
     projectName: config.projectName,
+    gameModule: config.gameModule,
     userdata: null,
     token: null,
     serverStatus: 'off',

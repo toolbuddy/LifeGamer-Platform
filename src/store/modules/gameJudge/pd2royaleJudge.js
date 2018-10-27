@@ -3,14 +3,14 @@ const config = require('../../../../config/config')[process.env.NODE_ENV]
 export default {
   namespaced: true,
   state: {
-    ws: null,
-    level1: null,
-    level2: null,
-    level3: null,
-    level4: null
+    ws: 'None',
+    level1: 'pending.....',
+    level2: 'pending.....',
+    level3: 'pending.....',
+    level4: 'pending.....'
   },
   getters: {
-    JudgeProcess: function (state, level) { return state[level] }
+    JudgeProcess: function (state) { return (level) => state[level] }
   },
   mutations: {
     /**
@@ -23,10 +23,10 @@ export default {
     updateJudgeProcess: function (state, param) { state[param.level] = param.data }
   },
   actions: {
-    createWebSocket: function (context, param) {
-      var wss = new WebSocket(`${config.hostname}/ws`)
-      wss.onopen = function () { wss.send(JSON.stringify({method: 'register', token: param.token})) }
-      wss.onclose = function () { wss.send(JSON.stringify({method: 'unregister', token: param.token})) }
+    createWebSocket: function (context, token) {
+      var wss = new WebSocket(config.ws_url)
+      wss.onopen = function () { wss.send(JSON.stringify({method: 'register', token: token})) }
+      wss.onclose = function () { wss.send(JSON.stringify({method: 'unregister', token: token})) }
       wss.onmessage = function (evt) {
         context.commit('updateJudgeProcess', JSON.parse(evt.data))
       }

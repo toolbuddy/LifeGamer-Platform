@@ -19,7 +19,7 @@
           <div class="commit-item commit-shortid"><a :href="`${hostname}/gitlab/${userdata.username}/${projectName}/commit/${commit.id}`">{{ commit.short_id }}</a></div>
           <div class="commit-item commit-title"> {{ commit.title }} </div>
           <div class="commit-item commit-time">{{ commit.committed_date }}</div>
-          <div class="commit-item commit-button click-button">select</div>
+          <div class="commit-item commit-button click-button" @click="selectCommit (commit.short_id)">select</div>
         </div>
         <div class="page-select">
           <ul class="pageinaction">
@@ -28,12 +28,7 @@
           </ul>
         </div>
       </div>
-      <div class="gameRendering" v-if='stage === "judging"'>
-        <div><h4>Level 1:</h4><pre id="level-1" class="gameProcess">pending.....</pre></div>
-        <div><h4>Level 2:</h4><pre id="level-2" class="gameProcess">pending.....</pre></div>
-        <div><h4>Level 3:</h4><pre id="level-3" class="gameProcess">pending.....</pre></div>
-        <div><h4>Level 4:</h4><pre id="level-4" class="gameProcess">pending.....</pre></div>
-      </div>
+      <pd2royaleJudge v-if='status === "judging" && gameModule === "pd2royale"'></pd2royaleJudge>
     </section>
 </template>
 
@@ -41,14 +36,15 @@
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import Loading from '@/components/Loading'
+import pd2royaleJudge from '@/components/gameJudge/pd2royaleJudge'
 
 export default {
   name: 'commit',
-  components: { Loading },
+  components: { Loading, pd2royaleJudge },
   computed: {
-    ...mapState('platform', ['hostname', 'projectName', 'userdata', 'serverStatus', 'token']),
+    ...mapState('platform', ['hostname', 'projectName', 'gameModule', 'userdata', 'serverStatus', 'token']),
     ...mapState('judge', ['page', 'curBranch', 'branchList', 'commits', 'status']),
-    ...mapState('gameJudge', ['ws', 'level1', 'level2', 'level3', 'level4']),
+    ...mapState('gameJudge', ['ws']),
     ...mapGetters('judge', ['commitsLen'])
   },
   created: function () {
@@ -57,7 +53,7 @@ export default {
   },
   methods: {
     ...mapMutations('judge', ['updateBranch', 'updatePage', 'updateStatus']),
-    ...mapActions('judge', ['getCommits', 'getBranchList']),
+    ...mapActions('judge', ['getCommits', 'getBranchList', 'judgeRequest']),
     ...mapActions('gameJudge', ['createWebSocket']),
     selectBranch (branch, page) {
       this.updateStatus('loading')
@@ -68,6 +64,11 @@ export default {
       this.updateStatus('loading')
       this.updatePage(page)
       this.getCommits({userID: this.userdata.id, branch: branch, page: page, token: this.token})
+    },
+    selectCommit (sha) {
+      this.updateStatus('judging')
+      this.judgeRequest({userID: this.userdata.id, username: this.userdata.username, sha: sha, branch: this.curBranch, token: this.token})
+      this.createWebSocket(this.token)
     }
   }
 }
@@ -196,18 +197,5 @@ export default {
   cursor: pointer;
   background-color:#777;
   color: #fff;
-}
-
-.gameRendering {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-.gameProcess {
-  width: 450px;
-  height: 450px;
-  color: #fff;
-  margin: 0;
 }
 </style>

@@ -4,6 +4,7 @@ const config = {
     gameModule: 'pd2royale',
     db_database: "lifegamer_platform",
     projectName: "2018-pd2-Project1",
+    ws_url: 'wss://pd2a.imslab.org/ws',
     stageScore: {
       "Build with Makefile (required)": 0,
       "Coding style checking (5%)": 5,
@@ -21,6 +22,7 @@ const config = {
     gameModule: 'pd2royale',
     db_database: "lifegamer_platform",
     projectName: "2018-pd2-Project1",
+    ws_url: 'wss://pd2a.imslab.org/ws',
     stageScore: {
       "Build with Makefile (required)": 0,
       "Coding style checking (5%)": 5,

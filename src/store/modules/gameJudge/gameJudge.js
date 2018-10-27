@@ -1,5 +1,5 @@
 const config = require('../../../../config/config')[process.env.NODE_ENV]
-const pd2royaleJudge = require('./pd2royaleJudge')
+const pd2royaleJudge = require('./pd2royaleJudge').default
 
 var gameJudge = null
 
@@ -10,4 +10,4 @@ switch (config.gameModule) {
   default: break
 }
 
-module.exports = { gameJudge }
+export default gameJudge
