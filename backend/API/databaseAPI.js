@@ -127,59 +127,6 @@ var databaseAPI = {
     })
   },
   /**
-   * getting commit table
-   *
-   * commit table - recording the data about user, commit sha and pipelineID
-   * because GitLabCI can only create the pipeline that run the latest code
-   * version, needed to change to certain version that user assigned, so it
-   * needs a table to record the pair of pipelineID and commit sha.
-   *
-   * @param {Connection} con - mysql connection
-   * @param {string} user - username, is almost studentID
-   * @returns {Promise<Object>} the promise contains commit table
-   * @resolve {Object} commit table with json format(key: user, sha, pipelineID)
-   * @reject {error} MysqlError
-   */
-  getCommitTable (con, user) {
-    return new Promise((resolve, reject) => {
-      let sql = `SELECT * from commit_table WHERE user = '${user}'`
-      con.query(sql, (error, result) => {
-        if (error) {
-          console.error(`\x1b[31m${new Date().toISOString()} [DB operating error] getting ${user} commit table error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
-          reject(error)
-        } else {
-          console.log(`\x1b[32m${new Date().toISOString()} [DB operating] getting ${user} commit table successful\x1b[0m`)
-          resolve(result)
-        }
-      })
-    })
-  },
-  /**
-   * inserting a row into commit table
-   *
-   * @param {Connection} con - mysql connection
-   * @param {string} user - username, is almost studentID
-   * @param {number} pipelineID - pipelineID
-   * @param {string} sha - commit SHA
-   * @returns {Promise<Object>} the promise contains sql execution result
-   * @resolve {Object} Mysql execution result
-   * @reject {error} MysqlError
-   */
-  insertCommitTable (con, user, pipelineID, sha) {
-    return new Promise((resolve, reject) => {
-      let sql = `INSERT into commit_table(pipelineID, user, sha) VALUES ('${pipelineID}', '${user}', '${sha}')`
-      con.query(sql, (error, result) => {
-        if (error) {
-          console.error(`\x1b[31m${new Date().toISOString()} [DB operating error] inserting ${user} data into commit table error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
-          reject(error)
-        } else {
-          console.log(`\x1b[32m${new Date().toISOString()} [DB operating] inserting ${user} data into commit table successful\x1b[0m`)
-          resolve(result)
-        }
-      })
-    })
-  },
-  /**
    * getting server status, on or off
    *
    * @param {Connection} con - mysql connection
