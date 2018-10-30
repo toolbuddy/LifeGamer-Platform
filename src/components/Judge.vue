@@ -42,18 +42,20 @@ export default {
   name: 'commit',
   components: { Loading, pd2royaleJudge },
   computed: {
-    ...mapState('platform', ['hostname', 'projectName', 'gameModule', 'userdata', 'serverStatus', 'token']),
+    ...mapState('platform', ['hostname', 'projectName', 'gameModule', 'userdata', 'token']),
     ...mapState('judge', ['page', 'curBranch', 'branchList', 'commits', 'status']),
     ...mapState('gameJudge', ['ws']),
     ...mapGetters('judge', ['commitsLen'])
   },
   created: function () {
+    this.getServerStatus()
     this.getBranchList({userID: this.userdata.id, token: this.token})
     this.getCommits({userID: this.userdata.id, branch: 'master', page: this.page, token: this.token})
   },
   methods: {
     ...mapMutations('judge', ['updateBranch', 'updatePage', 'updateStatus']),
     ...mapActions('judge', ['getCommits', 'getBranchList', 'judgeRequest']),
+    ...mapActions('platform', ['getServerStatus']),
     ...mapActions('gameJudge', ['createWebSocket']),
     selectBranch (branch, page) {
       this.updateStatus('loading')
@@ -77,8 +79,6 @@ export default {
 <!-- css part -->
 <style scoped>
 .section-wrapper {
-  width: 100vw;
-  height: 100vh;
   box-sizing: border-box;
   padding: 50px 7%;
 }

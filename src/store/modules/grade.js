@@ -87,10 +87,11 @@ export default {
      *
      * pipeline format
      * {
-     *    id: id,
+     *    id: pipelineID,
      *    stages: [stage1, stage2, ...],
-     *    time: time,
+     *    time: commit.created_at,
      *    status: status,
+     *    artifact_id: artifact_id,
      *    score: score,
      *    stage1: [{ name: name, status: status }, {...}],
      *    stage2: [{ name: name, status: status }, {...}],
@@ -108,6 +109,7 @@ export default {
         let _pipeline = {
           id: pipeline[0].pipeline.id,
           time: datetime.pattern(datetime),
+          artifact_id: pipeline[0].id,
           status: pipeline[0].status,
           stages: [],
           score: 0

@@ -25,8 +25,8 @@ const _platformData = new platformData()
 OAuthService.init(app);
 
 (async ()=> {
-  const con = await databaseAPI.createConnect("localhost", process.env.DB_USER, process.env.DB_PASSWORD, config.db_database);
-  const gamedatabaseCon = await gameDatabaseAPI.createConnect("localhost", process.env.DB_USER, process.env.DB_PASSWORD, config.gameDatabase)
+  const con = await databaseAPI.createConnect("localhost", process.env.DB_USER, process.env.DB_PASSWORD, config.db_database)
+  const gamedatabaseCon = await gameDatabaseAPI.createConnect("localhost", process.env.DB_USER, process.env.DB_PASSWORD, config.gameModule)
   _platformJudge.init(app, con, config)
   _platformMarkdown.init(app, con, config)
   _platformStatus.init(app, con, config)

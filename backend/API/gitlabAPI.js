@@ -215,6 +215,7 @@ var gitlabAPI = {
             if (err) {
               console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] writing executable file error: \nerror message: ${err}\x1b[0m`)
             } else {
+              shell.exec(`chmod 777 ${path}/${filename}`)
               console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting artifact file successful\x1b[0m`)
               resolve(rsp)
             }

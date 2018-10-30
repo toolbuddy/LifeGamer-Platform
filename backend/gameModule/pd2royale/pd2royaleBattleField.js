@@ -21,7 +21,7 @@ class pd2royaleBattleField {
      * Request for getting user register status
      *
      * @name get/userRegisterStatus
-     * @param {string} user - user name
+     * @param {string} req.query.user - user name
      * @inner
      * @param {string} path - express path
      * @param {callback} middleware - express middleware
@@ -120,6 +120,7 @@ class pd2royaleBattleField {
     router.get('/battle', async (req, res) => {
       res.set('Content-Type', 'application/json')
       try {
+        await gameDatabaseAPI.setUserEnemy(con, req.query.user, req.query.enemy)
         /* if folder not exist, create one */
         if (!fs.existsSync('/home/pd2royale/battleFile')) shell.exec('mkdir /home/pd2royale/battleFile')
         let time = new Date().toISOString()

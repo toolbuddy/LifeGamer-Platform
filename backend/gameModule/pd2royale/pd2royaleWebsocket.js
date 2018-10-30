@@ -54,8 +54,8 @@ class pd2royaleWebsocket {
       if (req.body.level === 'battle') {
         if (req.body.p1 !== 'p1' && req.body.p2 !== 'p2') {
           await pd2royaleELO.calculate(con, req.body.p1, req.body.p2, req.body.result)
-          await gameDatabaseAPI.setUserAttack(con, req.body.p1, 'none')
-          console.log(`\x1b[32m${new Date().toISOString()} [pd2royale operating]updating user ELO successful\x1b[0m`)
+          await gameDatabaseAPI.setUserEnemy(con, req.body.p1, 'none')
+          console.log(`\x1b[32m${new Date().toISOString()} [pd2royale operating] updating user ELO successful\x1b[0m`)
         }
       } else {
         this.socketpool[req.body.token].send(

@@ -58,11 +58,13 @@ export default {
     ...mapGetters('grade', ['pipelinesLen'])
   },
   created: function () {
+    this.getServerStatus()
     this.getPipelines({ userID: this.userdata.id, page: this.page, token: this.token })
     this.getGrade(this.userdata.username)
   },
   methods: {
     ...mapActions('grade', ['getCommitTable', 'getGrade', 'getPipelines']),
+    ...mapActions('platform', ['getServerStatus']),
     ...mapMutations('grade', ['updateStatus', 'updatePage']),
     /* show job span color according to its status */
     jobColor: function (job) {

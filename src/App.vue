@@ -56,15 +56,10 @@ export default {
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
+  margin: 0 auto;
 }
 
 #app {
-  height: 100%;
-  width: 100%;
   font-family: "Kalam", "Kosugi Maru", "Noto Sans TC", "sans-serif";
   font-size: 18px;
   -webkit-font-smoothing: antialiased;

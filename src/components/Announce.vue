@@ -18,7 +18,7 @@
 <script>
 import './style/monokai-sublime.css'
 import './style/github-style.css'
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 const axios = require('axios')
 var marked = require('marked')
@@ -42,6 +42,7 @@ export default {
     markedString: function () { return marked(this.markdownString) }
   },
   created: function () {
+    this.getServerStatus()
     this.getWebContent() // getting webcontent from server
   },
   watch: {
@@ -52,6 +53,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('platform', ['getServerStatus']),
     getWebContent: function () {
       axios.get(`${config.hostname}/markdownContent?page=Announce`).then(response => { this.markdownString = response.data })
     },

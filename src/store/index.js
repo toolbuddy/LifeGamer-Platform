@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import platform from './modules/platform'
 import judge from './modules/judge'
 import grade from './modules/grade'
-import battlefield from './modules/battlefield'
+import gameBattleField from './modules/gameBattleField/gameBattleField'
 import gameJudge from './modules/gameJudge/gameJudge'
 
 Vue.use(Vuex)
@@ -15,6 +15,6 @@ export default new Vuex.Store({
     judge,
     gameJudge,
     grade,
-    battlefield
+    gameBattleField
   }
 })
