@@ -6,7 +6,7 @@ var gameModule = null
 var gameWebsocket = null
 
 /* using switch case to decide game database */
-switch (config.gameDatabase) {
+switch (config.gameModule) {
   case 'pd2royale':
     gameModule = new pd2royaleBattleField()
     gameWebsocket = new pd2royaleWebsocket()

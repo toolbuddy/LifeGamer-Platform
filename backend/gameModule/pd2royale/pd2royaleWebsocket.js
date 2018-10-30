@@ -30,10 +30,10 @@ class pd2royaleWebsocket {
         let data = JSON.parse(message)
         switch (data.method) {
           case 'register': // client register
-            this.socketpool[data.userID] = ws
+            this.socketpool[data.token] = ws
             break
           case 'unregister': // client exit
-            delete this.socketpool[data.userID]
+            delete this.socketpool[data.token]
             break
           default: break
         }
@@ -52,12 +52,14 @@ class pd2royaleWebsocket {
     router.post('/game', async (req, res) => {
       res.set('Content-Type', 'application/json')
       if (req.body.level === 'battle') {
-        await pd2royaleELO.ELOcalculate(req.body.p1, req.body.p2, req.body.result)
-        await gameDatabaseAPI.setUserAttack(con, req.body.p1, 'none')
-        console.log(`\x1b[32m${new Date().toISOString()} [pd2royale operating]updating user ELO successful\x1b[0m`)
+        if (req.body.p1 !== 'p1' && req.body.p2 !== 'p2') {
+          await pd2royaleELO.calculate(con, req.body.p1, req.body.p2, req.body.result)
+          await gameDatabaseAPI.setUserEnemy(con, req.body.p1, 'none')
+          console.log(`\x1b[32m${new Date().toISOString()} [pd2royale operating] updating user ELO successful\x1b[0m`)
+        }
       } else {
         this.socketpool[req.body.token].send(
-          {'level': req.body.level, 'data': req.body.data})
+          JSON.stringify({'level': 'level' + req.body.level, 'data': req.body.data}))
         console.log(`\x1b[32m${new Date().toISOString()} [pd2royale operating] sending ${req.body.token} judging data\x1b[0m`)
       }
       res.end()

@@ -1,246 +1,74 @@
 <!-- HTML part -->
 <template>
-    <section class="section-wrapper">
-      <div v-if='this.stage === "finish"'>
-        <!-- The template here showing all pipelines status -->
+  <section class="section-wrapper">
+    <div v-if='status === "done"'>
+      <!-- The template here showing all pipelines status -->
+      <!-- start -->
+      <div class="pipelines-row pipelines-header-row">
+        <div class="pipelines-item pipelines-time">Time</div>
+        <div class="pipelines-item pipelines-score">Score</div>
+        <div class="pipelines-item pipelines-button">Best: {{ grade }}</div>
+        <div class="pipelines-item pipelines-link">Link</div>
+      </div>
+      <div v-for="(pipeline,index) in pipelines" :key="index">
+        <div class="pipelines-row">
+          <div class="pipelines-item pipelines-time"> {{ pipeline.time }} </div>
+          <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
+          <div class="pipelines-item pipelines-button click-button" @click="detailToggle(index)">Detail</div>
+          <div class="pipelines-item pipelines-link"><a :href="`${hostname}/gitlab/${userdata.username}/${projectName}/pipelines/${pipeline.id}`">Link</a></div>
+        </div>
+        <!-- end -->
+        <!-- The template here showing jobs detail inside a pipeline -->
         <!-- start -->
-        <div class="pipelines-row pipelines-header-row">
-          <div class="pipelines-item pipelines-commit-id">Commit SHA</div>
-          <div class="pipelines-item pipelines-time">Time</div>
-          <div class="pipelines-item pipelines-score">Score</div>
-          <div class="pipelines-item pipelines-button">Best: {{ bestScore }}</div>
-        </div>
-        <div v-for="(pipeline,index) in pipelinejobs" :key="index">
-          <div class="pipelines-row">
-            <div class="pipelines-item pipelines-commit-id"><a :href="pipelineURL(pipeline.id)" v-html="convertCommitSHA(pipeline.id)"></a></div>
-            <div class="pipelines-item pipelines-time" v-html="formatDate(new Date(pipeline.time))"></div>
-            <div class="pipelines-item pipelines-score"> {{ pipeline.score }} </div>
-            <div class="pipelines-item pipelines-button click-button" @click="detailToggle(index)">Detail</div>
-          </div>
-          <!-- end -->
-          <!-- The template here showing jobs detail inside a pipeline -->
-          <!-- start -->
-          <div class="pipelines-details details-off" :id="dynamicID(index)">
-            <!-- unordered list show all stage -->
-            <ul style="list-style: none;" v-for="(stage, index) in pipeline.jobs.stages" :key="index">
-              <span class="stageStyle">{{ stage }}</span>
+        <div class="pipelines-details details-off" :id="`pipeline-detail-${index}`">
+          <!-- unordered list show all stage -->
+          <ul style="list-style: none;" v-for="(stage, index) in pipeline.stages" :key="index">
+            <span class="stage-style">{{ stage }}</span>
               <!-- list show all jobs in stage -->
-              <li style="padding: 10px;" v-for="(job, index) in pipeline.jobs[stage]" :key="index">
-                <span class="jobStyle" :style="jobColor(job)">{{ job.name }}</span>
-              </li>
-            </ul>
-          </div>
-          <!-- end -->
+            <li style="padding: 10px;" v-for="(job, index) in pipeline[stage]" :key="index">
+              <span class="job-style" :style="jobColor(job)">{{ job.name }}</span>
+            </li>
+          </ul>
         </div>
+        <!-- end -->
       </div>
-      <!-- waiting data -->
-      <div class="waiting-page" v-else>
-        <div class="waiting-box"></div>
-        <div>please wait...</div>
+      <div class="page-select">
+        <ul class="pageinaction">
+          <li v-if="page > 1" @click="selectPage(page-1)">Prev</li>
+          <li v-if="pipelinesLen == 10" @click="selectPage(page+1)">Next</li>
+        </ul>
       </div>
-    </section>
+    </div>
+    <!-- waiting data -->
+    <Loading v-else></Loading>
+  </section>
 </template>
 
 <!-- js part -->
 <script>
-const config = require('../../config/config')[process.env.NODE_ENV]
+import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
+import Loading from '@/components/Loading'
 
 export default {
   name: 'grade',
-  data: function () {
-    return {
-      token: null,
-      userdata: null,
-      pipelinejobs: null,
-      commitTable: null,
-      bestScore: 0,
-      dbScore: null,
-      stage: 'waiting'
-    }
+  components: { Loading },
+  computed: {
+    ...mapState('platform', ['hostname', 'projectName', 'userdata', 'token']),
+    ...mapState('grade', ['page', 'pipelines', 'status', 'grade']),
+    ...mapGetters('grade', ['pipelinesLen'])
   },
   created: function () {
-    /* get user token from cookie */
-    this.token = this.$cookies.get('token')
-    /* get user data */
-    this.$http
-      .get(`${config.hostname}/gitlab/api/v4/user?access_token=${this.token}`)
-      .then(response => {
-        this.userdata = response.body
-      })
-      /* deal with db data */
-      .then(() => {
-        /* get score from db in server */
-        this.$http
-          .get(
-            `${config.hostname}/grade?user=${this.userdata.username}`
-          )
-          .then(response => {
-            this.dbScore = response.body
-            this.bestScore = response.body
-          })
-          .then(() => {
-            this.getPipelineJobs()
-            this.getCommitTable()
-          })
-      })
-  },
-  watch: {
-    bestScore: function () {
-      if (this.bestScore > this.dbScore) {
-        this.dbScore = this.bestScore
-        this.$http.post(
-          `${config.hostname}/user_grade`,
-          {
-            studentID: this.userdata.username,
-            score: this.bestScore
-          },
-          { headers: { 'Content-Type': 'application/json' } }
-        )
-      }
-    }
+    this.getServerStatus()
+    this.getPipelines({ userID: this.userdata.id, page: this.page, token: this.token })
+    this.getGrade(this.userdata.username)
   },
   methods: {
-    getPipelineJobs: function () {
-      this.$http
-        .get(
-          `${config.hostname}/pipelinejobs?userID=${this.userdata.id}&page=1&token=${
-            this.token
-          }`
-        )
-        .then(response => {
-          this.pipelinejobs = JSON.parse(response.bodyText)
-        })
-        .then(() => {
-          this.addPipelineTime()
-        })
-        .then(async () => {
-          await this.stageSorting()
-          /* set all pipeline score */
-          this.pipelinejobs.forEach(pipeline => {
-            this.getScore(pipeline)
-          })
-          /* set max score */
-          this.setMaxscore()
-          this.stage = 'finish'
-        })
-    },
-    getCommitTable: function () {
-      this.$http
-        .get(`${config.hostname}/commitTable?user=${this.userdata.username}`)
-        .then(response => {
-          this.commitTable = JSON.parse(response.bodyText)
-        })
-    },
-    stageSorting: function () {
-      return new Promise(resolve => {
-        /* pipeline jobs json format
-         *
-         * {
-         *    'stage': [stage1, stage2, ...],
-         *    'pipelineStatus': pipelineStatus,
-         *    'stage1': [{'name': jobName, 'status': jobStatus }],
-         *    'stage2': [{'name': jobName, 'status': jobStatus }],
-         *     ...
-         * }
-         *
-        */
-        this.pipelinejobs.forEach(item => {
-          let jobSort = {}
-          /* set stages array */
-          jobSort['stages'] = []
-          /* set pipeline status */
-          jobSort['pipelineStatus'] = item.jobs[0].pipeline.status
-          item.jobs.forEach(job => {
-            /* check json has key or not */
-            if (jobSort.hasOwnProperty(job.stage)) {
-              let jobData = {
-                status: job.status,
-                name: job.name
-              }
-              jobSort[job.stage].push(jobData)
-            } else {
-              jobSort['stages'].push(job.stage)
-              jobSort[job.stage] = []
-              let jobData = {
-                status: job.status,
-                name: job.name
-              }
-              jobSort[job.stage].push(jobData)
-            }
-          })
-          item.jobs = jobSort
-        })
-        resolve('true')
-      })
-    },
-    getScore: function (pipeline) {
-      /* check pipeline status */
-      if (
-        pipeline.jobs.pipelineStatus === 'running' ||
-        pipeline.jobs.pipelineStatus === 'pending'
-      ) {
-        pipeline['score'] = 'running'
-        return
-      }
-      let score = 0
-      pipeline.jobs.stages.forEach(stage => {
-        pipeline.jobs[stage].forEach(job => {
-          if (job.status === 'success') {
-            score = score + config.stageScore[job.name]
-          }
-        })
-      })
-      pipeline['score'] = score
-    },
+    ...mapActions('grade', ['getCommitTable', 'getGrade', 'getPipelines']),
+    ...mapActions('platform', ['getServerStatus']),
+    ...mapMutations('grade', ['updateStatus', 'updatePage']),
     /* show job span color according to its status */
     jobColor: function (job) {
-      return job.status === 'success'
-        ? { color: 'green' }
-        : job.status === 'failed' ? { color: 'red' } : { color: 'blue' }
-    },
-    /* add created time to pipeline */
-    addPipelineTime: function () {
-      this.pipelinejobs.forEach(pipeline => {
-        pipeline['time'] = pipeline.jobs[0].created_at
-      })
-    },
-    /* pipeline url */
-    pipelineURL: function (id) {
-      return `${config.hostname}/gitlab/${this.userdata.username}/${
-        config.projectName
-      }/pipelines/${id}`
-    },
-    /* convert pipeline ID to commit SHA */
-    convertCommitSHA: function (pipelineID) {
-      let commitSHA = null
-      this.commitTable.forEach(item => {
-        if (item.pipelineID === pipelineID) {
-          commitSHA = item.sha
-        }
-      })
-      return commitSHA
-    },
-    dynamicID: function (index) {
-      return `pipeline-detail-${index}`
-    },
-    formatDate: function (date) {
-      var hours = date.getHours()
-      var minutes = date.getMinutes()
-      var ampm = hours >= 12 ? 'pm' : 'am'
-      hours = hours % 12
-      hours = hours || 12 // the hour '0' should be '12'
-      minutes = minutes < 10 ? '0' + minutes : minutes
-      var strTime = hours + ':' + minutes + ' ' + ampm
-      return (
-        date.getMonth() +
-        1 +
-        '/' +
-        date.getDate() +
-        '/' +
-        date.getFullYear() +
-        '  ' +
-        strTime
-      )
+      return job.status === 'success' ? { color: 'green' } : job.status === 'failed' ? { color: 'red' } : { color: 'blue' }
     },
     /* open/off the details info */
     detailToggle: function (index) {
@@ -253,13 +81,10 @@ export default {
         detail.classList.add('details-off')
       }
     },
-    /* get max score */
-    setMaxscore: function () {
-      this.pipelinejobs.forEach(pipeline => {
-        if (pipeline.score !== 'running') {
-          this.bestScore = Math.max(this.bestScore, pipeline.score)
-        }
-      })
+    selectPage (page) {
+      this.updateStatus('loading')
+      this.updatePage(page)
+      this.getPipelines({ userID: this.userdata.id, page: page, token: this.token })
     }
   }
 }
@@ -299,21 +124,10 @@ export default {
   text-align: center;
 }
 
-.pipelines-time {
-  width: 25%;
-}
-
-.pipelines-commit-id {
-  width: 25%;
-}
-
-.pipelines-score {
-  width: 25%;
-}
-
-.pipelines-button {
-  width: 25%;
-}
+.pipelines-time { width: 25%; }
+.pipelines-link { width: 25%; }
+.pipelines-score { width: 25%; }
+.pipelines-button { width: 25%; }
 
 .click-button {
   display: flex;
@@ -346,43 +160,37 @@ export default {
   opacity: 1;
 }
 
-.stageStyle {
+.stage-style {
   font-size: 25px;
   font-weight: bold;
   padding-left: 15px;
 }
 
-.jobStyle {
+.job-style {
   padding-left: 50px;
 }
 
-/* for waiting content */
-.waiting-page {
-  display: flex;
-  width: 100%;
-  height: 450px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.page-select {
+  text-align: center;
+  border-top: 1px solid #8c8c8c;
 }
 
-.waiting-page > div {
-  margin: 15px;
+.pageinaction {
+  display: inline-block;
+  padding: 0;
+  margin-top: 2.2rem;
 }
 
-.waiting-box {
-  width: 80px;
-  height: 80px;
-  background-color: red;
-  animation: 1s animate-inifite infinite;
+.pageinaction > li {
+  display: inline;
+  border: 1px solid #bcbcbc;
+  border-radius: 5px;
+  padding: 7px 20px;
 }
 
-@keyframes animate-inifite {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.pageinaction > li:hover {
+  cursor: pointer;
+  background-color:#777;
+  color: #fff;
 }
 </style>

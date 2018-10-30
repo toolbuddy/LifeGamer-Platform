@@ -1,7 +1,6 @@
 'use strict'
 require('./check-versions')()
 
-console.log(process.argv)
 process.env.NODE_ENV = process.argv[2];
 
 const ora = require('ora')

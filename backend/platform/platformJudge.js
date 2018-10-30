@@ -25,7 +25,7 @@ class platformJudge {
      * @param {string} path - express path
      * @param {callback} middleware - express middleware
      */
-    router.get('./branchList', async (req, res) => {
+    router.get('/branchList', async (req, res) => {
       res.set('Content-Type', 'application/json')
       try {
         let projectID = await gitlabAPI.getProjectID(config.hostname, req.query.userID, config.projectName, req.query.token)
@@ -58,26 +58,6 @@ class platformJudge {
         res.status(200).end(JSON.stringify(commitlist))
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] getting commit list error\nerror message: ${error}\x1b[0m`)
-        res.status(500).end(error) // internal server error
-      }
-    })
-    /**
-     * Request for getting commit table
-     *
-     * @name get/commitTable
-     * @param {string} req.query.user - username
-     * @inner
-     * @param {string} path - express path
-     * @param {callback} middleware - express middleware
-     */
-    router.get('/commitTable', async (req, res) => {
-      res.set('Content-Type', 'application/json')
-      try {
-        let commitTable = await databaseAPI.getCommitTable(con, req.query.user)
-        console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] getting commit table successful\x1b[0m`)
-        res.status(200).end(JSON.stringify(commitTable))
-      } catch (error) {
-        console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] getting commit table error\nerror message: ${error}\x1b[0m`)
         res.status(500).end(error) // internal server error
       }
     })
@@ -129,7 +109,7 @@ class platformJudge {
      * @name get/pipelinejobs
      * @param {number} req.query.userID - user ID
      * @param {string} req.query.token - gitlab access token
-     * @param {number} req.query.page - the page number user wonna getting, 20 records per page
+     * @param {number} req.query.page - the page number user wonna getting, 10 records per page
      * @inner
      * @param {string} path - express path
      * @param {callback} middleware - express middleware

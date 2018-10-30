@@ -4,7 +4,7 @@ const config = require('../../../config/config')[process.env.NODE_ENV]
 var gameDatabaseAPI = null
 
 /* using switch case to decide game database */
-switch (config.gameDatabase) {
+switch (config.gameModule) {
   case 'pd2royale':
     gameDatabaseAPI = pd2royaleDatabaseAPI
     break

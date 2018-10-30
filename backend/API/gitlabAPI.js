@@ -60,7 +60,7 @@ var gitlabAPI = {
    *
    * @param {string} host - server host
    * @param {number} projectID - project ID
-   * @param {number} page - page number, 20 pipelines per page.
+   * @param {number} page - page number, 10 pipelines per page.
    * @param {string} token - user’s gitlab access token
    * @returns {Promise<Object>} the promise contains pipelines(json format)
    * @resolve {Object} pipelines list(json format)
@@ -68,7 +68,7 @@ var gitlabAPI = {
    */
   getPipelines (host, projectID, page, token) {
     return new Promise((resolve, reject) => {
-      let url = `${host}/gitlab/api/v4/projects/${projectID}/pipelines?per_page=20&page=${page}&access_token=${token}`
+      let url = `${host}/gitlab/api/v4/projects/${projectID}/pipelines?per_page=10&page=${page}&access_token=${token}`
       request.get(url, (error, rsp, body) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting pipelines error: \nrequest url: ${url}\nerror message: ${error}\x1b[0m`)
@@ -215,6 +215,7 @@ var gitlabAPI = {
             if (err) {
               console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] writing executable file error: \nerror message: ${err}\x1b[0m`)
             } else {
+              shell.exec(`chmod 777 ${path}/${filename}`)
               console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting artifact file successful\x1b[0m`)
               resolve(rsp)
             }

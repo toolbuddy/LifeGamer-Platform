@@ -43,7 +43,7 @@ var pd2royaleDatabaseAPI = {
    */
   getUserRegisterStatus (con, username) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * from user_register WHERE studentID = '${username}'`
+      let sql = `SELECT * from user_register WHERE username = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [pd2royale DB operating error] getting ${username} register status error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
@@ -66,7 +66,7 @@ var pd2royaleDatabaseAPI = {
    */
   userRegister (con, username) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE user_register SET status = 'registered' WHERE studentID = '${username}'`
+      let sql = `UPDATE user_register SET status = 'registered' WHERE username = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [pd2royale DB operating error] setting ${username} register status error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
@@ -111,7 +111,7 @@ var pd2royaleDatabaseAPI = {
    */
   getUserELO (con, username) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * from user_register where studentID = '${username}'`
+      let sql = `SELECT * from user_register where username = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [pd2royale DB operating error] getting ${username} elo error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
@@ -135,7 +135,7 @@ var pd2royaleDatabaseAPI = {
    */
   updateUserELO (con, username, elo) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE user_register SET elo = ${elo} where studentID = '${username}'`
+      let sql = `UPDATE user_register SET elo = ${elo} where username = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [pd2royale DB operating error] updating ${username} elo error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
@@ -157,9 +157,9 @@ var pd2royaleDatabaseAPI = {
    * @resolve {Object} Mysql execution result
    * @reject {error} MysqlError
    */
-  setUserAttack (con, username, enemy) {
+  setUserEnemy (con, username, enemy) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE user_register SET attackWho = '${enemy}' where studentID = '${username}'`
+      let sql = `UPDATE user_register SET enemy = '${enemy}' where username = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [pd2royale DB operating error] setting ${username} attack target error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)

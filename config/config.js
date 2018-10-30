@@ -1,9 +1,10 @@
 const config = {
   development: {
     hostname: "https://pd2a.imslab.org",
-    gameDatabase: 'pd2royale',
+    gameModule: 'pd2royale',
     db_database: "lifegamer_platform",
     projectName: "2018-pd2-Project1",
+    ws_url: 'wss://pd2a.imslab.org/ws',
     stageScore: {
       "Build with Makefile (required)": 0,
       "Coding style checking (5%)": 5,
@@ -18,9 +19,10 @@ const config = {
   },
   production: {  
     hostname: "https://pd2a.imslab.org",
-    gameDatabase: 'pd2royale',
+    gameModule: 'pd2royale',
     db_database: "lifegamer_platform",
     projectName: "2018-pd2-Project1",
+    ws_url: 'wss://pd2a.imslab.org/ws',
     stageScore: {
       "Build with Makefile (required)": 0,
       "Coding style checking (5%)": 5,

@@ -25,11 +25,10 @@ class platformMarkdown {
      * @param {callback} middleware - express middleware
      */
     router.get('/markdownContent', async (req, res) => {
-      res.set('Content-Type', 'application/json')
       try {
         let markdownContent = await databaseAPI.getMarkdownContent(con, req.query.page)
         console.log(`\x1b[32m${new Date().toISOString()} [platformMarkdown operating] getting markdown content successful\x1b[0m`)
-        res.status(200).end(JSON.stringify(markdownContent))
+        res.status(200).end(markdownContent)
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformMarkdown operating error] getting markdown content error\nerror message: ${error}\x1b[0m`)
         res.status(500).end(error) // internal server error
@@ -67,4 +66,4 @@ class platformMarkdown {
   }
 }
 
-module.exports = { platformMarkdown };
+module.exports = { platformMarkdown }
