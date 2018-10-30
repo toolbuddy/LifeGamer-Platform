@@ -9,10 +9,6 @@ import store from './store'
 /* vuex */
 Vue.use(Vuex)
 
-/* vue resource */
-const vueResource = require('vue-resource')
-Vue.use(vueResource.default)
-
 Vue.config.devtools = true
 Vue.config.productionTip = false
 

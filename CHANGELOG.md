@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## [2.0.0] - 2018-10-31
+### Changed
+- Frontend Code Review
+    - Add vuex module to handle actions(async methods), mutations(sync methods), and saving data.
+    - Divide Frame.vue into AsideMenu.vue and HeadBar.vue
+    - Apart Loading.vue from Judge.vue/Grade.vue/BattleField.vue
+    - Creating components/gameJudge folder to handle different gameModule Judge part
+    - Creating components/gameBattleField folder to handle different gameModule BattleField part
+    - Creating store to handle vuex
+        - modules/grade: dealing with pipelines/grade part
+        - modules/judge: dealing with commits/judge part
+        - modules/platform: dealing with userdata/token/pageControl part
+        - modules/gameBattleField: offer different gameModule battle field part
+        - modules/gameJudge: offer different gameModule judge part, websocket included
+    - Remove 'vue-cookies' dependency
+    - Replace 'vue-resource' dependency with 'axios' dependency
+    - Replace 'socket.io' dependency with 'ws' dependency
+
+
 ## [1.2.0] - 2018-10-16
 ### Changed
 - Backend Code Review
