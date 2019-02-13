@@ -1,135 +1,69 @@
 <template>
   <div id="app">
-    <div id="content" v-if="hasCookie">
-      <div v-if="platformUse">
-        <Frame/>
+    <div v-if="token !== null">
+      <div v-if="isAdmin || serverStatus === 'on'">
+        <HeadBar />
+        <AsideMenu />
         <router-view></router-view>
       </div>
-      <div class="serverOff" v-else>
-        <div class="message">
-          <p>伺服器維護中</p>
-          <p>Server under maintenance</p>
-          <div class="logoutButton" @click="cleanCookie">Logout</div>
-        </div>
-      </div>
+      <Maintain v-else></Maintain>
     </div>
-    <div id="login" v-else>
-      <Login/>
-    </div>
+    <Login v-else></Login>
   </div>
 </template>
 
 <script>
-import Frame from './components/Frame'
-import Login from './components/Login'
+import HeadBar from '@/components/HeadBar'
+import Login from '@/components/Login'
+import Maintain from '@/components/Maintain'
+import AsideMenu from '@/components/AsideMenu'
 
-const config = require('../config/config')
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'App',
-  components: { Frame, Login },
-  data: function () {
-    return {
-      hasCookie: false,
-      serverStatus: 'on',
-      is_admin: true
-    }
-  },
+  components: { HeadBar, Login, Maintain, AsideMenu },
   computed: {
-    platformUse: function () {
-      return this.is_admin || this.serverStatus === 'on'
-    }
+    ...mapState('platform', ['token', 'serverStatus', 'userdata']),
+    ...mapGetters('platform', ['isAdmin'])
   },
   created: function () {
-    this.checkCookie()
+    this.getCookieToken()
+    this.getUserData()
     this.getServerStatus()
-    this.checkAdmin()
-    this.$router.replace({ query: { edit: false } })
   },
   methods: {
-    checkCookie: function () {
-      this.hasCookie = this.$cookies.isKey('token')
-    },
-    getServerStatus: function () {
-      if (this.hasCookie) {
-        this.$http.get(`${config.hostname}/db_serverStatus`).then(response => {
-          this.serverStatus = response.body
-        })
-      }
-    },
-    checkAdmin: function () {
-      if (this.hasCookie) {
-        let cookie = this.$cookies.get('token')
-        this.$http
-          .get(`${config.hostname}/gitlab/api/v4/user?access_token=${cookie}`)
-          .then(response => {
-            this.is_admin = response.body.is_admin
-          })
-      }
-    },
-    cleanCookie: function () {
-      this.$http.get(`${config.hostname}/gitlab/users/sign_out`)
-      this.$cookies.remove('token')
-      window.location.reload()
-    }
+    ...mapMutations('platform', ['getCookieToken']),
+    ...mapActions('platform', ['getUserData', 'getServerStatus'])
   }
 }
 </script>
 
 <style>
 @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+@import url('https://fonts.googleapis.com/css?family=Kalam|Kosugi+Maru');
+
+:root {
+  --login-button-color: #333;
+  --login-button-hover-color: #666;
+  --fullWidth: 100%;
+  --headerbar-height: 48px;
+  --headerbar-color: #009688;
+  --headerbar-hover-color: #006d70;
+  --menu-background-color: #006d70;
+  --menu-width: 250px;
+}
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  margin: 0 auto;
 }
 
 #app {
-  height: 100%;
-  width: 100%;
-  font-family: "Noto Sans TC", "sans-serif";
+  font-family: "Kalam", "Kosugi Maru", "Noto Sans TC", "sans-serif";
+  font-size: 18px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#login {
-  width: 100%;
-  height: 100%;
-}
-
-.serverOff {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background: #666;
-}
-
-.message {
-  font-weight: bold;
-  font-size: 35px;
-  width: 70vw;
-  border: 5px solid #fff;
-  text-align: center;
-  color: #fff;
-}
-
-.logoutButton {
-  margin: 15px;
-}
-
-.logoutButton:hover {
-  cursor: pointer;
-  background: #aaa;
-}
 </style>

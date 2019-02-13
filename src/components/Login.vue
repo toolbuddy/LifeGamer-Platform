@@ -11,28 +11,21 @@
 
 <!-- javascript part -->
 <script>
-const config = require('../../config/config')
+const config = require('../../config/config')[process.env.NODE_ENV]
 
 export default {
   name: 'Login',
   methods: {
-    login: function () {
-      window.location.href = `${config.hostname}/auth`
-    }
+    login: () => { window.location.href = `${config.hostname}/auth` }
   }
 }
 </script>
 
 <!-- css part -->
-<style>
-:root {
-  --login-button-color: #333;
-  --login-button-hover-color: #666;
-}
-
+<style scoped>
 #loginpage {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   padding: 8%;
   box-sizing: border-box;
   display: flex;
