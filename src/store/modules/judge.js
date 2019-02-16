@@ -72,8 +72,10 @@ export default {
     getCommits (context, param) {
       axios.get(`${config.hostname}/commits?userID=${param.userID}&branch=${param.branch}&page=${param.page}&token=${param.token}`).then(response => {
         context.commit('updateCommits', response.data)
-      }).then(() => {
         context.commit('updateStatus', 'done')
+      }).catch(error => {
+        console.log(error.response)
+        context.commit('updateStatus', 'error')
       })
     },
     /**
@@ -85,6 +87,9 @@ export default {
     getBranchList (context, param) {
       axios.get(`${config.hostname}/branchList?userID=${param.userID}&token=${param.token}`).then(response => {
         context.commit('updateBranchList', response.data)
+      }).catch(error => {
+        console.log(error.response)
+        context.commit('updateBranchList', 'error') // cannot get branchlist, user have no repo
       })
     },
     /**

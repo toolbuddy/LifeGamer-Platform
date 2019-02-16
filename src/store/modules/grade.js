@@ -78,8 +78,10 @@ export default {
           pipelines.push(_pipeline)
         }
         context.commit('updatePipelines', pipelines)
-      }).then(() => {
         context.commit('updateStatus', 'done')
+      }).catch(error => {
+        console.log(error.response)
+        context.commit('updateStatus', 'error')
       })
     },
     /**

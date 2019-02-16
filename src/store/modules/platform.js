@@ -9,7 +9,7 @@ export default {
     gameModule: config.gameModule,
     userdata: null,
     token: null,
-    serverStatus: 'off',
+    serverStatus: 'on',
     asideMenuCollapse: 0,
     editMode: 0
   },

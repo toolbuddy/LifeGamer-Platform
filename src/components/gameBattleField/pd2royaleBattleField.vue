@@ -1,6 +1,8 @@
 <!-- HTML part -->
 <template>
     <div class="battleField-wrapper">
+      <Loading v-if='status === "loading"'></Loading>
+      <RepoNotFound v-if='status === "error"'></RepoNotFound>
       <!-- unregistered part, show message let user to register -->
       <!-- begin -->
       <section v-if='userStatus === "unregistered" && status === "done"'>
@@ -47,7 +49,6 @@
               </ul>
             </div>
           </div>
-          <Loading v-else></Loading>
         </section>
       </section>
       <!-- end -->
@@ -86,10 +87,11 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import Loading from '@/components/Loading'
+import RepoNotFound from '@/components/RepoNotFound'
 
 export default {
   name: 'pd2royaleBattleField',
-  components: { Loading },
+  components: { Loading, RepoNotFound },
   data: function () {
     return { mode: 'defend' }
   },

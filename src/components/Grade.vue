@@ -1,6 +1,8 @@
 <!-- HTML part -->
 <template>
   <section class="section-wrapper">
+    <Loading v-if='status === "loading"'></Loading>
+    <RepoNotFound v-if='status === "error"'></RepoNotFound>
     <div v-if='status === "done"'>
       <!-- The template here showing all pipelines status -->
       <!-- start -->
@@ -39,8 +41,6 @@
         </ul>
       </div>
     </div>
-    <!-- waiting data -->
-    <Loading v-else></Loading>
   </section>
 </template>
 
@@ -48,10 +48,11 @@
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import Loading from '@/components/Loading'
+import RepoNotFound from '@/components/RepoNotFound'
 
 export default {
   name: 'grade',
-  components: { Loading },
+  components: { Loading, RepoNotFound },
   computed: {
     ...mapState('platform', ['hostname', 'projectName', 'userdata', 'token']),
     ...mapState('grade', ['page', 'pipelines', 'status', 'grade']),

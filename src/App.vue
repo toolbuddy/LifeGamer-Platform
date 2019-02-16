@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div v-if="token !== null">
-      <div v-if="isAdmin || serverStatus === 'on'">
+      <div v-if="hasLoadedData && (isAdmin || serverStatus === 'on')">
         <HeadBar />
         <AsideMenu />
         <router-view></router-view>
@@ -25,7 +25,10 @@ export default {
   components: { HeadBar, Login, Maintain, AsideMenu },
   computed: {
     ...mapState('platform', ['token', 'serverStatus', 'userdata']),
-    ...mapGetters('platform', ['isAdmin'])
+    ...mapGetters('platform', ['isAdmin']),
+    hasLoadedData () {
+      return this.userdata !== null
+    }
   },
   created: function () {
     this.getCookieToken()

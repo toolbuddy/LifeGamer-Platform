@@ -2,6 +2,7 @@
 <template>
     <section class="section-wrapper">
       <Loading v-if='status === "loading"'></Loading>
+      <RepoNotFound v-if='status === "error"'></RepoNotFound>
       <div v-if='status === "done"'>
         <div class="branch-selector">
           <div class="current-branch"> {{ curBranch }} </div>
@@ -37,17 +38,18 @@
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import Loading from '@/components/Loading'
 import pd2royaleJudge from '@/components/gameJudge/pd2royaleJudge'
+import RepoNotFound from '@/components/RepoNotFound'
 
 export default {
   name: 'commit',
-  components: { Loading, pd2royaleJudge },
+  components: { Loading, pd2royaleJudge, RepoNotFound },
   computed: {
     ...mapState('platform', ['hostname', 'projectName', 'gameModule', 'userdata', 'token']),
     ...mapState('judge', ['page', 'curBranch', 'branchList', 'commits', 'status']),
     ...mapState('gameJudge', ['ws']),
     ...mapGetters('judge', ['commitsLen'])
   },
-  created: function () {
+  beforeMount: function () {
     this.getServerStatus()
     this.getBranchList({userID: this.userdata.id, token: this.token})
     this.getCommits({userID: this.userdata.id, branch: 'master', page: this.page, token: this.token})

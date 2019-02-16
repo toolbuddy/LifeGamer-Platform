@@ -47,8 +47,13 @@ var gitlabAPI = {
           console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting projectID error: \nrequest url: ${url}\nerror message: ${error}\x1b[0m`)
           reject(error)
         } else {
-          console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting projectID successful\x1b[0m`)
-          resolve(JSON.parse(body)[0].id)
+          if (JSON.parse(body).length !== 0) {
+            console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting projectID successful\x1b[0m`)
+            resolve(JSON.parse(body)[0].id)
+          } else {
+            console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting projectID error:\nrequest url: ${url}\x1b[0m`)
+            reject('User have no certain repo')
+          }
         }
       })
     })
