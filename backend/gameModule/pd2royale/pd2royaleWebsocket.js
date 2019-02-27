@@ -1,6 +1,6 @@
 const WebSocket = require('ws')
 const fs = require('fs')
-const { gameDatabaseAPI } = require('../../API/API')
+const { gameDatabaseAPI } = require('../../API')
 const { pd2royaleELO } = require('./pd2royaleELO')
 
 /**

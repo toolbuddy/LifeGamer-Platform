@@ -1,4 +1,4 @@
-const { gitlabAPI, databaseAPI } = require('../API/API')
+const { gitlabAPI, databaseAPI } = require('../API')
 const fs = require('fs')
 
 /**
@@ -34,7 +34,7 @@ class platformJudge {
         res.status(200).end(JSON.stringify(branchlist))
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] getting branch list error\nerror message: ${error}\x1b[0m`)
-        res.status(500).end(error) // internal server error
+        res.end(error)
       }
     })
     /**
@@ -58,7 +58,7 @@ class platformJudge {
         res.status(200).end(JSON.stringify(commitlist))
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] getting commit list error\nerror message: ${error}\x1b[0m`)
-        res.status(500).end(error) // internal server error
+        res.end(error)
       }
     })
     /**
@@ -79,7 +79,7 @@ class platformJudge {
         res.status(200).end(JSON.stringify(grade))
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] getting user grade error\nerror message: ${error}\x1b[0m`)
-        res.status(500).end(error) // internal server error
+        res.end(error)
       }
     })
     /**
@@ -100,7 +100,7 @@ class platformJudge {
         res.status(200).end(JSON.stringify(result))
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] updating user grade error\nerror message: ${error}\x1b[0m`)
-        res.status(500).end(error) // internal server error
+        res.end(error)
       }
     })
     /**
@@ -129,7 +129,7 @@ class platformJudge {
         res.status(200).end(JSON.stringify(pipelinejobs))
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] getting pipeline and jobs error\nerror message: ${error}\x1b[0m`)
-        res.status(500).end(error) // internal server error
+        res.end(error)
       }
     })
     /**
@@ -154,7 +154,7 @@ class platformJudge {
         res.status(200).end(JSON.stringify(result))
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] judging error\nerror message: ${error}\x1b[0m`)
-        res.status(500).end(error) // internal server error
+        res.end(error)
       }
     })
   }

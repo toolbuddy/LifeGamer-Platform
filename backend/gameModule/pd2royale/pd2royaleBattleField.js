@@ -1,7 +1,7 @@
 const shell = require('shelljs')
 const fs = require('fs')
 const exec = require('child_process')
-const { gitlabAPI, gameDatabaseAPI } = require('../../API/API')
+const { gitlabAPI, gameDatabaseAPI } = require('../../API')
 
 /**
  * @class

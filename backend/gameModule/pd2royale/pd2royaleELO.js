@@ -1,4 +1,4 @@
-const { gameDatabaseAPI } = require('../../API/API')
+const { gameDatabaseAPI } = require('../../API')
 
 var pd2royaleELO = {
   /**

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 
 const { OAuthService } = require('./backend/oauth')
 const { platformJudge, platformMarkdown, platformStatus, platformData } = require('./backend/platform/platformBackend')
-const { databaseAPI, gameDatabaseAPI } = require('./backend/API/API')
+const { databaseAPI, gameDatabaseAPI } = require('./backend/API')
 const { gameModule, gameWebsocket } = require('./backend/gameModule/gameModule')
 const config = require('./config/config')[process.env.NODE_ENV]
 
