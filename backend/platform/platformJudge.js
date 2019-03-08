@@ -1,5 +1,11 @@
+const config = require('../../config/config')[process.env.NODE_ENV]
 const { gitlabAPI, databaseAPI } = require('../API')
 const fs = require('fs')
+
+Date.prototype.pattern = function (fmt) {
+  fmt = new Date((fmt - fmt.getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace(/[A-Z]/g, ' ')
+  return fmt
+}
 
 /**
  * @class
@@ -123,7 +129,7 @@ class platformJudge {
         let pipelinejobs = []
         for (const pipeline of pipelines) {
           let pipelinejob = await gitlabAPI.getPipelineJobs(config.hostname, projectID, pipeline.id, req.query.token)
-          pipelinejobs.push(pipelinejob)
+          pipelinejobs.push(await this.pipelineSorting(pipelinejob))
         }
         console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] getting pipeline and jobs successful\x1b[0m`)
         res.status(200).end(JSON.stringify(pipelinejobs))
@@ -181,6 +187,59 @@ class platformJudge {
           resolve('config written successful')
         }
       })
+    })
+  }
+  /**
+   * The function sorting pipeline data
+   *
+   * pipeline format
+   * {
+   *  id,
+   *  stages: [],
+   *  time,
+   *  artifact_id,
+   *  score,
+   *  stage1: [{ name, status }],
+   *  ...
+   * }
+   *
+   * @param {Object} pipelineJobs - pipeline with jobs before sorting,
+   * @returns {Promise<Object>} the promise contains pipeline done sorted,
+   * @resolve {Object} pipeline done sorted
+   */
+  pipelineSorting (pipelineJobs) {
+    return new Promise(resolve => {
+      // initialize pipeline format
+      let datetime = new Date(pipelineJobs[0].created_at)
+      let doneSorted = {
+        id: pipelineJobs[0].pipeline.id,
+        time: datetime.pattern(datetime),
+        artifact_id: pipelineJobs[0].id,
+        status: pipelineJobs[0].status,
+        stages: [],
+        score: 0
+      }
+      // modify job stage, name, and status
+      for (let job of pipelineJobs) {
+        if (doneSorted.hasOwnProperty(job.stage)) {
+          doneSorted[job.stage].push({ name: job.name, status: job.status })
+        } else {
+          doneSorted.stages.push(job.stage)
+          doneSorted[job.stage] = [{ name: job.name, status: job.status }]
+        }
+      }
+      // modify pipeline score
+      if (doneSorted.status === 'running' || doneSorted.status === 'pending') {
+        doneSorted.score = 'running'
+      } else {
+        for (let stage of doneSorted.stages) {
+          for (let job of doneSorted[stage]) {
+            doneSorted.score += (job.status === 'success') ? config.stageScore[job.name] : 0
+          }
+        }
+      }
+
+      resolve(doneSorted)
     })
   }
 }
