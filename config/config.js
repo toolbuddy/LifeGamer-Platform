@@ -1,38 +1,42 @@
 const config = {
   development: {
     hostname: "https://pd2a.imslab.org",
-    gameModule: 'pd2royale',
+    gameModule: 'pd2sudoku',
     db_database: "lifegamer_platform",
-    projectName: "2018-pd2-Project1",
-    ws_url: 'wss://pd2a.imslab.org/ws',
+    projectName: "pd2-sudoku",
+    ws_url: null,
     stageScore: {
-      "Build with Makefile (required)": 0,
-      "Coding style checking (5%)": 5,
-      "Card registering (10%)": 10,
-      "Communicate with server (15%)": 15,
-      "Finish correctly (10%)": 10,
-      "Level 1 (20%)": 20,
-      "Level 2 (10%)": 10,
-      "Level 3 (10%)": 10,
-      "Level 4 (20%)": 20
+      "Build with Makefile (5%)": 5,
+      "Can transform (10%)": 10,
+      "Generate problem (10%)": 10,
+      "Solve lv1 (20%)": 20,
+      "Solve lv2 (10%)": 10,
+      "Solve lv3 (10%)": 10,
+      "Speed lv1 (10%)": 10,
+      "Speed lv2 (5%)": 5,
+      "Speed lv3 (5%)": 5,
+      "Finish normally (10%)": 10,
+      "Coding style checking (5%)": 5
     }
   },
-  production: {  
+  production: {
     hostname: "https://pd2a.imslab.org",
-    gameModule: 'pd2royale',
+    gameModule: 'pd2sudoku',
     db_database: "lifegamer_platform",
-    projectName: "2018-pd2-Project1",
+    projectName: "pd2-sudoku",
     ws_url: 'wss://pd2a.imslab.org/ws',
     stageScore: {
-      "Build with Makefile (required)": 0,
-      "Coding style checking (5%)": 5,
-      "Card registering (10%)": 10,
-      "Communicate with server (15%)": 15,
-      "Finish correctly (10%)": 10,
-      "Level 1 (20%)": 20,
-      "Level 2 (10%)": 10,
-      "Level 3 (10%)": 10,
-      "Level 4 (20%)": 20
+      "Build with Makefile (5%)": 5,
+      "Can transform (10%)": 10,
+      "Generate problem (10%)": 10,
+      "Solve lv1 (20%)": 20,
+      "Solve lv2 (10%)": 10,
+      "Solve lv3 (10%)": 10,
+      "Speed lv1 (10%)": 10,
+      "Speed lv2 (5%)": 5,
+      "Speed lv3 (5%)": 5,
+      "Finish normally (10%)": 10,
+      "Coding style checking (5%)": 5
     }
   }
 };

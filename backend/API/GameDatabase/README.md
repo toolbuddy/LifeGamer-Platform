@@ -1,6 +1,6 @@
 # gameDatabase API
 
-## pd2royaleDatabaseAPI
+## gameDatabaseAPI
 
 Offer API operating pd2royale game database.
 

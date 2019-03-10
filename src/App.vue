@@ -44,7 +44,6 @@ export default {
 
 <style>
 @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
-@import url('https://fonts.googleapis.com/css?family=Kalam|Kosugi+Maru');
 
 :root {
   --login-button-color: #333;
@@ -63,8 +62,7 @@ body {
 }
 
 #app {
-  font-family: "Kalam", "Kosugi Maru", "Noto Sans TC", "sans-serif";
-  font-size: 18px;
+  font-family: "Noto Sans TC", "sans-serif";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

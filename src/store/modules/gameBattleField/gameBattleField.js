@@ -7,7 +7,9 @@ switch (config.gameModule) {
   case 'pd2royale':
     gameBattleField = pd2royaleBattleField
     break
-  default: break
+  default:
+    gameBattleField = pd2royaleBattleField
+    break
 }
 
 export default gameBattleField

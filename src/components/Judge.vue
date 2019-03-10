@@ -4,12 +4,17 @@
       <Loading v-if='status === "loading"'></Loading>
       <RepoNotFound v-if='status === "error"'></RepoNotFound>
       <div v-if='status === "done"'>
-        <div class="branch-selector">
-          <div class="current-branch"> {{ curBranch }} </div>
-            <ul class="branch-select">
-              <li class="select-item" v-for="(branch, index) in branchList" :key="index" @click="selectBranch(branch, 1)"> {{ branch }} </li>
-              </ul>
+        <button class="branch-selector" @click="branchDropdownToggle">
+          <span>{{ curBranch }}</span>
+          <img class="arrow-down" src="../assets/arrow_down_black.svg" />
+        </button>
+        <div id="branch-select-dropdown">
+          <header>Switch branch</header>
+          <div v-for="(branch, index) in branchList" :key="index" @click="selectBranch(branch, 1)">
+            <img class="check-mark" src="../assets/checkmark-icon.svg" v-if='curBranch === branch' />
+            {{ branch }}
           </div>
+        </div>
         <div class="commit-row commit-header-row">
           <div class="commit-item commit-shortid">Short ID</div>
           <div class="commit-item commit-title">Title</div>
@@ -30,6 +35,7 @@
         </div>
       </div>
       <pd2royaleJudge v-if='status === "judging" && gameModule === "pd2royale"'></pd2royaleJudge>
+      <pd2sudokuJudge v-if='status === "judging" && gameModule === "pd2sudoku"'></pd2sudokuJudge>
     </section>
 </template>
 
@@ -37,12 +43,17 @@
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import Loading from '@/components/Loading'
+
 import pd2royaleJudge from '@/components/gameJudge/pd2royaleJudge'
+import pd2sudokuJudge from '@/components/gameJudge/pd2sudokuJudge'
+
 import RepoNotFound from '@/components/RepoNotFound'
+
+const config = require('../../config/config')[process.env.NODE_ENV]
 
 export default {
   name: 'commit',
-  components: { Loading, pd2royaleJudge, RepoNotFound },
+  components: { Loading, pd2royaleJudge, pd2sudokuJudge, RepoNotFound },
   computed: {
     ...mapState('platform', ['hostname', 'projectName', 'gameModule', 'userdata', 'token']),
     ...mapState('judge', ['page', 'curBranch', 'branchList', 'commits', 'status']),
@@ -59,6 +70,11 @@ export default {
     ...mapActions('judge', ['getCommits', 'getBranchList', 'judgeRequest']),
     ...mapActions('platform', ['getServerStatus']),
     ...mapActions('gameJudge', ['createWebSocket']),
+    branchDropdownToggle () {
+      let dropDown = document.querySelector('div#branch-select-dropdown')
+      if (dropDown.style.display === 'none' || dropDown.style.display === '') dropDown.style.display = 'block'
+      else dropDown.style.display = 'none'
+    },
     selectBranch (branch, page) {
       this.updateStatus('loading')
       this.updateBranch(branch)
@@ -72,7 +88,7 @@ export default {
     selectCommit (sha) {
       this.updateStatus('judging')
       this.judgeRequest({userID: this.userdata.id, username: this.userdata.username, sha: sha, branch: this.curBranch, token: this.token})
-      this.createWebSocket(this.token)
+      if (config.ws_url) this.createWebSocket(this.token)
     }
   }
 }
@@ -83,6 +99,75 @@ export default {
 .section-wrapper {
   box-sizing: border-box;
   padding: 50px 7%;
+}
+
+.branch-selector {
+  margin: 20px 0;
+  text-align: left;
+  color: #444444;
+  background: #F3F3F3;
+  border: 1px #DADADA solid;
+  padding: 5px 10px;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 9pt;
+  outline: none;
+  width: 120px;
+  height: 30px;
+}
+
+.branch-selector:hover{
+  border: 1px #C6C6C6 solid;
+  box-shadow: 1px 1px 1px #EAEAEA;
+  color: #333333;
+  background: #F7F7F7;
+  cursor: pointer;
+}
+
+.arrow-down {
+  float: right;
+  height: 70%;
+}
+
+.check-mark {
+  height: 70%;
+  margin: 0 10px;
+  padding: 3px 0;
+}
+
+#branch-select-dropdown {
+  display: none;
+  width: 400px;
+  position: absolute;
+  margin-top: -15px;
+  color: #444444;
+  background: #F3F3F3;
+  border: 1px #DADADA solid;
+  padding: 5px 10px;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 9pt;
+  outline: none;
+}
+
+#branch-select-dropdown > header {
+  text-align: center;
+  height: 30px;
+  line-height: 30px;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+#branch-select-dropdown > div {
+  height: 20px;
+  line-height: 20px;
+  padding: 5px 0;
+  border-radius: 2px;
+  display: flex;
+}
+
+#branch-select-dropdown > div:hover {
+  background-color: #ddd;
+  cursor: pointer;
 }
 
 .commit-row {
@@ -129,41 +214,6 @@ export default {
   background-color: #009688;
   cursor: pointer;
   color: #fff;
-}
-
-.branch-selector { width: 100%;}
-
-.branch-select {
-  float: right;
-  list-style: none;
-  padding: 0;
-  margin: 10px 0;
-}
-
-.current-branch {
-  float: left;
-  padding: 12px;
-  margin: 10px 0;
-  border-left: 5px solid #bcbcbc;
-}
-
-.select-item {
-  float: right;
-  margin: 2px 5px;
-  background-color: #fff;
-  color: #000;
-  padding: 10px;
-  border-radius: 10px;
-  width: 80px;
-  border: 1px solid #bcbcbc;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.select-item:hover {
-  background-color: #777;
-  color: #fff;
-  cursor: pointer;
 }
 
 @media screen and (min-width: 1200px) {

@@ -31,8 +31,8 @@ OAuthService.init(app);
   _platformMarkdown.init(app, con, config)
   _platformStatus.init(app, con, config)
   _platformData.init(app, config)
-  gameModule.init(app, gamedatabaseCon, config)
-  gameWebsocket.init(app, gamedatabaseCon, websocketPort)
+  if (gameModule) gameModule.init(app, gamedatabaseCon, config)
+  if (gameWebsocket) gameWebsocket.init(app, gamedatabaseCon, websocketPort)
 })()
 
 app.listen (port, () => {

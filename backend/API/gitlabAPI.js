@@ -6,7 +6,7 @@ var gitlabAPI = {
   /**
    * getting user data
    *
-   * @param {string} hoserverStatusst - server host
+   * @param {string} host - server host
    * @param {string} token - user's gitlab access token
    * @returns {Promise<Object>} the promise contains userdata
    * @resolve {Object} userdata, the data from gitlab
@@ -60,7 +60,7 @@ var gitlabAPI = {
   },
   /**
    * getting pipelines
-   * It'll get 20 records per page, user can choose which page wonna to see.
+   * It'll get 10 records per page, user can choose which page wonna to see.
    * It'll get all branches' records, but showing belongs to which branch inside frontend details
    *
    * @param {string} host - server host

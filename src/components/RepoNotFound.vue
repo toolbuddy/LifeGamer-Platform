@@ -20,6 +20,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-top: 10vh;
 }
 
 .img-wrapper {

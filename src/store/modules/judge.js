@@ -99,7 +99,9 @@ export default {
      * @param {Object} param - param, contains userID, username, sha, branch, and token
      */
     judgeRequest (context, param) {
-      axios.get(`${config.hostname}/judge?userID=${param.userID}&username=${param.username}&sha=${param.sha}&branch=${param.branch}&token=${param.token}`)
+      axios.get(`${config.hostname}/judge?userID=${param.userID}&username=${param.username}&sha=${param.sha}&branch=${param.branch}&token=${param.token}`).catch(error => {
+        alert('Sorry, your project is now judging, plz wait for finishing judging then try again')
+      })
     }
   }
 }
