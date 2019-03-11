@@ -155,6 +155,7 @@ export default {
   height: 30px;
   line-height: 30px;
   border-bottom: 1px solid #dfdfdf;
+  margin-bottom: 5px;
 }
 
 #branch-select-dropdown > div {

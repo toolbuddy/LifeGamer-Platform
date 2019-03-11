@@ -89,11 +89,10 @@ class platformJudge {
       }
     })
     /**
-     * Request for posting user's grade
+     * Request for updating user's grade
      *
      * @name get/updateGrade
-     * @param {string} req.body.user - username
-     * @param {number} req.body.grade - the grade is going to be updated
+     * @param {string} req.query.token - user's gitlab access token
      * @inner
      * @param {string} path - express path
      * @param {callback} middleware - express middleware
@@ -103,14 +102,38 @@ class platformJudge {
       try {
         let userData = await gitlabAPI.getUserData(config.hostname, req.query.token)
         let projectID = await gitlabAPI.getProjectID(config.hostname, userData.id, config.projectName, req.query.token)
-        let latestPipeline = await gitlabAPI.getLatestPipeline(config.hostname, projectID, req.query.token)[0]
-        latestPipeline = await gitlabAPI.getPipelineJobs(config.hostname, projectID, latestPipeline.id, req.query.token)
+        let latestPipeline = await gitlabAPI.getLatestPipeline(config.hostname, projectID, req.query.token)
+        latestPipeline = await gitlabAPI.getPipelineJobs(config.hostname, projectID, latestPipeline[0].id, req.query.token)
         latestPipeline = await this.pipelineSorting(latestPipeline)
         let result = await databaseAPI.setUserGrade(con, userData.username, latestPipeline.score)
         console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful\x1b[0m`)
         res.status(200).end(JSON.stringify(result))
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] updating user grade error\nerror message: ${error}\x1b[0m`)
+        res.end(error)
+      }
+    })
+    /**
+     * Request for getting latest pipeline and its jobs
+     *
+     * @name get/latestPipelineJobs
+     * @param {number} req.query.userID - user's gitlab user ID
+     * @param {string} req.query.token - user's gitlab access token
+     * @inner
+     * @param {string} path - express path
+     * @param {callback} middleware - express middleware
+     */
+    router.get('/latestPipelineJobs', async (req, res) => {
+      res.set('Content-Type', 'application/json')
+      try {
+        let projectID = await gitlabAPI.getProjectID(config.hostname, req.query.userID, config.projectName, req.query.token)
+        let latestPipeline = await gitlabAPI.getLatestPipeline(config.hostname, projectID, req.query.token)
+        latestPipeline = await gitlabAPI.getPipelineJobs(config.hostname, projectID, latestPipeline[0].id, req.query.token)
+        latestPipeline = await this.pipelineSorting(latestPipeline)
+        console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] getting latest pipeline and jobs successful\x1b[0m`)
+        res.status(200).end(JSON.stringify(latestPipeline))
+      } catch (error) {
+        console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] getting latest pipeline and jobs error\nerror message: ${error}\x1b[0m`)
         res.end(error)
       }
     })
@@ -161,9 +184,16 @@ class platformJudge {
         let projectID = await gitlabAPI.getProjectID(config.hostname, req.query.userID, config.projectName, req.query.token)
         let latestPipeline = await gitlabAPI.getLatestPipeline(config.hostname, projectID, req.query.token)
         console.log(latestPipeline)
-        if (latestPipeline[0].status === 'pending' || latestPipeline[0].status === 'running') {
-          console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] judging error\nerror message: gitlab CI have not finished judging yet.\x1b[0m`)
-          res.status(500).end('server have not finished judging yet')
+        if (typeof(latestPipeline) === 'object') {
+          if (latestPipeline[0].status === 'pending' || latestPipeline[0].status === 'running') {
+            console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] judging error\nerror message: gitlab CI have not finished judging yet.\x1b[0m`)
+            res.status(500).end('server have not finished judging yet')
+          } else {
+            await this.writeConfig(req.query.username, req.query.sha, req.query.token)
+            let result = await gitlabAPI.postPipeline(config.hostname, projectID, req.query.branch, req.query.token)
+            console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] judgment creating successful\x1b[0m`)
+            res.status(200).end(JSON.stringify(result))
+          }
         } else {
           await this.writeConfig(req.query.username, req.query.sha, req.query.token)
           let result = await gitlabAPI.postPipeline(config.hostname, projectID, req.query.branch, req.query.token)
@@ -227,7 +257,7 @@ class platformJudge {
         id: pipelineJobs[0].pipeline.id,
         time: datetime.pattern(datetime),
         artifact_id: pipelineJobs[0].id,
-        status: pipelineJobs[0].status,
+        status: pipelineJobs[pipelineJobs.length - 1].status,
         stages: [],
         score: 0
       }

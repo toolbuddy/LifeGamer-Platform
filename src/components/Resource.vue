@@ -74,7 +74,7 @@ export default {
 
 #markdown-body {
   margin-top: 50px;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .edit-wrapper {

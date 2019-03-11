@@ -3,7 +3,7 @@
   <section class="section-wrapper">
     <Loading v-if='status === "loading"'></Loading>
     <RepoNotFound v-if='status === "error"'></RepoNotFound>
-    <div v-if='status === "done"'>
+    <div v-if='status === "done" && typeof(pipelines) === "object"'>
       <!-- The template here showing all pipelines status -->
       <!-- start -->
       <div class="pipelines-row pipelines-header-row">
@@ -41,6 +41,10 @@
         </ul>
       </div>
     </div>
+    <div class="judgeNotFound" v-if='status === "done" && typeof(pipelines) !== "object"'>
+      <h2>404 Not Found</h2>
+      <h4>We cannot find any judge result, please goto judge page and run judgment.</h4>
+    </div>
   </section>
 </template>
 
@@ -69,7 +73,7 @@ export default {
     ...mapMutations('grade', ['updateStatus', 'updatePage']),
     /* show job span color according to its status */
     jobColor: function (job) {
-      return job.status === 'success' ? { color: 'green' } : job.status === 'failed' ? { color: 'red' } : { color: 'blue' }
+      return job.status === 'success' ? { color: 'green' } : (job.status === 'failed' || job.status === 'skipped') ? { color: 'red' } : { color: 'blue' }
     },
     /* open/off the details info */
     detailToggle: function (index) {
@@ -193,5 +197,9 @@ export default {
   cursor: pointer;
   background-color:#777;
   color: #fff;
+}
+
+.judgeNotFound {
+  text-align: center;
 }
 </style>

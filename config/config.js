@@ -3,7 +3,7 @@ const config = {
     hostname: "https://pd2a.imslab.org",
     gameModule: 'pd2sudoku',
     db_database: "lifegamer_platform",
-    projectName: "pd2-sudoku",
+    projectName: "2019-pd2-sudoku",
     ws_url: null,
     stageScore: {
       "Build with Makefile (5%)": 5,
@@ -23,7 +23,7 @@ const config = {
     hostname: "https://pd2a.imslab.org",
     gameModule: 'pd2sudoku',
     db_database: "lifegamer_platform",
-    projectName: "pd2-sudoku",
+    projectName: "2019-pd2-sudoku",
     ws_url: 'wss://pd2a.imslab.org/ws',
     stageScore: {
       "Build with Makefile (5%)": 5,

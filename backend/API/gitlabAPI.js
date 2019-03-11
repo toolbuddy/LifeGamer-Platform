@@ -113,7 +113,7 @@ var gitlabAPI = {
             resolve(JSON.parse(body))
           } else {
             console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting pipelines error: \nrequest url: ${url}\nerror message: User have no pipeline\x1b[0m`)
-            reject('User have no pipeline')
+            resolve('User have no pipeline')
           }
         };
       })

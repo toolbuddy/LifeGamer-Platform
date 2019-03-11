@@ -83,21 +83,24 @@ var databaseAPI = {
    * getting student grade
    *
    * @param {Connection} con - mysql connection
-   * @param {string} user - username, is almost studentID
+   * @param {string} user - gitlab username
    * @returns {Promise<number>} the promise contains user's grade
    * @resolve {number} user's grade
    * @reject {error} MysqlError
    */
   getUserGrade (con, user) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * from users WHERE id = '${user}'`
+      let sql = `SELECT * from users WHERE gitlabID = '${user}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [DB operating error] getting ${user} grade error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
           reject(error)
-        } else {
+        } else if (result.length > 0){
           console.log(`\x1b[32m${new Date().toISOString()} [DB operating] getting ${user} grade successful\x1b[0m`)
           resolve(result[0].score)
+        } else {
+          console.error(`\x1b[31m${new Date().toISOString()} [DB operating error] getting ${user} grade error: \nsql command: ${sql}\nerror message: User not found\x1b[0m`)
+          reject('User not found') 
         }
       })
     })
@@ -106,7 +109,7 @@ var databaseAPI = {
    * setting student grade(updating)
    *
    * @param {Connection} con - mysql connection
-   * @param {string} user - username, is almost studentID
+   * @param {string} user - gitlab username
    * @param {number} grade - the grade is going to update
    * @returns {Promise<Object>} the promise contains sql execution result
    * @resolve {Object} Mysql execution result
@@ -114,7 +117,7 @@ var databaseAPI = {
    */
   setUserGrade (con, user, grade) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE users SET score = '${grade}' WHERE id = '${user}'`
+      let sql = `UPDATE users SET score = '${grade}' WHERE gitlabID = '${user}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [DB operating error] getting ${user} grade error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
