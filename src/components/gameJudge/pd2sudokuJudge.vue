@@ -1,5 +1,5 @@
 <template>
-  <section class='pd2sudokuJudging' v-if='status === "done"'>
+  <section class='pd2sudokuJudging' v-if='JobStatus === "done"'>
     <div v-for="(stage, index) in latestPipelineJobs.stages" :key="index">
       <h3> {{ stage }} </h3>
       <div class="processWrapper">
@@ -24,10 +24,10 @@ export default {
   },
   computed: {
     ...mapState('platform', ['userdata', 'token']),
-    ...mapState('gameJudge', ['JobProcess', 'latestPipelineJobs', 'status'])
+    ...mapState('judge', ['JobProcess', 'latestPipelineJobs', 'JobStatus'])
   },
   methods: {
-    ...mapActions('gameJudge', ['getLatestPipelineJobs', 'getJudgingProcess']),
+    ...mapActions('judge', ['getJudgingProcess']),
     pollingInterval () {
       for (let stage of this.latestPipelineJobs.stages) {
         for (let job of this.latestPipelineJobs[stage]) {
@@ -40,13 +40,10 @@ export default {
       }
     }
   },
-  created: async function () {
-    await this.getLatestPipelineJobs({
-      userID: this.userdata.id,
-      token: this.token
-    })
-    this.pollingInterval()
-    // window.location.href = 'https://pd2a.imslab.org/#/grade'
+  watch: {
+    JobStatus (newValue, oldValue) {
+      if (newValue === 'done') this.pollingInterval()
+    }
   },
   beforeDestroy () {
     var keys = Object.keys(this.IntervalPool)
