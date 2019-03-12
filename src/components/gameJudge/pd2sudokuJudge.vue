@@ -3,7 +3,10 @@
     <div v-for="(stage, index) in latestPipelineJobs.stages" :key="index">
       <h3> {{ stage }} </h3>
       <div class="processWrapper">
-        <pre v-for="(job, index) in latestPipelineJobs[stage]" :key="index"><code :id="'job-' + job.id"></code></pre>
+        <div v-for="(job, index) in latestPipelineJobs[stage]" :key="index">
+          <h4> {{ job.name }} </h4>
+          <pre><code :id="'job-' + job.id"></code></pre>
+        </div>
       </div>
     </div>
   </section>
@@ -44,6 +47,12 @@ export default {
     })
     this.pollingInterval()
     // window.location.href = 'https://pd2a.imslab.org/#/grade'
+  },
+  beforeDestroy () {
+    var keys = Object.keys(this.IntervalPool)
+    for (let key of keys) {
+      clearInterval(this.IntervalPool[key])
+    }
   }
 }
 </script>
