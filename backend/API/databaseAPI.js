@@ -100,7 +100,7 @@ var databaseAPI = {
           resolve(result[0].score)
         } else {
           console.error(`\x1b[31m${new Date().toISOString()} [DB operating error] getting ${user} grade error: \nsql command: ${sql}\nerror message: User not found\x1b[0m`)
-          reject('User not found') 
+          reject('User not found')
         }
       })
     })

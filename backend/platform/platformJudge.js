@@ -105,9 +105,15 @@ class platformJudge {
         let latestPipeline = await gitlabAPI.getLatestPipeline(config.hostname, projectID, req.query.token)
         latestPipeline = await gitlabAPI.getPipelineJobs(config.hostname, projectID, latestPipeline[0].id, req.query.token)
         latestPipeline = await this.pipelineSorting(latestPipeline)
-        let result = await databaseAPI.setUserGrade(con, userData.username, latestPipeline.score)
-        console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful\x1b[0m`)
-        res.status(200).end(JSON.stringify(result))
+        let bestScore = await databaseAPI.getUserGrade(con, userData.username)
+        if (latestPipeline.score > bestScore) {
+          let result = await databaseAPI.setUserGrade(con, userData.username, latestPipeline.score)
+          console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful\x1b[0m`)
+          res.status(200).end(JSON.stringify(result))
+        } else {
+          console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful(not updated)\x1b[0m`)
+          res.status(200).end('Not Modified')
+        }
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] updating user grade error\nerror message: ${error}\x1b[0m`)
         res.end(error)
