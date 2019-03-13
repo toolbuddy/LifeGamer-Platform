@@ -2,6 +2,8 @@ const config = require('../../config/config')[process.env.NODE_ENV]
 const { gitlabAPI, databaseAPI } = require('../API')
 const fs = require('fs')
 
+const timeout = ms => new Promise(res => setTimeout(res, ms))
+
 Date.prototype.pattern = function (fmt) {
   fmt = new Date((fmt - fmt.getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace(/[A-Z]/g, ' ')
   return fmt
@@ -102,6 +104,9 @@ class platformJudge {
       try {
         let userData = await gitlabAPI.getUserData(config.hostname, req.query.token)
         let projectID = await gitlabAPI.getProjectID(config.hostname, userData.id, config.projectName, req.query.token)
+        console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] waiting 15 sec....\x1b[0m`)
+        res.end(`${userData.username}'s request accepted`)
+        await timeout(15000)
         let latestPipeline = await gitlabAPI.getLatestPipeline(config.hostname, projectID, req.query.token)
         latestPipeline = await gitlabAPI.getPipelineJobs(config.hostname, projectID, latestPipeline[0].id, req.query.token)
         latestPipeline = await this.pipelineSorting(latestPipeline)
@@ -109,10 +114,8 @@ class platformJudge {
         if (latestPipeline.score > bestScore) {
           let result = await databaseAPI.setUserGrade(con, userData.username, latestPipeline.score)
           console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful\x1b[0m`)
-          res.status(200).end(JSON.stringify(result))
         } else {
           console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful(not updated)\x1b[0m`)
-          res.status(200).end('Not Modified')
         }
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] updating user grade error\nerror message: ${error}\x1b[0m`)
