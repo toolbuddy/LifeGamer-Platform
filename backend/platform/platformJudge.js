@@ -109,13 +109,19 @@ class platformJudge {
         await timeout(15000)
         let latestPipeline = await gitlabAPI.getLatestPipeline(config.hostname, projectID, req.query.token)
         latestPipeline = await gitlabAPI.getPipelineJobs(config.hostname, projectID, latestPipeline[0].id, req.query.token)
-        latestPipeline = await this.pipelineSorting(latestPipeline)
-        let bestScore = await databaseAPI.getUserGrade(con, userData.username)
-        if (latestPipeline.score > bestScore) {
-          let result = await databaseAPI.setUserGrade(con, userData.username, latestPipeline.score)
-          console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful\x1b[0m`)
+        // avoid user click "retry" button
+        let stageScoreKeys = Object.keys(config.stageScore)
+        if (latestPipeline.length !== stageScoreKeys.length) {
+          console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] ${userData.username} click retry button, reject!!`)
         } else {
-          console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful(not updated)\x1b[0m`)
+          latestPipeline = await this.pipelineSorting(latestPipeline)
+          let bestScore = await databaseAPI.getUserGrade(con, userData.username)
+          if (latestPipeline.score > bestScore) {
+            let result = await databaseAPI.setUserGrade(con, userData.username, latestPipeline.score)
+            console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful\x1b[0m`)
+          } else {
+            console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] updating user grade successful(not updated)\x1b[0m`)
+          }
         }
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] updating user grade error\nerror message: ${error}\x1b[0m`)
@@ -192,7 +198,6 @@ class platformJudge {
       try {
         let projectID = await gitlabAPI.getProjectID(config.hostname, req.query.userID, config.projectName, req.query.token)
         let latestPipeline = await gitlabAPI.getLatestPipeline(config.hostname, projectID, req.query.token)
-        console.log(latestPipeline)
         if (typeof(latestPipeline) === 'object') {
           if (latestPipeline[0].status === 'pending' || latestPipeline[0].status === 'running') {
             console.error(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] judging error\nerror message: gitlab CI have not finished judging yet.\x1b[0m`)
@@ -234,7 +239,7 @@ class platformJudge {
           console.log(`\x1b[31m${new Date().toISOString()} [platformJudge operating error] writing config error\nerror message: ${error}\x1b[0m`)
           reject(error)
         } else {
-          console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating]writing config successful\x1b[0m`)
+          console.log(`\x1b[32m${new Date().toISOString()} [platformJudge operating] writing config successful\x1b[0m`)
           resolve('config written successful')
         }
       })
