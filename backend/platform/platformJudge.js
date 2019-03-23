@@ -1,4 +1,4 @@
-const config = require('../../config/config')[process.env.NODE_ENV]
+const config = require('../../config/setting')
 const { gitlabAPI, databaseAPI } = require('../API')
 const fs = require('fs')
 

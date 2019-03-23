@@ -1,4 +1,4 @@
-const config = require('../../../../config/config')[process.env.NODE_ENV]
+const config = require('../../../../config/setting')
 const pd2royaleJudge = require('./pd2royaleJudge').default
 const pd2sudokuJudge = require('./pd2sudokuJudge').default
 

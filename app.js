@@ -6,7 +6,9 @@ const { OAuthService } = require('./backend/oauth')
 const { platformJudge, platformMarkdown, platformStatus, platformData } = require('./backend/platform/platformBackend')
 const { databaseAPI, gameDatabaseAPI } = require('./backend/API')
 const { gameModule, gameWebsocket } = require('./backend/gameModule/gameModule')
-const config = require('./config/config')[process.env.NODE_ENV]
+const config = require('./config/setting')
+
+console.log(config)
 
 var port = process.env.PORT || 3000
 var websocketPort = 9487

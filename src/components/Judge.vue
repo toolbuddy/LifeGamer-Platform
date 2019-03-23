@@ -49,7 +49,7 @@ import pd2sudokuJudge from '@/components/gameJudge/pd2sudokuJudge'
 
 import RepoNotFound from '@/components/RepoNotFound'
 
-const config = require('../../config/config')[process.env.NODE_ENV]
+const config = require('../../config/setting')
 
 export default {
   name: 'commit',

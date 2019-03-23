@@ -1,6 +1,6 @@
 const { pd2royaleBattleField } = require('./pd2royale/pd2royaleBattleField')
 const { pd2royaleWebsocket } = require('./pd2royale/pd2royaleWebsocket')
-const config = require('../../config/config')[process.env.NODE_ENV]
+const config = require('../../config/setting')
 
 var gameModule = null
 var gameWebsocket = null

@@ -1,4 +1,4 @@
-const config = require('../../../../config/config')[process.env.NODE_ENV]
+const config = require('../../../../config/setting')
 const pd2royaleBattleField = require('./pd2royaleBattleField').default
 const pd2sudokuBattleField = require('./pd2sudokuBattleField').default
 

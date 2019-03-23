@@ -1,5 +1,5 @@
 const simpleOauthModule = require('simple-oauth2')
-const config = require('../config/config')[process.env.NODE_ENV]
+const config = require('../config/setting')
 
 const oauth2 = simpleOauthModule.create({
   client: {
