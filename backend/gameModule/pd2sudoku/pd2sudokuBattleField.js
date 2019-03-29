@@ -98,11 +98,11 @@ class pd2sudokuBattleField {
         /* if folder not exist, create one */
         if (!fs.existsSync('/home/pd2sudoku')) shell.exec('mkdir /home/pd2sudoku')
         /* check user folder exist or not */
-        if (!fs.existSync(`/home/pd2sudoku/${req.query.user}`)) shell.exec(`mkdir /home/pd2sudoku/${req.query.user}`)
+        if (!fs.existsSync(`/home/pd2sudoku/${req.query.user}`)) shell.exec(`mkdir /home/pd2sudoku/${req.query.user}`)
 
         let projectID = await gitlabAPI.getProjectID(config.hostname, req.query.userID, config.projectName, req.query.token)
-        result = await gitlabAPI.getArtifact(config.hostname, projectID, req.query.jobID, req.query.token, 'generate', `/home/pd2sudoku${req.query.user}`, 'generate')
-        result = await gitlabAPI.getArtifact(config.hostname, projectID, req.query.jobID, req.query.token, 'solve', `/home/pd2sudoku${req.query.user}`, 'solve')
+        result = await gitlabAPI.getArtifact(config.hostname, projectID, req.query.jobID, req.query.token, 'generate', `/home/pd2sudoku/${req.query.user}`, 'generate')
+        result = await gitlabAPI.getArtifact(config.hostname, projectID, req.query.jobID, req.query.token, 'solve', `/home/pd2sudoku/${req.query.user}`, 'solve')
         console.log(`\x1b[32m${new Date().toISOString()} [platformBattleField operating] getting artifact successful\x1b[0m`)
         res.status(200).end(JSON.stringify(result))
       } catch (error) {

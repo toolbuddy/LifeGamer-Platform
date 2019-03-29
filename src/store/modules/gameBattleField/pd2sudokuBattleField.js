@@ -5,6 +5,7 @@ export default {
   namespaced: true,
   state: {
     group: null,
+    memberList: null,
     process: false
   },
   getters: {},
@@ -26,7 +27,7 @@ export default {
      */
     getUserGroup (context, username) {
       axios.get(`${config.hostname}/userGroup?user=${username}`).then(response => {
-        context.commit('updateGroup', response)
+        context.commit('updateGroup', response.data)
       })
     },
     /**
@@ -45,7 +46,7 @@ export default {
      * @param {Object} param - contains userID, username, token, and job id
      */
     updateCodeVersion (context, param) {
-      axios.get(`${config.hostname}/artifact?userID=${param.userID}&user=${param.username}&token=${param.token}&jobID=${param.job_id}`).then(() => {
+      axios.get(`${config.hostname}/artifact?userID=${param.userID}&user=${param.user}&token=${param.token}&jobID=${param.job_id}`).then(() => {
         alert('update successful')
       })
     },

@@ -51,7 +51,7 @@ var pd2sudokuDatabaseAPI = {
         } else {
           if (result.length != 0) {
             console.log(`\x1b[32m${new Date().toISOString()} [gameDatabase operating] getting ${username} group successful\x1b[0m`)
-            resolve(result[0].group)
+            resolve(result[0].user_group)
           } else {
             console.error(`\x1b[31m${new Date().toISOstring()} [gameDatabase operating error] getting ${username} group error: \nerror message: ${username} not found.\x1b[0m`)
             reject('error')
@@ -72,7 +72,7 @@ var pd2sudokuDatabaseAPI = {
    */
   updateUserGroup (con, username, group) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE user_register SET group = ${group} WHERE gitlabID = '${username}'`
+      let sql = `UPDATE users SET user_group = '${group}' WHERE gitlabID = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] setting ${username} group error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
@@ -95,7 +95,7 @@ var pd2sudokuDatabaseAPI = {
    */
   getMemberList (con, group) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * from user_register where group = ${group} ORDER BY ELO DESC`
+      let sql = `SELECT * from user_register where user_group = ${group} ORDER BY ELO DESC`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] getting member list error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
