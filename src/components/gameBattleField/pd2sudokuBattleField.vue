@@ -64,7 +64,40 @@
 
         <!-- The dashboard part -->
         <!-- start -->
-        <section></section>
+        <section class="dashboard" v-if='this.mode === "dashboard"'>
+            <div class="dashboard-easy">
+                <div class="dashboard-easy-headerbar"><strong>Basic</strong></div>
+                <div class="dashboard-contain">
+                    <div class="dashboard-contain-item">Rank</div>
+                    <div class="dashboard-contain-item">Gitlab ID</div>
+                    <div class="dashboard-contain-item">ELO (change)</div>
+                </div>
+                <div class="dashboard-contain" v-for='(member, index) in memberList["easy"]' :key="index">
+                    <div class="dashboard-contain-item"> {{ index+1 }} </div>
+                    <div class="dashboard-contain-item"> {{ member.gitlabID }} </div>
+                    <div class="dashboard-contain-item">
+                        <span>{{ member.ELO }}</span>
+                        <span :style="ELOcolor(member)">( {{ member.ELO - member.pre_ELO }} )</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-hard">
+                <div class="dashboard-hard-headerbar"><strong>Advanced</strong></div>
+                <div class="dashboard-contain">
+                    <div class="dashboard-contain-item">Rank</div>
+                    <div class="dashboard-contain-item">Gitlab ID</div>
+                    <div class="dashboard-contain-item">ELO (change)</div>
+                </div>
+                <div class="dashboard-contain" v-for='(member, index) in memberList["hard"]' :key="index">
+                    <div class="dashboard-contain-item"> {{ index+1 }} </div>
+                    <div class="dashboard-contain-item"> {{ member.gitlabID }} </div>
+                    <div class="dashboard-contain-item">
+                        <span>{{ member.ELO }}</span>
+                        <span :style="ELOcolor(member)">( {{ member.ELO - member.pre_ELO }} )</span>
+                    </div>
+                </div>
+            </div>
+        </section>
         <!-- end -->
 
         <!-- The record part -->
@@ -82,7 +115,7 @@ import Loading from '@/components/Loading'
 export default {
   name: 'pd2sudokuBattleField',
   components: { Loading },
-  data: function() {
+  data: function () {
     return { mode: 'selectCode' }
   },
   computed: {
@@ -91,36 +124,47 @@ export default {
     ...mapState('gameBattleField', ['group', 'memberList', 'process']),
     ...mapGetters('grade', ['pipelinesLen'])
   },
-  created: function() {
+  created: function () {
     this.getPipelines({ userID: this.userdata.id, page: this.page, token: this.token })
     this.getUserGroup(this.userdata.username)
   },
   methods: {
     ...mapMutations('grade', ['updatePage', 'updateStatus']),
-    ...mapActions('gameBattleField', ['getUserGroup', 'updateUserGroup', 'updateCodeVersion', 'battleRequest']),
+    ...mapActions('gameBattleField', ['getUserGroup', 'updateUserGroup', 'updateCodeVersion', 'battleRequest', 'getMemberList']),
     ...mapActions('grade', ['getPipelines']),
     pipelineURL: function (id) {
-        return `${this.hostname}/gitlab/${this.userdata.username}/${this.projectName}/pipelines/${id}`
+      return `${this.hostname}/gitlab/${this.userdata.username}/${this.projectName}/pipelines/${id}`
     },
     selectGroup: function (group) {
       this.updateUserGroup({ user: this.userdata.username, group: group })
     },
-    selectMode: function (mode) {
-        this.mode = mode
-        if (mode === 'battle') this.getMemberList(this.group)
+    selectMode: async function (mode) {
+      this.mode = mode
+      if (mode === 'battle') {
+        this.updateStatus('loading')
+        await this.getMemberList(this.group)
+        this.updateStatus('done')
+      } else if (mode === 'dashboard') {
+        this.updateStatus('loading')
+        await this.getMemberList('both')
+        this.updateStatus('done')
+      }
     },
     selectPage: function (page) {
-        this.updateStatus('loading')
-        this.updatePage(page)
-        this.getPipelines({ userID: this.userdata.id, page: page, token: this.token })
+      this.updateStatus('loading')
+      this.updatePage(page)
+      this.getPipelines({ userID: this.userdata.id, page: page, token: this.token })
     },
     selectPipeline: function (pipeline) {
-        this.updateCodeVersion({
-            user: this.userdata.username,
-            userID: this.userdata.id,
-            token: this.token,
-            job_id: pipeline.artifact_id
-        })
+      this.updateCodeVersion({
+        user: this.userdata.username,
+        userID: this.userdata.id,
+        token: this.token,
+        job_id: pipeline.artifact_id
+      })
+    },
+    ELOcolor: function (member) {
+      return (member.ELO - member.pre_ELO >= 0) ? ((member.ELO - member.pre_ELO > 0) ? { color: 'green' } : { color: 'black' }) : { color: 'red' }
     }
   }
 }
@@ -257,5 +301,37 @@ export default {
     background-color: #009688;
     cursor: pointer;
     color: #fff;
+}
+
+.dashboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboard-easy, .dashboard-hard {
+    width: 50%;
+    min-width: 150px;
+    height: 35px;
+    color: white;
+    line-height: 35px;
+    margin: 0 20px;
+    text-align: center;
+}
+
+.dashboard-easy-headerbar { background-color: #006EFF; }
+.dashboard-hard-headerbar { background-color: #D7234B; }
+.dashboard-contain {
+    background-color: #efefef;
+    border-top: 1px solid #d9d9d9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboard-contain-item {
+    width: 30%;
+    padding: 0 15px;
+    color: #000;
 }
 </style>

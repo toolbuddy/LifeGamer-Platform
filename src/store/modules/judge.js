@@ -77,7 +77,7 @@ export default {
      * @param {Object} state - vuex store state
      * @param {string} status - current status, loading, done, judging
      */
-    updateStatus (state, status) { state.status = status },
+    updateStatus (state, status) { state.status = status }
   },
   actions: {
     /**

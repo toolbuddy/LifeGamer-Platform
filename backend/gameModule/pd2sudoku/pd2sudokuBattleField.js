@@ -70,8 +70,15 @@ class pd2sudokuBattleField {
      */
     router.get('/memberList', async (req, res) => {
       res.set('Content-Type', 'application/json')
+      let memberList = null
       try {
-        let memberList = await gameDatabaseAPI.getMemberList(con, req.query.group)
+        if (req.query.group === 'both') {
+            let easy = await gameDatabaseAPI.getMemberList(con, 'easy')
+            let hard = await gameDatabaseAPI.getMemberList(con, 'hard')
+            memberList = { 'easy': easy, 'hard': hard }
+        } else {
+            memberList = await gameDatabaseAPI.getMemberList(con, req.query.group)
+        }
         console.log(`\x1b[32m${new Date().toISOString()} [platformBattleField operating] getting member list successful\x1b[0m`)
         res.status(200).end(JSON.stringify(memberList))
       } catch (error) {

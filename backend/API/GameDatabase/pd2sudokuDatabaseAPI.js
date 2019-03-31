@@ -95,7 +95,7 @@ var pd2sudokuDatabaseAPI = {
    */
   getMemberList (con, group) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * from user_register where user_group = ${group} ORDER BY ELO DESC`
+      let sql = `SELECT * from users where user_group = '${group}' ORDER BY ELO DESC`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] getting member list error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
@@ -154,6 +154,20 @@ var pd2sudokuDatabaseAPI = {
           reject(error)
         } else {
           console.log(`\x1b[32m${new Date().toISOString()} [gameDatabase operating] updating ${username} elo successful\x1b[0m`)
+          resolve(result)
+        }
+      })
+    })
+  },
+  updateUserPreELO (con, username, preELO) {
+    return new Promise((resolve, reject) => {
+      let sql = `UPDATE user_register SET pre_ELO = ${preELO} where gitlabID = '${username}'`
+      con.query(sql, (error, result) => {
+        if (error) {
+          console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] updating ${username} pre elo error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
+          reject(error)
+        } else {
+          console.log(`\x1b[32m${new Date().toISOString()} [gameDatabase operating] updating ${username} pre elo successful\x1b[0m`)
           resolve(result)
         }
       })

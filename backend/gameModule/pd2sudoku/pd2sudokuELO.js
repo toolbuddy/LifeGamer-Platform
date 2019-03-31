@@ -27,6 +27,9 @@ var pd2sudokuELO = {
     let p1NewELO = Math.floor(p1ELO + K * (S_A - expectP1))
     let p2NewELO = Math.floor(p2ELO + K * (S_B - expectP2))
     /* save ELO */
+    await gameDatabaseAPI.updateUserPreELO(con, p1, p1ELO);
+    await gameDatabaseAPI.updateUserPreELO(con, p2, p2ELO);
+
     await gameDatabaseAPI.updateUserELO(con, p1, p1NewELO)
     await gameDatabaseAPI.updateUserELO(con, p2, p2NewELO)
     console.log(`\x1b[32m${new Date().toISOString()} [pd2royaleELO operating] calculating ELO finish\x1b[0m`)
