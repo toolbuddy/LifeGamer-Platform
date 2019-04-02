@@ -8,7 +8,9 @@ export default {
     memberList: null,
     enemy: null,
     process: false,
-    battleResult: null
+    battleResult: null,
+    records: null,
+    recordPage: 1
   },
   getters: {},
   mutations: {
@@ -42,6 +44,8 @@ export default {
      * @param {Boolean} status
      */
     updateProcessStatus (state, status) { state.process = status },
+    updateRecord (state, records) { state.records = records },
+    updateRecordPage (state, page) { state.recordPage = page },
     /**
      * updating battle result
      *
@@ -121,6 +125,14 @@ export default {
       axios.get(`${config.hostname}/battle?user=${param.user}&enemy=${param.enemy}&group=${param.group}`).then(response => {
         context.commit('updateBattleResult', response.data)
       })
+    },
+    getRecord (context, page) {
+        return new Promise(resolve => {
+            axios.get(`${config.hostname}/record?page=${page}`).then(response => {
+                context.commit('updateRecord', response.data)
+                resolve()
+            })
+        })
     }
   }
 }

@@ -162,6 +162,17 @@ class pd2sudokuBattleField {
         res.status(500).end(error) // internal server error
       }
     })
+    router.get('/record', async (req, res) => {
+      res.set('Content-Type', 'application/json')
+      try {
+        let records = await gameDatabaseAPI.getRecord(con, req.query.page)
+        console.log(`\x1b[32m${new Date().toISOString()} [platformBattleField operating] getting record successful\x1b[0m`)
+        res.status(200).end(JSON.stringify(records))
+      } catch (error) {
+        console.log(`\x1b[31m${new Date().toISOString()} [platformBattleField operating] getting record failed\x1b[0m`)
+        reject(error)
+      }
+    })
   }
 }
 

@@ -94,7 +94,7 @@
                         </section>
                     </div>
                     <div class="battle-result-row">
-                        <div class="battle-result-backButton" onclick="location.reload()">Back</div>
+                        <div class="battle-result-backButton" @click="backFunction()">Back</div>
                     </div>
                 </div>
             </section>
@@ -141,6 +141,32 @@
 
         <!-- The record part -->
         <!-- start -->
+        <section v-if='this.mode === "record"'>
+            <div class="record-row record-header-row">
+                <div class="record-item">Time</div>
+                <div class="record-item">Player1</div>
+                <div class="record-item">Player2</div>
+                <div class="record-item">Winner</div>
+                <div class="record-item">P1Change</div>
+                <div class="record-item">P2Change</div>
+            </div>
+            <div v-for="(record, index) in records" :key="index">
+                <div class="record-row">
+                    <div class="record-item">{{ record.time }}</div>
+                    <div class="record-item">{{ record.player1 }}</div>
+                    <div class="record-item">{{ record.player2 }}</div>
+                    <div class="record-item">{{ record.winner }}</div>
+                    <div class="record-item">{{ record.p1change }}</div>
+                    <div class="record-item">{{ record.p2change }}</div>
+                </div>
+            </div>
+            <div class="page-select">
+                <ul class="pageinaction">
+                    <li v-if="recordPage > 1" @click="selectRecordPage(recordPage-1)">Prev</li>
+                    <li v-if="records.length === 15" @click="selectRecordPage(recordPage+1)">Next</li>
+                </ul>
+            </div>
+        </section>
         <!-- end -->
     </section>
 
@@ -163,7 +189,7 @@ export default {
   computed: {
     ...mapState('platform', ['userdata', 'token', 'hostname', 'projectName']),
     ...mapState('grade', ['status', 'pipelines', 'page']),
-    ...mapState('gameBattleField', ['group', 'enemy', 'memberList', 'process', 'battleResult']),
+    ...mapState('gameBattleField', ['group', 'enemy', 'memberList', 'process', 'battleResult', 'records', 'recordPage']),
     ...mapGetters('grade', ['pipelinesLen'])
   },
   created: function () {
@@ -172,8 +198,8 @@ export default {
   },
   methods: {
     ...mapMutations('grade', ['updatePage', 'updateStatus']),
-    ...mapMutations('gameBattleField', ['updateGroup']),
-    ...mapActions('gameBattleField', ['getUserGroup', 'updateUserGroup', 'updateCodeVersion', 'battleRequest', 'getMemberList']),
+    ...mapMutations('gameBattleField', ['updateGroup', 'updateProcessStatus', 'updateRecordPage']),
+    ...mapActions('gameBattleField', ['getUserGroup', 'updateUserGroup', 'updateCodeVersion', 'battleRequest', 'getMemberList', 'getRecord']),
     ...mapActions('grade', ['getPipelines']),
     pipelineURL: function (id) {
       return `${this.hostname}/gitlab/${this.userdata.username}/${this.projectName}/pipelines/${id}`
@@ -193,6 +219,8 @@ export default {
         this.updateStatus('loading')
         await this.getMemberList('both')
         this.updateStatus('done')
+      } else if (mode === 'record') {
+        this.getRecord(this.page)
       }
     },
     selectPage: function (page) {
@@ -219,6 +247,16 @@ export default {
     },
     roundColor: function (result) {
       return (result) ? ((result > 1) ? { color: 'red' } : { color: 'green'}) : { color: 'white' }
+    },
+    backFunction: function () {
+        this.updateProcessStatus(false)
+        this.selectMode('battle')
+    },
+    selectRecordPage: async function (page) {
+        this.updateStatus('loading')
+        this.updateRecordPage(page)
+        await this.getRecord(this.recordPage)
+        this.updateStatus('done')
     }
   }
 }
@@ -289,7 +327,7 @@ export default {
     cursor: pointer;
 }
 
-.pipelines-row, .battleboard-contain, .battleboard-headerbar {
+.pipelines-row, .battleboard-contain, .battleboard-headerbar, .record-row {
     width: 100%;
     height: 70px;
     font-size: 14px;
@@ -302,13 +340,13 @@ export default {
     background-color: #f9f9f9;
 }
 
-.pipelines-header-row, .battleboard-headerbar {
+.pipelines-header-row, .battleboard-headerbar, .record-header-row {
     background-color: steelblue;
     color: #fff;
     height: 35px;
 }
 
-.pipelines-item, .battle-list-item {
+.pipelines-item, .battle-list-item, .record-item {
     float: left;
     text-align: center;
 }
@@ -323,7 +361,7 @@ export default {
 .pageinaction {
     display: inline-block;
     padding: 0;
-    margin-top: 2.2rem;
+    margin: 2.2rem 0;
 }
 
 .pageinaction > li {
@@ -450,4 +488,8 @@ export default {
     transform: scale(1.05);
     cursor: pointer;
 }
+
+.record-row { height: 50px; }
+.record-header-row { height: 35px; }
+.record-item { width: calc(100% / 6); }
 </style>
