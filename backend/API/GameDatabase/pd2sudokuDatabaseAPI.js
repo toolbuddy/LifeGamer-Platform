@@ -118,7 +118,7 @@ var pd2sudokuDatabaseAPI = {
    */
   getUserELO (con, username) {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * from user_register where gitlabID = '${username}'`
+      let sql = `SELECT * from users where gitlabID = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] getting ${username} elo error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
@@ -147,7 +147,7 @@ var pd2sudokuDatabaseAPI = {
    */
   updateUserELO (con, username, elo) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE user_register SET ELO = ${elo} where gitlabID = '${username}'`
+      let sql = `UPDATE users SET ELO = ${elo} where gitlabID = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] updating ${username} elo error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
@@ -161,7 +161,7 @@ var pd2sudokuDatabaseAPI = {
   },
   updateUserPreELO (con, username, preELO) {
     return new Promise((resolve, reject) => {
-      let sql = `UPDATE user_register SET pre_ELO = ${preELO} where gitlabID = '${username}'`
+      let sql = `UPDATE users SET pre_ELO = ${preELO} where gitlabID = '${username}'`
       con.query(sql, (error, result) => {
         if (error) {
           console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] updating ${username} pre elo error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)

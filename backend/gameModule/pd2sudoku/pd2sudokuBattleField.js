@@ -73,9 +73,9 @@ class pd2sudokuBattleField {
       let memberList = null
       try {
         if (req.query.group === 'both') {
-            let easy = await gameDatabaseAPI.getMemberList(con, 'easy')
-            let hard = await gameDatabaseAPI.getMemberList(con, 'hard')
-            memberList = { 'easy': easy, 'hard': hard }
+            let basic = await gameDatabaseAPI.getMemberList(con, 'basic')
+            let advanced = await gameDatabaseAPI.getMemberList(con, 'advanced')
+            memberList = { 'basic': basic, 'advanced': advanced }
         } else {
             memberList = await gameDatabaseAPI.getMemberList(con, req.query.group)
         }
@@ -102,8 +102,6 @@ class pd2sudokuBattleField {
       res.set('Content-Type', 'application/json')
       let result = null
       try {
-        /* if folder not exist, create one */
-        if (!fs.existsSync('/home/pd2sudoku')) shell.exec('mkdir /home/pd2sudoku')
         /* check user folder exist or not */
         if (!fs.existsSync(`/home/pd2sudoku/${req.query.user}`)) shell.exec(`mkdir /home/pd2sudoku/${req.query.user}`)
 
@@ -138,26 +136,27 @@ class pd2sudokuBattleField {
          * setting shell command
          *
          * 1. copy user and enemy file into 'battleFile' folder, prevent the file read more than once at the same time
-         * 2. execute the battle_field battle engine beginning the battle
+         * 2. execute the battle-field battle engine beginning the battle
          */
-        let shellCommand = `cp /home/pd2sudoku/${req.query.user} /home/pd2royale/battleFile/${req.query.user}_${time} -r && \
-        cp /home/pd2royale/${req.query.enemy} /home/pd2royale/battleFile/${req.query.enemy}_${time} -r && \
-        battle-field ${req.query.user} ${req.query.enemy} -m ${req.query.group} /home/pd2sudoku/battleFile/${req.query.user}_${time} /home/pd2sudoku/battleFile/${req.query.enemy}_${time}`
-        exec.exec(shellCommand, (err, stdout, stderr) => {
-          if (err) {
+        let shellCommand = `cp /home/pd2sudoku/${req.query.user} /home/pd2sudoku/battleFile/${req.query.user}_${time} -r && \
+        cp /home/pd2sudoku/${req.query.enemy} /home/pd2sudoku/battleFile/${req.query.enemy}_${time} -r && \
+        battle-field -m ${req.query.group} /home/pd2sudoku/battleFile/${req.query.user}_${time} /home/pd2sudoku/battleFile/${req.query.enemy}_${time}`
+
+        exec.exec(shellCommand, (error, stdout, stderr) => {
+          if (error) {
             console.error(`\x1b[31m${new Date().toISOString()} [platformBattleField operating error] starting battle error\nerror message: ${err}\x1b[0m`)
-            res.status(500).end(err) // internal server error
+            res.end(error)
           }
-          // sending game process
-          if (!isJson(stdout)) { // battlefield process
-            res.send(stdout)
-          } else {
-            let result = JSON.parse(stdout)['winner']
-            pd2sudokuELO.calculate(con, req.query.user, req.query.enemy, parseInt(result))
-            res.end('done')
+          let data = stdout.slice(0, stdout.length-1).split('\n')
+          for (const item of data) {
+            if (isJson(item)) {
+                let result = JSON.parse(item)['winner']
+                pd2sudokuELO.calculate(con, req.query.user, req.query.enemy, parseInt(result))
+                res.end(JSON.stringify(data))
+            }
           }
+          console.log(`\x1b[32m${new Date().toISOString()} [platformBattleField operating] starting battle successful\x1b[0m`)
         })
-        console.log(`\x1b[32m${new Date().toISOString()} [platformBattleField operating] starting battle successful\x1b[0m`)
       } catch (error) {
         console.error(`\x1b[31m${new Date().toISOString()} [platformBattleField operating error] starting battle error\nerror message: ${error}\x1b[0m`)
         res.status(500).end(error) // internal server error

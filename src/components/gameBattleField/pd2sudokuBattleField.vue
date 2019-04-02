@@ -5,11 +5,11 @@
     <!-- begin -->
     <section v-if='group === "unregistered" && status === "done"' class="unregistered">
         <span class="title">Please choose group</span>
-        <div class="group-button" @click="selectGroup('easy')">
+        <div class="group-button" @click="selectGroup('basic')">
             <img src="../../assets/basic.svg" />
             <span>Basic</span>
         </div>
-        <div class="group-button" @click="selectGroup('hard')">
+        <div class="group-button" @click="selectGroup('advanced')">
             <img src="../../assets/advanced.svg" />
             <span>Advanced</span>
         </div>
@@ -19,7 +19,7 @@
     <!-- The part user have already registered -->
     <!-- headbar mode select part -->
     <!-- begin -->
-    <section v-if='(group === "easy" || group === "hard") && status === "done"'>
+    <section v-if='(group === "basic" || group === "advanced") && status === "done"'>
         <ul class="mode-select">
             <li class="mode" @click="selectMode('selectCode')">Code select</li>
             <li class="mode" @click="selectMode('battle')">Battle</li>
@@ -29,7 +29,12 @@
     </section>
     <!-- end -->
 
-    <section v-if='(group === "easy" || group === "hard") && status === "done"'>
+    <section v-if='group === "updating"' style="padding: 20px 0;">
+        <h2>please select one pipeline to register</h2>
+        <p>Select one code version, and you can change them after you register.</p>
+    </section>
+
+    <section v-if='(group === "basic" || group === "advanced" || group === "updating") && status === "done"'>
         <!-- The part code version select -->
         <!-- start -->
         <section v-if='this.mode === "selectCode"'>
@@ -60,6 +65,40 @@
 
         <!-- The battle part -->
         <!-- start -->
+        <section class="battleboard" v-if='this.mode === "battle"'>
+            <section>
+                <div class="battleboard-headerbar">
+                    <div class="battleboard-item"><strong>Rank</strong></div>
+                    <div class="battleboard-item"><strong>Gitlab ID</strong></div>
+                    <div class="battleboard-item"><strong>ELO</strong></div>
+                    <div class="battleboard-item"><strong>Group: {{ group }} </strong></div>
+                </div>
+                <div class="battleboard-contain" v-for="(member, index) in memberList" :key="index">
+                    <div class="battleboard-item"> {{ index + 1 }}</div>
+                    <div class="battleboard-item"> {{ member.gitlabID }} </div>
+                    <div class="battleboard-item"> {{ member.ELO }} </div>
+                    <div class="battleboard-item" v-if='member.gitlabID !== userdata.username'>
+                        <div class="click-button" @click="battleRequest({ user: userdata.username, enemy: member.gitlabID, group: group })">Battle</div>
+                    </div>
+                </div>
+            </section>
+            <section class="battle-result" v-if='process'>
+                <div class="battle-result-wrapper">
+                    <div class="battle-result-header">Result</div>
+                    <div v-for='(result, index) in battleResult' :key="index">
+                        <section class="battle-result-row" v-if='result.length === 3'>
+                            <div>Round {{ index + 1 }} </div>
+                            <div>{{ userdata.username }} v.s. {{ enemy }} </div>
+                            <div>{{ result[0] }} : {{ result[1] }}</div>
+                            <div v-html='roundResult(result[2])' :style="roundColor(result[2])"></div>
+                        </section>
+                    </div>
+                    <div class="battle-result-row">
+                        <div class="battle-result-backButton" onclick="location.reload()">Back</div>
+                    </div>
+                </div>
+            </section>
+        </section>
         <!-- end -->
 
         <!-- The dashboard part -->
@@ -72,7 +111,7 @@
                     <div class="dashboard-contain-item">Gitlab ID</div>
                     <div class="dashboard-contain-item">ELO (change)</div>
                 </div>
-                <div class="dashboard-contain" v-for='(member, index) in memberList["easy"]' :key="index">
+                <div class="dashboard-contain" v-for='(member, index) in memberList["basic"]' :key="index">
                     <div class="dashboard-contain-item"> {{ index+1 }} </div>
                     <div class="dashboard-contain-item"> {{ member.gitlabID }} </div>
                     <div class="dashboard-contain-item">
@@ -88,7 +127,7 @@
                     <div class="dashboard-contain-item">Gitlab ID</div>
                     <div class="dashboard-contain-item">ELO (change)</div>
                 </div>
-                <div class="dashboard-contain" v-for='(member, index) in memberList["hard"]' :key="index">
+                <div class="dashboard-contain" v-for='(member, index) in memberList["advanced"]' :key="index">
                     <div class="dashboard-contain-item"> {{ index+1 }} </div>
                     <div class="dashboard-contain-item"> {{ member.gitlabID }} </div>
                     <div class="dashboard-contain-item">
@@ -116,12 +155,15 @@ export default {
   name: 'pd2sudokuBattleField',
   components: { Loading },
   data: function () {
-    return { mode: 'selectCode' }
+    return {
+        mode: 'selectCode',
+        temp: null
+    }
   },
   computed: {
     ...mapState('platform', ['userdata', 'token', 'hostname', 'projectName']),
     ...mapState('grade', ['status', 'pipelines', 'page']),
-    ...mapState('gameBattleField', ['group', 'memberList', 'process']),
+    ...mapState('gameBattleField', ['group', 'enemy', 'memberList', 'process', 'battleResult']),
     ...mapGetters('grade', ['pipelinesLen'])
   },
   created: function () {
@@ -130,13 +172,16 @@ export default {
   },
   methods: {
     ...mapMutations('grade', ['updatePage', 'updateStatus']),
+    ...mapMutations('gameBattleField', ['updateGroup']),
     ...mapActions('gameBattleField', ['getUserGroup', 'updateUserGroup', 'updateCodeVersion', 'battleRequest', 'getMemberList']),
     ...mapActions('grade', ['getPipelines']),
     pipelineURL: function (id) {
       return `${this.hostname}/gitlab/${this.userdata.username}/${this.projectName}/pipelines/${id}`
     },
     selectGroup: function (group) {
-      this.updateUserGroup({ user: this.userdata.username, group: group })
+      this.updateGroup('updating')
+      this.temp = group
+      // this.updateUserGroup({ user: this.userdata.username, group: group })
     },
     selectMode: async function (mode) {
       this.mode = mode
@@ -162,9 +207,18 @@ export default {
         token: this.token,
         job_id: pipeline.artifact_id
       })
+      if (this.temp !== null) {
+        this.updateUserGroup({ user: this.userdata.username, group: this.temp })
+      }
     },
     ELOcolor: function (member) {
       return (member.ELO - member.pre_ELO >= 0) ? ((member.ELO - member.pre_ELO > 0) ? { color: 'green' } : { color: 'black' }) : { color: 'red' }
+    },
+    roundResult: function (result) {
+      return (result) ? ((result > 1) ? 'Lose' : 'Win') : 'Tie'
+    },
+    roundColor: function (result) {
+      return (result) ? ((result > 1) ? { color: 'red' } : { color: 'green'}) : { color: 'white' }
     }
   }
 }
@@ -235,7 +289,7 @@ export default {
     cursor: pointer;
 }
 
-.pipelines-row, .battle-list-row {
+.pipelines-row, .battleboard-contain, .battleboard-headerbar {
     width: 100%;
     height: 70px;
     font-size: 14px;
@@ -248,7 +302,7 @@ export default {
     background-color: #f9f9f9;
 }
 
-.pipelines-header-row, .battle-list-header-row {
+.pipelines-header-row, .battleboard-headerbar {
     background-color: steelblue;
     color: #fff;
     height: 35px;
@@ -333,5 +387,67 @@ export default {
     width: 30%;
     padding: 0 15px;
     color: #000;
+}
+
+.battleboard-item {
+    width: 25%;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+}
+
+.battle-result {
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, .75);
+    color: #fff;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    padding: 7.5% 10%;
+}
+
+.battle-result-wrapper {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 5%;
+    border: 10px solid #fff;
+    text-align: center;
+}
+
+.battle-result-header {
+    font-size: 36px;
+    font-weight: bold;
+    border-bottom: 2px solid #fff;
+    padding: 15px 0;
+}
+
+.battle-result-row {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
+    font-weight: bold;
+    text-align: center;
+}
+
+.battle-result-row > div {
+    margin: 10px;
+    width: 20%;
+}
+.battle-result-backButton {
+    width: 150px;
+    height: 50px;
+    line-height: 50px;
+    border: 2px solid #fff;
+}
+
+.battle-result-backButton:hover {
+    transform: scale(1.05);
+    cursor: pointer;
 }
 </style>

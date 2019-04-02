@@ -6,7 +6,9 @@ export default {
   state: {
     group: null,
     memberList: null,
-    process: false
+    enemy: null,
+    process: false,
+    battleResult: null
   },
   getters: {},
   mutations: {
@@ -14,7 +16,7 @@ export default {
      * updating user group
      *
      * @param {Object} state - vuex store state
-     * @param {string} group - unregistered, easy, or hard
+     * @param {string} group - unregistered, basic, or advanced
      */
     updateGroup (state, group) { state.group = group },
     /**
@@ -23,9 +25,43 @@ export default {
      * @param {Object} state - vuex store state
      * @param {Object} memberList
      * - mode: battle, only with the memeber list that have same group
-     * - mode: dashboard, member list with easy, hard group
+     * - mode: dashboard, member list with basic, advanced group
      */
-    updateMemberList (state, memberList) { state.memberList = memberList }
+    updateMemberList (state, memberList) { state.memberList = memberList },
+    /**
+     * updating enemy
+     *
+     * @param {Object} state - vuex store state
+     * @param {string} enemy - enemy's gitlab username
+     */
+    updateEnemy (state, enemy) { state.enemy = enemy },
+    /**
+     * updating process status
+     *
+     * @param {Object} state - vuex store state
+     * @param {Boolean} status
+     */
+    updateProcessStatus (state, status) { state.process = status },
+    /**
+     * updating battle result
+     *
+     * @param {Object} state - vuex store state
+     * @param {Object} result - battle result
+     */
+    updateBattleResult (state, result) {
+        let temp = [], battleResult = []
+        for (let i = 0; i < result.length; ++i) {
+            if (i !== result.length - 1) {
+                temp.push(parseFloat(result[i]).toFixed(4))
+                if (temp.length === 3) {
+                    battleResult.push(temp)
+                    temp = []
+                }
+            }
+        }
+        state.battleResult = battleResult
+        console.log(state.battleResult)
+    }
   },
   actions: {
     /**
@@ -80,12 +116,10 @@ export default {
      * @param {Object} param - contains user, enemy, and group
      */
     battleRequest (context, param) {
+      context.commit('updateProcessStatus', true)
+      context.commit('updateEnemy', param.enemy)
       axios.get(`${config.hostname}/battle?user=${param.user}&enemy=${param.enemy}&group=${param.group}`).then(response => {
-        if (response !== 'done') {
-          /**
-           * TODO: the process response handler
-           */
-        }
+        context.commit('updateBattleResult', response.data)
       })
     }
   }
