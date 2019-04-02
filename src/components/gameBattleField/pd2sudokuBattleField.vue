@@ -49,7 +49,7 @@
                     <div class="pipelines-item pipelines-time" v-html="pipeline.time"></div>
                     <div class="pipelines-item pipelines-grade" v-html="pipeline.score"></div>
                     <div class="pipelines-item pipelines-link"><a :href="pipelineURL(pipeline.id)">Link</a></div>
-                    <div class="pipelines-item pipelines-button" v-if='pipeline.score > 15'>
+                    <div class="pipelines-item pipelines-button" v-if='allowPipeline(pipeline)'>
                         <div class="click-button" @click="selectPipeline(pipeline)">Select</div>
                     </div>
                 </div>
@@ -182,8 +182,8 @@ export default {
   components: { Loading },
   data: function () {
     return {
-        mode: 'selectCode',
-        temp: null
+      mode: 'selectCode',
+      temp: null
     }
   },
   computed: {
@@ -228,6 +228,9 @@ export default {
       this.updatePage(page)
       this.getPipelines({ userID: this.userdata.id, page: page, token: this.token })
     },
+    allowPipeline: function (pipeline) {
+      return pipeline.Generate[0].status === 'success' && pipeline.Stability[0].status === 'success'
+    },
     selectPipeline: function (pipeline) {
       this.updateCodeVersion({
         user: this.userdata.username,
@@ -246,17 +249,17 @@ export default {
       return (result) ? ((result > 1) ? 'Lose' : 'Win') : 'Tie'
     },
     roundColor: function (result) {
-      return (result) ? ((result > 1) ? { color: 'red' } : { color: 'green'}) : { color: 'white' }
+      return (result) ? ((result > 1) ? { color: 'red' } : { color: 'green' }) : { color: 'white' }
     },
     backFunction: function () {
-        this.updateProcessStatus(false)
-        this.selectMode('battle')
+      this.updateProcessStatus(false)
+      this.selectMode('battle')
     },
     selectRecordPage: async function (page) {
-        this.updateStatus('loading')
-        this.updateRecordPage(page)
-        await this.getRecord(this.recordPage)
-        this.updateStatus('done')
+      this.updateStatus('loading')
+      this.updateRecordPage(page)
+      await this.getRecord(this.recordPage)
+      this.updateStatus('done')
     }
   }
 }

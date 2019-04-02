@@ -144,7 +144,7 @@ class pd2sudokuBattleField {
 
         exec.exec(shellCommand, (error, stdout, stderr) => {
           if (error) {
-            console.error(`\x1b[31m${new Date().toISOString()} [platformBattleField operating error] starting battle error\nerror message: ${err}\x1b[0m`)
+            console.error(`\x1b[31m${new Date().toISOString()} [platformBattleField operating error] starting battle error\nerror message: ${error}\x1b[0m`)
             res.end(error)
           }
           let data = stdout.slice(0, stdout.length-1).split('\n')

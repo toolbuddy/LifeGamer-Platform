@@ -122,6 +122,7 @@ export default {
           token: param.token
         })
       }).catch(error => {
+        console.error(error)
         alert('Sorry, your project is now judging, please wait for finishing judging then try again')
       })
     },
@@ -154,6 +155,7 @@ export default {
           })
           resolve()
         }).catch(error => {
+          console.error(error)
           context.commit('updatePipelineJob', {
             'jobID': param.jobID,
             'data': 'failed....',

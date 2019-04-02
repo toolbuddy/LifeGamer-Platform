@@ -53,18 +53,19 @@ export default {
      * @param {Object} result - battle result
      */
     updateBattleResult (state, result) {
-        let temp = [], battleResult = []
-        for (let i = 0; i < result.length; ++i) {
-            if (i !== result.length - 1) {
-                temp.push(parseFloat(result[i]).toFixed(4))
-                if (temp.length === 3) {
-                    battleResult.push(temp)
-                    temp = []
-                }
-            }
+      let temp = []
+      let battleResult = []
+      for (let i = 0; i < result.length; ++i) {
+        if (i !== result.length - 1) {
+          temp.push(parseFloat(result[i]).toFixed(4))
+          if (temp.length === 3) {
+            battleResult.push(temp)
+            temp = []
+          }
         }
-        state.battleResult = battleResult
-        console.log(state.battleResult)
+      }
+      state.battleResult = battleResult
+      console.log(state.battleResult)
     }
   },
   actions: {
@@ -127,12 +128,12 @@ export default {
       })
     },
     getRecord (context, page) {
-        return new Promise(resolve => {
-            axios.get(`${config.hostname}/record?page=${page}`).then(response => {
-                context.commit('updateRecord', response.data)
-                resolve()
-            })
+      return new Promise(resolve => {
+        axios.get(`${config.hostname}/record?page=${page}`).then(response => {
+          context.commit('updateRecord', response.data)
+          resolve()
         })
+      })
     }
   }
 }
