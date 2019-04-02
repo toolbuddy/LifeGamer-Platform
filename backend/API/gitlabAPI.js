@@ -6,7 +6,7 @@ var gitlabAPI = {
   /**
    * getting user data
    *
-   * @param {string} hoserverStatusst - server host
+   * @param {string} host - server host
    * @param {string} token - user's gitlab access token
    * @returns {Promise<Object>} the promise contains userdata
    * @resolve {Object} userdata, the data from gitlab
@@ -47,15 +47,20 @@ var gitlabAPI = {
           console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting projectID error: \nrequest url: ${url}\nerror message: ${error}\x1b[0m`)
           reject(error)
         } else {
-          console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting projectID successful\x1b[0m`)
-          resolve(JSON.parse(body)[0].id)
+          if (JSON.parse(body).length !== 0) {
+            console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting projectID successful\x1b[0m`)
+            resolve(JSON.parse(body)[0].id)
+          } else {
+            console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting projectID error:\nrequest url: ${url}\x1b[0m`)
+            reject('User have no certain repo')
+          }
         }
       })
     })
   },
   /**
    * getting pipelines
-   * It'll get 20 records per page, user can choose which page wonna to see.
+   * It'll get 10 records per page, user can choose which page wonna to see.
    * It'll get all branches' records, but showing belongs to which branch inside frontend details
    *
    * @param {string} host - server host
@@ -74,8 +79,42 @@ var gitlabAPI = {
           console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting pipelines error: \nrequest url: ${url}\nerror message: ${error}\x1b[0m`)
           reject(error)
         } else {
-          console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting pipelines successful\x1b[0m`)
-          resolve(JSON.parse(body))
+          if (JSON.parse(body).length !== 0) {
+            console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting pipelines successful\x1b[0m`)
+            resolve(JSON.parse(body))
+          } else {
+            console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting pipelines error: \nrequest url: ${url}\nerror message: User have no pipeline\x1b[0m`)
+            reject('User have no pipeline')
+          }
+        };
+      })
+    })
+  },
+  /**
+   * getting latest pipeline
+   *
+   * @param {string} host - gitlab server host
+   * @param {number} projectID - project ID
+   * @param {string} token - user's gitlab access token
+   * @returns {Promise<Object>} the promise contains latest pipeline
+   * @resolve {Object} latest pipeline
+   * @reject {error} RequestError
+   */
+  getLatestPipeline (host, projectID, token) {
+    return new Promise((resolve, reject) => {
+      let url = `${host}/gitlab/api/v4/projects/${projectID}/pipelines?per_page=1&page=1&access_token=${token}`
+      request.get(url, (error, rsp, body) => {
+        if (error) {
+          console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting pipelines error: \nrequest url: ${url}\nerror message: ${error}\x1b[0m`)
+          reject(error)
+        } else {
+          if (JSON.parse(body).length !== 0) {
+            console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting pipelines successful\x1b[0m`)
+            resolve(JSON.parse(body))
+          } else {
+            console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting pipelines error: \nrequest url: ${url}\nerror message: User have no pipeline\x1b[0m`)
+            resolve('User have no pipeline')
+          }
         };
       })
     })
@@ -203,24 +242,15 @@ var gitlabAPI = {
   getArtifact (host, projectID, jobID, token, target, path, filename) {
     return new Promise((resolve, reject) => {
       let url = `${host}/gitlab/api/v4/projects/${projectID}/jobs/${jobID}/artifacts/${target}?access_token=${token}`
-      request.get(url, (error, rsp, body) => {
+      /* if folder not exist, create one */
+      if (!fs.existsSync(path)) shell.exec(`mkdir ${path}`)
+      shell.exec(`wget '${url}' -q -O ${path}/${filename} && chmod +x ${path}/${filename}`, (error, stdout, stderr) => {
         if (error) {
-          console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting Artifact file error: \nrequest url: ${url}\nerror message: ${error}\x1b[0m`)
-          reject(error)
-        } else {
-          /* if folder not exist, create one */
-          if (!fs.existsSync(path)) shell.exec(`mkdir ${path}`)
-          /* make HTTP response as a file */
-          fs.writeFile(`${path}/${filename}`, body, (err) => {
-            if (err) {
-              console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] writing executable file error: \nerror message: ${err}\x1b[0m`)
-            } else {
-              shell.exec(`chmod 777 ${path}/${filename}`)
-              console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting artifact file successful\x1b[0m`)
-              resolve(rsp)
-            }
-          })
+          console.log(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating] getting artifact file failed\nerror message: ${stderr}\x1b[0m`)
+          reject('getting artifact file failed')
         }
+        console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting artifact file successful\x1b[0m`)
+        resolve(true)
       })
     })
   }

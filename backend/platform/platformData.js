@@ -1,4 +1,4 @@
-const { gitlabAPI } = require('../API/API')
+const { gitlabAPI } = require('../API')
 
 /**
  * @class

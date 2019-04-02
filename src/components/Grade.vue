@@ -1,7 +1,9 @@
 <!-- HTML part -->
 <template>
   <section class="section-wrapper">
-    <div v-if='status === "done"'>
+    <Loading v-if='status === "loading"'></Loading>
+    <RepoNotFound v-if='status === "error"'></RepoNotFound>
+    <div v-if='status === "done" && typeof(pipelines) === "object"'>
       <!-- The template here showing all pipelines status -->
       <!-- start -->
       <div class="pipelines-row pipelines-header-row">
@@ -39,8 +41,10 @@
         </ul>
       </div>
     </div>
-    <!-- waiting data -->
-    <Loading v-else></Loading>
+    <div class="judgeNotFound" v-if='status === "done" && typeof(pipelines) !== "object"'>
+      <h2>404 Not Found</h2>
+      <h4>We cannot find any judge result, please goto judge page and run judgment.</h4>
+    </div>
   </section>
 </template>
 
@@ -48,10 +52,11 @@
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import Loading from '@/components/Loading'
+import RepoNotFound from '@/components/RepoNotFound'
 
 export default {
   name: 'grade',
-  components: { Loading },
+  components: { Loading, RepoNotFound },
   computed: {
     ...mapState('platform', ['hostname', 'projectName', 'userdata', 'token']),
     ...mapState('grade', ['page', 'pipelines', 'status', 'grade']),
@@ -68,7 +73,7 @@ export default {
     ...mapMutations('grade', ['updateStatus', 'updatePage']),
     /* show job span color according to its status */
     jobColor: function (job) {
-      return job.status === 'success' ? { color: 'green' } : job.status === 'failed' ? { color: 'red' } : { color: 'blue' }
+      return job.status === 'success' ? { color: 'green' } : (job.status === 'failed' || job.status === 'skipped') ? { color: 'red' } : { color: 'blue' }
     },
     /* open/off the details info */
     detailToggle: function (index) {
@@ -192,5 +197,9 @@ export default {
   cursor: pointer;
   background-color:#777;
   color: #fff;
+}
+
+.judgeNotFound {
+  text-align: center;
 }
 </style>

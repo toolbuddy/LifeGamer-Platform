@@ -31,7 +31,17 @@ export default {
 }
 
 @keyframes animate-inifite {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  0% {
+    border-radius: 0;
+    transform: rotate(0deg);
+  }
+  50% {
+    border-radius: 50%;
+    transform: rotate(360deg);
+  }
+  100% {
+    border-radius: 0;
+    transform: rotate(720deg);
+  }
 }
 </style>

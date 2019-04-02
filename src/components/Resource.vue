@@ -27,7 +27,7 @@ marked.setOptions({
   highlight: function (code) { return hljs.highlightAuto(code).value }
 })
 
-const config = require('../../config/config')[process.env.NODE_ENV]
+const config = require('../../config/setting')
 
 export default {
   name: 'Announce',
@@ -74,7 +74,7 @@ export default {
 
 #markdown-body {
   margin-top: 50px;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .edit-wrapper {

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div v-if="token !== null">
-      <div v-if="isAdmin || serverStatus === 'on'">
+      <div v-if="hasLoadedData && (isAdmin || serverStatus === 'on')">
         <HeadBar />
         <AsideMenu />
         <router-view></router-view>
@@ -25,7 +25,10 @@ export default {
   components: { HeadBar, Login, Maintain, AsideMenu },
   computed: {
     ...mapState('platform', ['token', 'serverStatus', 'userdata']),
-    ...mapGetters('platform', ['isAdmin'])
+    ...mapGetters('platform', ['isAdmin']),
+    hasLoadedData () {
+      return this.userdata !== null
+    }
   },
   created: function () {
     this.getCookieToken()
@@ -41,7 +44,6 @@ export default {
 
 <style>
 @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
-@import url('https://fonts.googleapis.com/css?family=Kalam|Kosugi+Maru');
 
 :root {
   --login-button-color: #333;
@@ -60,8 +62,7 @@ body {
 }
 
 #app {
-  font-family: "Kalam", "Kosugi Maru", "Noto Sans TC", "sans-serif";
-  font-size: 18px;
+  font-family: "Noto Sans TC", "sans-serif";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
