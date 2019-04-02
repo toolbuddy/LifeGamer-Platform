@@ -242,24 +242,15 @@ var gitlabAPI = {
   getArtifact (host, projectID, jobID, token, target, path, filename) {
     return new Promise((resolve, reject) => {
       let url = `${host}/gitlab/api/v4/projects/${projectID}/jobs/${jobID}/artifacts/${target}?access_token=${token}`
-      request.get(url, (error, rsp, body) => {
+      /* if folder not exist, create one */
+      if (!fs.existsSync(path)) shell.exec(`mkdir ${path}`)
+      shell.exec(`wget '${url}' -q -O ${path}/${filename} && chmod +x ${path}/${filename}`, (error, stdout, stderr) => {
         if (error) {
-          console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] getting Artifact file error: \nrequest url: ${url}\nerror message: ${error}\x1b[0m`)
-          reject(error)
-        } else {
-          /* if folder not exist, create one */
-          if (!fs.existsSync(path)) shell.exec(`mkdir ${path}`)
-          /* make HTTP response as a file */
-          fs.writeFile(`${path}/${filename}`, body, (err) => {
-            if (err) {
-              console.error(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating error] writing executable file error: \nerror message: ${err}\x1b[0m`)
-            } else {
-              shell.exec(`chmod 777 ${path}/${filename}`)
-              console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting artifact file successful\x1b[0m`)
-              resolve(rsp)
-            }
-          })
+          console.log(`\x1b[31m${new Date().toISOString()} [gitlabAPI operating] getting artifact file failed\nerror message: ${stderr}\x1b[0m`)
+          reject('getting artifact file failed')
         }
+        console.log(`\x1b[32m${new Date().toISOString()} [gitlabAPI operating] getting artifact file successful\x1b[0m`)
+        resolve(true)
       })
     })
   }
