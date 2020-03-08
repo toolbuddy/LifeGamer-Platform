@@ -34,7 +34,8 @@ export default {
   data: function () {
     return {
       mobileHeaderbarOpen: false,
-      headerlist: [{ value: 'Battle Field', path: 'battle' }, { value: 'Resources', path: 'resource' }]
+      headerlist: [//{ value: 'Battle Field', path: 'battle' },
+        { value: 'Resources', path: 'resource' }]
     }
   },
   created: function () {

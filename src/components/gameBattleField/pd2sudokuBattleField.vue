@@ -199,6 +199,7 @@ export default {
   methods: {
     ...mapMutations('grade', ['updatePage', 'updateStatus']),
     ...mapMutations('gameBattleField', ['updateGroup', 'updateProcessStatus', 'updateRecordPage']),
+    ...mapActions('platform', ['getServerStatus']),
     ...mapActions('gameBattleField', ['getUserGroup', 'updateUserGroup', 'updateCodeVersion', 'battleRequest', 'getMemberList', 'getRecord']),
     ...mapActions('grade', ['getPipelines']),
     pipelineURL: function (id) {
@@ -254,6 +255,7 @@ export default {
     backFunction: function () {
       this.updateProcessStatus(false)
       this.selectMode('battle')
+      this.getServerStatus()
     },
     selectRecordPage: async function (page) {
       this.updateStatus('loading')
@@ -443,7 +445,7 @@ export default {
     color: #fff;
     width: 100vw;
     height: 100vh;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 999;

@@ -177,7 +177,7 @@ var pd2sudokuDatabaseAPI = {
     return new Promise((resolve, reject) => {
         con.query('INSERT INTO record(time, player1, player2, winner, p1change, p2change) VALUES(?,?,?,?,?,?)', [time, player1, player2, winner, p1change, p2change] , (error, result) => {
             if (error) {
-                console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] insert record error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
+                console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] insert record error: \nerror message: ${error}\x1b[0m`)
                 reject(error)
             } else {
                 console.log(`\x1b[32m${new Date().toISOString()} [gameDatabase operating] insert record successful\x1b[0m`)
@@ -191,7 +191,7 @@ var pd2sudokuDatabaseAPI = {
         let offset = (page-1) * 15
         con.query('SELECT * FROM record ORDER BY time DESC LIMIT 15 OFFSET ?', [offset], (error, result) => {
             if (error) {
-                console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] getting record error: \nsql command: ${sql}\nerror message: ${error}\x1b[0m`)
+                console.error(`\x1b[31m${new Date().toISOString()} [gameDatabase operating error] getting record error: \nerror message: ${error}\x1b[0m`)
                 reject(error)
             } else {
                 console.log(`\x1b[32m${new Date().toISOString()} [gameDatabase operating] getting record successful\x1b[0m`)
